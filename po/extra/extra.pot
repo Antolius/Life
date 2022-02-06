@@ -1,0 +1,50 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the extra package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: extra\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-06 19:51+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/life.desktop.in:6 data/life.appdata.xml.in:6
+msgid "Life"
+msgstr ""
+
+#: data/life.desktop.in:7 data/life.appdata.xml.in:7
+msgid "Conway's Game of Life"
+msgstr ""
+
+#: data/life.desktop.in:8
+msgid "Simulate life this zero-player game"
+msgstr ""
+
+#: data/life.desktop.in:10
+msgid "Conway;Game;Life;Cellular;Automaton;Automata;"
+msgstr ""
+
+#: data/life.desktop.in:12
+msgid "hr.from.josipantolis.life"
+msgstr ""
+
+#: data/life.appdata.xml.in:9
+msgid ""
+"Whether you are seriously into a study of cellular automata or are just "
+"looking for some casual fun this simulator of Conway's Game of Life is here "
+"for you. Life might be a zero-player game, but it's entertaining to play "
+"with."
+msgstr ""
+
+#: data/life.appdata.xml.in:24
+msgid "Josip Antoliš"
+msgstr ""

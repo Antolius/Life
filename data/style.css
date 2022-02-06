@@ -1,0 +1,7 @@
+.live-cell {
+    background-color: @insensitive_fg_color
+}
+
+.dead-cell {
+    background-color: @insensitive_bg_color
+}

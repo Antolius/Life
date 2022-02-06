@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>hr.from.josipantolis.life</id>
+  <launchable type="desktop-id">hr.from.josipantolis.life.desktop</launchable>
+
+  <name>Life</name>
+  <summary>Conway's Game of Life</summary>
+  <description>
+    <p>Whether you are seriously into a study of cellular automata or are just
+    looking for some casual fun this simulator of Conway's Game of Life is here
+    for you. Life might be a zero-player game, but it's entertaining to play
+    with.</p>
+  </description>
+
+  <metadata_license>CC-BY-4.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <custom>
+    <value key="x-appcenter-suggested-price">0</value>
+  </custom>
+  <developer_name>Josip Antoliš</developer_name>
+  <url type="homepage">https://github.com/antolius/life</url>
+  <url type="bugtracker">https://github.com/antolius/life/issues</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/default.png</image>
+      <caption>A game of life showcasing default (light) style</caption>
+    </screenshot>
+      <screenshot>
+        <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/dark.png</image>
+        <caption>A game of life showcasing dark style</caption>
+      </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1" />
+</component>

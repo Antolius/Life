@@ -1,0 +1,7 @@
+src/Application.vala
+src/MainWindow.vala
+src/Simulation.vala
+src/Ticker.vala
+src/Widgets/BoardGrid.vala
+src/Widgets/HeaderBar.vala
+src/Constants/Const.vala
