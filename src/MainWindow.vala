@@ -105,10 +105,21 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         grid.attach (header_bar, 0, 0);
 
         var scrolled_area = new Gtk.ScrolledWindow (null, null) {
-            child = new Widgets.BoardGrid (Application.simulation)
+            child = new Widgets.DrawingBoard (tree_with_a_glider ())
         };
         grid.attach (scrolled_area, 0, 1);
 
         child = grid;
+    }
+
+    private HashLife.QuadTree tree_with_a_glider () {
+        var tree = new HashLife.QuadTree (6);
+        var corner = new Point (-tree.root.width / 2, tree.root.width / 2 - 1);
+        tree.set_alive (corner.x_add (2).y_add (-1), true);
+        tree.set_alive (corner.x_add (3).y_add (-2), true);
+        tree.set_alive (corner.x_add (1).y_add (-3), true);
+        tree.set_alive (corner.x_add (2).y_add (-3), true);
+        tree.set_alive (corner.x_add (3).y_add (-3), true);
+        return tree;
     }
 }

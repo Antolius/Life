@@ -1,7 +1,13 @@
 src/Application.vala
+src/ColorPalette.vala
+src/Drawable.vala
 src/MainWindow.vala
-src/Simulation.vala
-src/Ticker.vala
-src/Widgets/BoardGrid.vala
-src/Widgets/HeaderBar.vala
+src/Point.vala
+src/Rectangle.vala
 src/Constants/Const.vala
+src/HashLife/Quad.vala
+src/HashLife/QuadFactory.vala
+src/HashLife/Quadruplet.vala
+src/HashLife/QuadTree.vala
+src/Widgets/DrawingBoard.vala
+src/Widgets/HeaderBar.vala

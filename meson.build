@@ -24,6 +24,7 @@ dependencies = [
 
 subdir ('data')
 subdir ('src')
+subdir ('test')
 subdir ('po')
 
 # Defining executable
@@ -34,5 +35,12 @@ executable (
     dependencies: dependencies,
     install: true
 )
+
+# Defning tests executable
+test('tests', executable (
+    meson.project_name () + '-tests',
+    common_sources + test_sources,
+    dependencies: dependencies
+))
 
 meson.add_install_script('meson/post_install.py')

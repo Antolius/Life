@@ -18,17 +18,14 @@
 *
 */
 
-public class Life.Ticker : Object {
+public interface Life.Drawable : Object {
 
-    public signal void tick ();
+    public abstract int64 width_points { get; }
+    public abstract int64 height_points { get; }
 
-    construct {
-        Timeout.add (500, emit_tick);
-    }
-
-    private bool emit_tick () {
-        tick ();
-        return Source.CONTINUE;
-    }
+    public abstract void draw (DrawAction draw_action, Rectangle draw_area);
+    public abstract void draw_entire (DrawAction draw_action);
 
 }
+
+public delegate void Life.DrawAction (Point p);
