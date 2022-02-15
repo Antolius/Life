@@ -18,7 +18,16 @@
 *
 */
 
-namespace Life.HashLife {
+namespace Life.HashLife.QuadTreeTests {
+
+    public void add_funcs () {
+        Test.add_func ("/HashLife/QuadTree/create_empty", test_create_empty);
+        Test.add_func ("/HashLife/QuadTree/set_and_get", test_set_and_get);
+        Test.add_func ("/HashLife/QuadTree/fill_entire", test_fill_entire);
+        Test.add_func ("/HashLife/QuadTree/draw", test_draw);
+        Test.add_func ("/HashLife/QuadTree/empty_edges", test_empty_edges);
+        Test.add_func ("/HashLife/QuadTree/grow", test_grow);
+    }
 
     void test_create_empty () {
         var tree = new QuadTree ();
@@ -67,54 +76,58 @@ namespace Life.HashLife {
         };
 
         load_plaintext_pattern (tree, glider_in_a_box);
-        print_plaintext_pattern (glider_in_a_box);
+        assert_tree_contains_pattern (tree, glider_in_a_box);
+    }
 
-        string[] output_captor = {
+    void test_empty_edges () {
+        var tree = new QuadTree (2);
+        assert (tree.root.width == 4);
+
+        string[] empty_edged_pattern = {
+            "....",
+            ".OO.",
+            ".OO.",
+            "...."
+        };
+        load_plaintext_pattern (tree, empty_edged_pattern);
+        var empty_edges = tree.has_empty_edges ();
+        assert (empty_edges == true);
+
+        string[] non_empty_edged_pattern = {
+            "....",
+            "....",
+            "....",
+            "O..."
+        };
+        load_plaintext_pattern (tree, non_empty_edged_pattern);
+        empty_edges = tree.has_empty_edges ();
+        assert (empty_edges == false);
+    }
+
+    void test_grow () {
+        var tree = new QuadTree (2);
+        assert (tree.root.width == 4);
+
+        string[] checkers_pattern = {
+            "O.O.",
+            ".O.O",
+            "O.O.",
+            ".O.O"
+        };
+        load_plaintext_pattern (tree, checkers_pattern);
+
+        tree.grow ();
+
+        string[] expected_pattenr = {
             "........",
             "........",
-            "........",
-            "........",
-            "........",
-            "........",
+            "..O.O...",
+            "...O.O..",
+            "..O.O...",
+            "...O.O..",
             "........",
             "........"
         };
-
-        var width = tree.root.width;
-        tree.draw_entire ((p) => {
-            var ap = p.add (-width / 2 + 1).flip ();
-            output_captor [ap.y].data[ap.x] = 'O';
-        });
-
-        print_plaintext_pattern (output_captor);
-        for (int i = 0; i < width; i++) {
-            assert (glider_in_a_box[i] == output_captor[i]);
-        }
-    }
-
-    void main (string[] args) {
-        Test.init (ref args);
-        Test.add_func ("/HashLife/QuadTree/create_empty", test_create_empty);
-        Test.add_func ("/HashLife/QuadTree/set_and_get", test_set_and_get);
-        Test.add_func ("/HashLife/QuadTree/fill_entire", test_fill_entire);
-        Test.add_func ("/HashLife/QuadTree/draw", test_draw);
-        Test.run ();
-    }
-
-    private void load_plaintext_pattern (QuadTree tree, string[] rows) {
-        var width = tree.root.width;
-        for (var i = 0; i < width; i++) {
-            for (var j = 0; j < width; j++) {
-                var cell_is_alive = rows[j].data[i] == 'O';
-                var p = new Point (i, j).flip ().add (width / 2 - 1);
-                tree.set_alive (p, cell_is_alive);
-            }
-        }
-    }
-
-    private void print_plaintext_pattern (string[] rows) {
-        foreach (var row in rows) {
-            print ("%s\n", row);
-        }
+        assert_tree_contains_pattern (tree, expected_pattenr);
     }
 }

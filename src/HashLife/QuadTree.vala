@@ -27,6 +27,8 @@ public class Life.HashLife.QuadTree : Object, Drawable {
     public int64 width_points { get { return root.width; } }
     public int64 height_points { get { return root.width; } }
 
+    public uint level { get { return root.level; } }
+
     public QuadTree (int level = 1, QuadFactory factory = new QuadFactory ()) {
         Object (
             factory: factory,
@@ -131,44 +133,48 @@ public class Life.HashLife.QuadTree : Object, Drawable {
         _draw (q.sw, bottom_left, draw_action, drawing_area);
     }
 
-    private void _advance (int num_of_steps) {
-
-    }
-
-    private bool is_empty (Quad q) {
+    public bool is_empty (Quad q) {
         return q == factory.create_empty_quad (q.level);
     }
 
-    private Point bottom_left () {
-        return new Point (-root.width / 2, -root.width / 2);
+    public Point bottom_left () {
+        return new Point (-width_points / 2, -height_points / 2);
     }
 
-    private Quad center (Quad q) {
+    public Quad center (Quad q) {
         assert (q.level >= 2);
         return factory.create_quad (q.nw.se, q.ne.sw, q.se.nw, q.sw.ne);
     }
 
-    private Quad north (Quad q) {
+    public Quad north (Quad q) {
         assert (q.level >= 2);
         return factory.create_quad (q.nw.ne, q.ne.nw, q.ne.sw, q.nw.se);
     }
 
-    private Quad east (Quad q) {
+    public Quad east (Quad q) {
         assert (q.level >= 2);
         return factory.create_quad (q.ne.sw, q.ne.se, q.se.ne, q.se.nw);
     }
 
-    private Quad south (Quad q) {
+    public Quad south (Quad q) {
         assert (q.level >= 2);
         return factory.create_quad (q.sw.ne, q.se.nw, q.se.sw, q.sw.se);
     }
 
-    private Quad weast (Quad q) {
+    public Quad west (Quad q) {
         assert (q.level >= 2);
-        return factory.create_quad (q.nw.sw, q.nw.se, q.sw.nw, q.sw.nw);
+        return factory.create_quad (q.nw.sw, q.nw.se, q.sw.ne, q.sw.nw);
     }
 
-    private bool has_empty_edges (Quad q) {
+    public bool has_empty_edges () {
+        return _has_empty_edges (root);
+    }
+
+    public bool center_has_empty_edges () {
+        return _has_empty_edges (center (root));
+    }
+
+    private bool _has_empty_edges (Quad q) {
         return q.level >= 2
             && is_empty (q.nw.nw) && is_empty (q.nw.ne) && is_empty (q.nw.sw)
             && is_empty (q.ne.nw) && is_empty (q.ne.ne) && is_empty (q.ne.se)
@@ -176,12 +182,12 @@ public class Life.HashLife.QuadTree : Object, Drawable {
             && is_empty (q.sw.nw) && is_empty (q.sw.se) && is_empty (q.sw.sw);
     }
 
-    private void grow () {
-        if (root.level >= MAX_LEVEL) {
+    public void grow () {
+        if (level >= MAX_LEVEL) {
             return;
         }
 
-        var border = factory.create_empty_quad (root.level - 1);
+        var border = factory.create_empty_quad (level - 1);
         root = factory.create_quad (
             factory.create_quad (border, border, root.nw, border),
             factory.create_quad (border, border, border, root.ne),

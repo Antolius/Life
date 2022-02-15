@@ -17,10 +17,12 @@ common_sources = files (
     'Point.vala',
     'Rectangle.vala',
     'Constants/Const.vala',
+    'HashLife/Pair.vala',
     'HashLife/Quad.vala',
     'HashLife/QuadFactory.vala',
     'HashLife/Quadruplet.vala',
     'HashLife/QuadTree.vala',
+    'HashLife/Stepper.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala'
 )

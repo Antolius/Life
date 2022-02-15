@@ -1,4 +1,7 @@
 test_sources = files (
-    'HashLifeTest.vala'
+    'TestsMain.vala',
+    'HashLife/QuadTreeTests.vala',
+    'HashLife/StepperTests.vala',
+    'HashLife/Utils.vala'
 )
 
