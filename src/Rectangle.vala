@@ -32,7 +32,7 @@ public class Life.Rectangle : Object {
         );
     }
 
-    private Point top_rigth () {
+    public Point top_rigth () {
         return new Point (bottom_left.x + width, bottom_left.y + height);
     }
 

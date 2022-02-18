@@ -55,6 +55,10 @@ public class Life.Point : Object {
         return new Point (x * factor, y * factor);
     }
 
+    public Point scale_imprecise (double factor) {
+        return new Point (Math.lround(x * factor), Math.lround(y * factor));
+    }
+
     public string to_string () {
         return ("(%" + int64.FORMAT + ", %" + int64.FORMAT + ")").printf (x, y);
     }

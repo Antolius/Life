@@ -11,3 +11,4 @@ src/HashLife/Quadruplet.vala
 src/HashLife/QuadTree.vala
 src/Widgets/DrawingBoard.vala
 src/Widgets/HeaderBar.vala
+src/Widgets/ScrolledBoard.vala

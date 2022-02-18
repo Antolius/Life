@@ -100,18 +100,18 @@ public class Life.HashLife.QuadTree : Object, Drawable {
     }
 
     public void draw_entire (DrawAction draw_action) {
-        draw (draw_action, root.rect (bottom_left ()));
+        draw (root.rect (bottom_left ()), draw_action);
     }
 
-    public void draw (DrawAction draw_action, Rectangle drawing_area) {
-        _draw (root, bottom_left (), draw_action, drawing_area);
+    public void draw (Rectangle drawing_area, DrawAction draw_action) {
+        _draw (root, bottom_left (), drawing_area, draw_action);
     }
 
     public void _draw (
         Quad q,
         Point bottom_left,
-        DrawAction draw_action,
-        Rectangle drawing_area
+        Rectangle drawing_area,
+        DrawAction draw_action
     ) {
         if (is_empty (q)) {
             return;
@@ -127,10 +127,10 @@ public class Life.HashLife.QuadTree : Object, Drawable {
         }
 
         var w = q.width / 2;
-        _draw (q.nw, bottom_left.y_add (w), draw_action, drawing_area);
-        _draw (q.ne, bottom_left.add (w), draw_action, drawing_area);
-        _draw (q.se, bottom_left.x_add (w), draw_action, drawing_area);
-        _draw (q.sw, bottom_left, draw_action, drawing_area);
+        _draw (q.nw, bottom_left.y_add (w), drawing_area, draw_action);
+        _draw (q.ne, bottom_left.add (w), drawing_area, draw_action);
+        _draw (q.se, bottom_left.x_add (w), drawing_area, draw_action);
+        _draw (q.sw, bottom_left, drawing_area, draw_action);
     }
 
     public bool is_empty (Quad q) {

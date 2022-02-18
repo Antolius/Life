@@ -24,7 +24,8 @@ common_sources = files (
     'HashLife/QuadTree.vala',
     'HashLife/Stepper.vala',
     'Widgets/DrawingBoard.vala',
-    'Widgets/HeaderBar.vala'
+    'Widgets/HeaderBar.vala',
+    'Widgets/ScrolledBoard.vala'
 )
 
 common_sources += build_constants

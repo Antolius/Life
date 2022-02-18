@@ -23,7 +23,7 @@ public interface Life.Drawable : Object {
     public abstract int64 width_points { get; }
     public abstract int64 height_points { get; }
 
-    public abstract void draw (DrawAction draw_action, Rectangle draw_area);
+    public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
     public abstract void draw_entire (DrawAction draw_action);
 
 }

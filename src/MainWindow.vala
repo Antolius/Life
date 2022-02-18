@@ -106,22 +106,20 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
         // TODO: put all this in a dedicated class
         var factory = new HashLife.QuadFactory ();
-        var tree = new HashLife.QuadTree (6, factory);
+        var tree = new HashLife.QuadTree (8, factory);
         fill_tree_with_an_acron (tree);
         var stepper = new HashLife.Stepper (tree, factory);
         var board = new Widgets.DrawingBoard (tree);
-        Timeout.add (100, () => {
+
+        var scrolled_board = new Widgets.ScrolledBoard (board);
+        grid.attach (scrolled_board, 0, 1);
+
+        Timeout.add (20, () => {
             stepper.step ();
-            // TODO: centralize scrolling to track previous viewport
             board.queue_resize ();
             board.queue_draw ();
             return Source.CONTINUE;
         });
-
-        var scrolled_area = new Gtk.ScrolledWindow (null, null) {
-            child = board
-        };
-        grid.attach (scrolled_area, 0, 1);
 
         child = grid;
     }
@@ -137,12 +135,13 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     private void fill_tree_with_an_acron (HashLife.QuadTree tree) {
         var corner = new Point (-tree.root.width / 2, tree.root.width / 2 - 1);
-        tree.set_alive (corner.x_add (3).y_add (-2), true);
-        tree.set_alive (corner.x_add (5).y_add (-3), true);
-        tree.set_alive (corner.x_add (2).y_add (-4), true);
-        tree.set_alive (corner.x_add (3).y_add (-4), true);
-        tree.set_alive (corner.x_add (6).y_add (-4), true);
-        tree.set_alive (corner.x_add (7).y_add (-4), true);
-        tree.set_alive (corner.x_add (8).y_add (-4), true);
+        var n = 120;
+        tree.set_alive (corner.x_add (3 + n).y_add (-2 - n), true);
+        tree.set_alive (corner.x_add (5 + n).y_add (-3 - n), true);
+        tree.set_alive (corner.x_add (2 + n).y_add (-4 - n), true);
+        tree.set_alive (corner.x_add (3 + n).y_add (-4 - n), true);
+        tree.set_alive (corner.x_add (6 + n).y_add (-4 - n), true);
+        tree.set_alive (corner.x_add (7 + n).y_add (-4 - n), true);
+        tree.set_alive (corner.x_add (8 + n).y_add (-4 - n), true);
     }
 }

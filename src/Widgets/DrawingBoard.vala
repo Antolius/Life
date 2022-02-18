@@ -28,6 +28,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
     // TODO: think hard about these casts:
     public int width { get { return (int) drawable.width_points * scale; } }
     public int height { get { return (int) drawable.height_points * scale; } }
+    public double reverse_scale { get { return 1 / ((double) scale); } }
 
     public DrawingBoard (Drawable drawable) {
         Object (
@@ -67,7 +68,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         reset_background (ctx);
         draw_grid (ctx);
         draw_live_cells (ctx);
-        return true;
+        return false;
     }
 
     private void reset_background (Cairo.Context ctx) {
@@ -99,16 +100,45 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var lcc = color_palette.live_cell_color;
         ctx.set_source_rgba (lcc.red, lcc.blue, lcc.green, lcc.alpha);
 
-        drawable.draw_entire (point => {
-            var top_left = point.x_add (drawable.width_points / 2)
-                .y_add (-drawable.height_points / 2 + 1)
-                .flip_h ()
-                .scale (scale)
-                .add (1);
-
+        drawable.draw (visible_drawable_rec (ctx), point => {
+            var top_left = drawable_to_cairo (point);
             ctx.rectangle (top_left.x, top_left.y, scale - 2, scale - 2);
         });
 
         ctx.fill ();
+    }
+
+    private Point drawable_to_cairo (Point drawable_point) {
+        return drawable_point.x_add (drawable.width_points / 2)
+            .y_add (-drawable.height_points / 2 + 1)
+            .flip_h ()
+            .scale (scale)
+            .add (1);
+    }
+
+    private Point cairo_to_drawable (Point cairo_point) {
+        return cairo_point
+            .scale_imprecise (reverse_scale)
+            .flip_h ()
+            .y_add (drawable.height_points / 2 - 1)
+            .x_add (-drawable.width_points / 2);
+    }
+
+    private Rectangle visible_drawable_rec (Cairo.Context ctx) {
+        Gdk.Rectangle rec;
+        Gdk.cairo_get_clip_rectangle (ctx, out rec);
+
+
+        var bottom_left_cairo = new Point (rec.x, rec.y + rec.height);
+        var bottom_left_drawable = cairo_to_drawable (bottom_left_cairo);
+
+        var heigth_drawable = Math.lround (rec.height * reverse_scale);
+        var width_drawable = Math.lround (rec.width * reverse_scale);
+
+        return new Rectangle (
+            bottom_left_drawable.add (-10),
+            heigth_drawable + 20,
+            width_drawable + 20
+        );
     }
 }
