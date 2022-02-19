@@ -101,7 +101,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
     private void create_layout () {
         grid = new Gtk.Grid ();
 
-        var header_bar = new Widgets.HeaderBar ();
+        var header_bar = new Widgets.HeaderBar (Application.state);
         grid.attach (header_bar, 0, 0);
 
         // TODO: put all this in a dedicated class
@@ -109,7 +109,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         var tree = new HashLife.QuadTree (8, factory);
         fill_tree_with_an_acron (tree);
         var stepper = new HashLife.Stepper (tree, factory);
-        var board = new Widgets.DrawingBoard (tree);
+        var board = new Widgets.DrawingBoard (tree, Application.state);
 
         var scrolled_board = new Widgets.ScrolledBoard (board);
         grid.attach (scrolled_board, 0, 1);

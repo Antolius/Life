@@ -16,6 +16,7 @@ common_sources = files (
     'MainWindow.vala',
     'Point.vala',
     'Rectangle.vala',
+    'State.vala',
     'Constants/Const.vala',
     'HashLife/Pair.vala',
     'HashLife/Quad.vala',

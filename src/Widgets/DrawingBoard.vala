@@ -20,21 +20,19 @@
 
 public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
-    private const int DEFAULT_SCALE = 10; // 1 tree point == 10 pixels
-
     public Drawable drawable { get; construct; }
-    public int scale { get; construct; }
+    public State state { get; construct; }
     public ColorPalette color_palette { get; construct; }
-    public int width { get { return (int) drawable.width_points * scale; } }
-    public int height { get { return (int) drawable.height_points * scale; } }
-    public double reverse_scale { get { return 1 / ((double) scale); } }
+    public int width { get { return (int) drawable.width_points * state.scale; } }
+    public int height { get { return (int) drawable.height_points * state.scale; } }
+    public double reverse_scale { get { return 1 / ((double) state.scale); } }
 
     private Point? cursor_position = null;
 
-    public DrawingBoard (Drawable drawable) {
+    public DrawingBoard (Drawable drawable, State state) {
         Object (
             drawable: drawable,
-            scale: DEFAULT_SCALE,
+            state: state,
             color_palette: new ColorPalette (),
             hexpand: true,
             vexpand: true,
@@ -92,13 +90,13 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         ctx.set_line_width (2);
 
         for (var i = 0; i <= drawable.width_points; i++) {
-            ctx.move_to (i * scale, 0);
-            ctx.line_to (i * scale, height);
+            ctx.move_to (i * state.scale, 0);
+            ctx.line_to (i * state.scale, height);
         }
 
         for (var j = 0; j <= drawable.height_points; j++) {
-            ctx.move_to (0, j * scale);
-            ctx.line_to (width, j * scale);
+            ctx.move_to (0, j * state.scale);
+            ctx.line_to (width, j * state.scale);
         }
 
         ctx.stroke ();
@@ -110,7 +108,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
         drawable.draw (visible_drawable_rec (ctx), point => {
             var top_left = drawable_to_cairo (point);
-            ctx.rectangle (top_left.x, top_left.y, scale - 2, scale - 2);
+            ctx.rectangle (top_left.x, top_left.y, state.scale - 2, state.scale - 2);
         });
 
         ctx.fill ();
@@ -124,7 +122,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var ac = color_palette.accent_color;
         ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 2);
         var top_left = drawable_to_cairo (cursor_position);
-        ctx.rectangle (top_left.x - 1, top_left.y - 1, scale, scale);
+        ctx.rectangle (top_left.x - 1, top_left.y - 1, state.scale, state.scale);
         ctx.set_line_width (2);
         ctx.stroke ();
     }
@@ -133,7 +131,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         return drawable_point.x_add (drawable.width_points / 2)
             .y_add (-drawable.height_points / 2 + 1)
             .flip_h ()
-            .scale (scale);
+            .scale (state.scale);
     }
 
     private Point cairo_to_drawable (Point cairo_point) {
@@ -175,10 +173,10 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
             }
 
             var rect = Gdk.Rectangle () {
-                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
-                y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
-                width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
-                height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
+                x = (int) int64.min (new_point.x, prev_point.x) - 2 * state.scale,
+                y = (int) int64.min (new_point.y, prev_point.y) - 2 * state.scale,
+                width = (int) (new_point.x - prev_point.x).abs () + 4 * state.scale,
+                height = (int) (new_point.y - prev_point.y).abs () + 4 * state.scale
             };
 
             cursor_position = new_cursor_position;
@@ -209,10 +207,10 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
             }
 
             var rect = Gdk.Rectangle () {
-                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
-                y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
-                width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
-                height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
+                x = (int) int64.min (new_point.x, prev_point.x) - 2 * state.scale,
+                y = (int) int64.min (new_point.y, prev_point.y) - 2 * state.scale,
+                width = (int) (new_point.x - prev_point.x).abs () + 4 * state.scale,
+                height = (int) (new_point.y - prev_point.y).abs () + 4 * state.scale
             };
 
             cursor_position = new_cursor_position;
@@ -229,10 +227,10 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var window = get_window ();
         if (window != null) {
             var rect = Gdk.Rectangle () {
-                x = (int) event.x - 2 * scale,
-                y = (int) event.y - 2 * scale,
-                width = 4 * scale,
-                height = 4 * scale
+                x = (int) event.x - 2 * state.scale,
+                y = (int) event.y - 2 * state.scale,
+                width = 4 * state.scale,
+                height = 4 * state.scale
             };
 
             window.invalidate_rect (rect, false);

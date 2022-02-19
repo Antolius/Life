@@ -21,6 +21,7 @@
 public class Life.Application : Gtk.Application {
 
     public static Settings settings;
+    public static State state;
 
     public Application () {
         Object (
@@ -31,6 +32,7 @@ public class Life.Application : Gtk.Application {
 
     static construct {
         settings = new Settings (Constants.PROJECT_NAME);
+        state = new State ();
     }
 
     protected override void activate () {
