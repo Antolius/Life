@@ -114,7 +114,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         var scrolled_board = new Widgets.ScrolledBoard (board);
         grid.attach (scrolled_board, 0, 1);
 
-        Timeout.add (20, () => {
+        Timeout.add (100, () => {
             stepper.step ();
             board.queue_resize ();
             board.queue_draw ();

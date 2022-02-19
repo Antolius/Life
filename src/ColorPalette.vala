@@ -50,6 +50,15 @@ public class Life.ColorPalette : Object {
         return _live_cell_color;
     } }
 
+    private Gdk.RGBA? _accent_color = null;
+    public Gdk.RGBA? accent_color { get {
+        if (_accent_color == null) {
+            setup_colors ();
+        }
+
+        return _accent_color;
+    } }
+
     private void setup_colors () {
         if (background_style == null || cell_style == null) {
             setup_styles ();
@@ -68,12 +77,12 @@ public class Life.ColorPalette : Object {
         background_style.set_path (window_widget_path);
         background_style.changed.connect (update_changed_colors);
 
-        var label_widget_path = new Gtk.WidgetPath ();
-        label_widget_path.append_type (typeof (Gtk.Button));
-        label_widget_path.iter_set_object_name (1, "button");
+        var button_widget_path = new Gtk.WidgetPath ();
+        button_widget_path.append_type (typeof (Gtk.Button));
+        button_widget_path.iter_set_object_name (1, "button");
 
         cell_style = new Gtk.StyleContext ();
-        cell_style.set_path (label_widget_path);
+        cell_style.set_path (button_widget_path);
         cell_style.changed.connect (update_changed_colors);
     }
 
@@ -91,6 +100,11 @@ public class Life.ColorPalette : Object {
         color = extract_live_cell_color ();
         if (color != _live_cell_color) {
             _live_cell_color = color;
+        }
+
+        color = extract_accent_color ();
+        if (color != _accent_color) {
+            _accent_color = color;
         }
     }
 
@@ -112,6 +126,13 @@ public class Life.ColorPalette : Object {
         return (Gdk.RGBA) cell_style.get_property (
             Gtk.STYLE_PROPERTY_COLOR,
             Gtk.StateFlags.INSENSITIVE
+        );
+    }
+
+    private Gdk.RGBA extract_accent_color () {
+        return (Gdk.RGBA) cell_style.get_property (
+            Gtk.STYLE_PROPERTY_COLOR,
+            Gtk.StateFlags.LINK
         );
     }
 }
