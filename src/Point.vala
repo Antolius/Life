@@ -56,7 +56,10 @@ public class Life.Point : Object {
     }
 
     public Point scale_imprecise (double factor) {
-        return new Point ((int64) Math.floor(x * factor), (int64) Math.floor(y * factor));
+        return new Point (
+            (int64) Math.floor (x * factor),
+            (int64) Math.floor (y * factor)
+        );
     }
 
     public string to_string () {

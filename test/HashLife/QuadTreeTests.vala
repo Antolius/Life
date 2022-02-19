@@ -18,6 +18,8 @@
 *
 */
 
+// because of consecutive dots:
+// vala-lint=skip-file
 namespace Life.HashLife.QuadTreeTests {
 
     public void add_funcs () {

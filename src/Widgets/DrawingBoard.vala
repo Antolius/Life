@@ -117,7 +117,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
     }
 
     private void highlight_cursor (Cairo.Context ctx) {
-        if (cursor_position == null ){
+        if (cursor_position == null) {
             return;
         }
 
@@ -175,7 +175,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
             }
 
             var rect = Gdk.Rectangle () {
-                x =  (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
+                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
                 y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
                 width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
                 height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
@@ -209,7 +209,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
             }
 
             var rect = Gdk.Rectangle () {
-                x =  (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
+                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
                 y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
                 width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
                 height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
@@ -229,7 +229,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var window = get_window ();
         if (window != null) {
             var rect = Gdk.Rectangle () {
-                x =  (int) event.x - 2 * scale,
+                x = (int) event.x - 2 * scale,
                 y = (int) event.y - 2 * scale,
                 width = 4 * scale,
                 height = 4 * scale
