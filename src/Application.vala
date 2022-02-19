@@ -21,7 +21,6 @@
 public class Life.Application : Gtk.Application {
 
     public static Settings settings;
-    public static Simulation simulation;
 
     public Application () {
         Object (
@@ -32,7 +31,6 @@ public class Life.Application : Gtk.Application {
 
     static construct {
         settings = new Settings (Constants.PROJECT_NAME);
-        simulation = new Simulation (new Ticker ());
     }
 
     protected override void activate () {
@@ -51,10 +49,6 @@ public class Life.Application : Gtk.Application {
         Hdy.init ();
         foce_elementary_style ();
         link_dark_mode_settings ();
-    }
-
-    public static int main (string[] args) {
-        return new Application ().run (args);
     }
 
     private void foce_elementary_style () {

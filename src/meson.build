@@ -9,14 +9,27 @@ build_constants = configure_file (
     configuration: build_info
 )
 
-sources = files (
+common_sources = files (
     'Application.vala',
+    'ColorPalette.vala',
+    'Drawable.vala',
     'MainWindow.vala',
-    'Simulation.vala',
-    'Ticker.vala',
-    'Widgets/BoardGrid.vala',
+    'Point.vala',
+    'Rectangle.vala',
+    'Constants/Const.vala',
+    'HashLife/Pair.vala',
+    'HashLife/Quad.vala',
+    'HashLife/QuadFactory.vala',
+    'HashLife/Quadruplet.vala',
+    'HashLife/QuadTree.vala',
+    'HashLife/Stepper.vala',
+    'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala',
-    'Constants/Const.vala'
+    'Widgets/ScrolledBoard.vala'
 )
 
-sources += build_constants
+common_sources += build_constants
+
+sources = common_sources + files (
+    'Main.vala'
+)

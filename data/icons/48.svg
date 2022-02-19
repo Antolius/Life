@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 12.7 12.7"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient4482">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop4480" />
+    </linearGradient>
+    <filter
+       height="6.290422"
+       width="3.2486877"
+       y="-2.3210242"
+       x="-0.9865486"
+       style="color-interpolation-filters:sRGB"
+       id="filter9715">
+      <feOffset
+         dx="7"
+         dy="7"
+         in="SourceAlpha"
+         result="result3"
+         id="feOffset9693" />
+      <feGaussianBlur
+         stdDeviation="8"
+         in="result3"
+         result="result1"
+         id="feGaussianBlur9695" />
+      <feComposite
+         operator="in"
+         in2="result1"
+         in="SourceGraphic"
+         result="result2"
+         id="feComposite9697" />
+      <feComposite
+         operator="out"
+         result="fbSourceGraphic"
+         in="result2"
+         in2="result2"
+         id="feComposite9699" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0 0 0 0 4 0 "
+         id="feColorMatrix9701" />
+      <feGaussianBlur
+         result="result0"
+         in="fbSourceGraphicAlpha"
+         stdDeviation="2"
+         id="feGaussianBlur9703" />
+      <feSpecularLighting
+         specularExponent="20"
+         specularConstant="1.20000005"
+         surfaceScale="3"
+         lighting-color="#ffffff"
+         result="result1"
+         in="result0"
+         id="feSpecularLighting9707">
+        <feDistantLight
+           azimuth="235"
+           elevation="45"
+           id="feDistantLight9705" />
+      </feSpecularLighting>
+      <feComposite
+         operator="in"
+         result="result2"
+         in="result1"
+         in2="fbSourceGraphicAlpha"
+         id="feComposite9709" />
+      <feComposite
+         in="fbSourceGraphic"
+         operator="arithmetic"
+         k2="2"
+         k3="2"
+         in2="result2"
+         result="result91"
+         id="feComposite9711"
+         k1="0"
+         k4="0" />
+      <feBlend
+         mode="multiply"
+         in2="result91"
+         id="feBlend9713" />
+    </filter>
+  </defs>
+  <g
+     id="layer6"
+     style="display:inline">
+    <rect
+       style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1839"
+       width="4.0947094"
+       height="4.0947094"
+       x="0.20793642"
+       y="8.397356" />
+    <rect
+       style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1841"
+       width="4.0947094"
+       height="4.0947094"
+       x="4.3026457"
+       y="8.397356" />
+    <rect
+       style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1843"
+       width="4.0947094"
+       height="4.0947094"
+       x="8.397356"
+       y="8.397356" />
+    <rect
+       style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1845"
+       width="4.0947094"
+       height="4.0947094"
+       x="8.397356"
+       y="4.3026457" />
+    <rect
+       style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1847"
+       width="4.0947094"
+       height="4.0947094"
+       x="4.3026457"
+       y="0.20793642" />
+    <rect
+       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2202"
+       width="4.0947094"
+       height="4.0947094"
+       x="4.3026457"
+       y="4.3026457" />
+    <rect
+       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2204"
+       width="4.0947094"
+       height="4.0947094"
+       x="8.397356"
+       y="0.20793642" />
+    <rect
+       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2206"
+       width="4.0947094"
+       height="4.0947094"
+       x="0.20793642"
+       y="0.20793642" />
+    <rect
+       style="opacity:1;fill:#eaeaea;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:0.26458333;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2208"
+       width="4.0947094"
+       height="4.0947094"
+       x="0.20793642"
+       y="4.3026457" />
+  </g>
+</svg>
