@@ -27,8 +27,8 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
     public int width { get { return (int) drawable.width_points * state.scale; } }
     public int height { get { return (int) drawable.height_points * state.scale; } }
     public double reverse_scale { get { return 1 / ((double) state.scale); } }
+    public Point? cursor_position { get; set; }
 
-    private Point? cursor_position = null;
     private bool is_pressing = false;
 
     public DrawingBoard (State state) {

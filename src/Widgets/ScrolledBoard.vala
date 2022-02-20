@@ -38,6 +38,14 @@ public class Life.Widgets.ScrolledBoard : Gtk.ScrolledWindow {
 
     private void connect_signals () {
         drawing_board.draw.connect (on_child_draw);
+        hadjustment.value_changed.connect (() => {
+            drawing_board.cursor_position = null;
+            drawing_board.queue_draw ();
+        });
+        vadjustment.value_changed.connect (() => {
+            drawing_board.cursor_position = null;
+            drawing_board.queue_draw ();
+        });
     }
 
     private bool on_child_draw () {
