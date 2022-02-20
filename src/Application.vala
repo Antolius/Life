@@ -34,6 +34,9 @@ public class Life.Application : Gtk.Application {
     }
 
     protected override void activate () {
+        Gtk.IconTheme.get_default ()
+            .add_resource_path ("/hr/from/josipantolis/life");
+
         unowned var existing_windows = get_windows ();
         if (existing_windows.length () > 0) {
             var window = existing_windows.first ().data as MainWindow;

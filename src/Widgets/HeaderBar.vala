@@ -59,7 +59,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.ERASER,
             tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
-                "edit-clear",
+                "edit-erase",
                 Gtk.IconSize.SMALL_TOOLBAR
             )
         };
