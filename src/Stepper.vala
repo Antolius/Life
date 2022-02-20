@@ -18,12 +18,8 @@
 *
 */
 
-namespace Life {
+public interface Life.Stepper : Object {
 
-    public void main (string[] args) {
-        Test.init (ref args);
-        HashLife.QuadTreeTests.add_funcs ();
-        HashLife.SimulationTests.add_funcs ();
-        Test.run ();
-    }
+    public abstract int64 generation { get; set; }
+    public abstract void step ();
 }

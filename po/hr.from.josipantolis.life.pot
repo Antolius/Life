@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hr.from.josipantolis.life\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-06 19:44+0100\n"
+"POT-Creation-Date: 2022-02-20 19:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,10 +17,42 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/MainWindow.vala:92
-msgid "Hello world!"
-msgstr ""
-
 #: src/Constants/Const.vala:22
 msgid "Life"
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:46
+msgid "Draw live cells"
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:60
+msgid "Erase live cells"
+msgstr ""
+
+#: src/Widgets/HeaderBar.vala:97
+msgid "Scale"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:49
+msgid "Slow simulation down"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:71
+msgid "Run simulation"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:77
+msgid "Pause simulation"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:104
+msgid "Speed simulation up"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:130
+msgid "Advance simulation by one generation"
+msgstr ""
+
+#: src/Widgets/PlaybackBar.vala:148
+msgid "Generation %"
 msgstr ""

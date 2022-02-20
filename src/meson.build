@@ -13,19 +13,22 @@ common_sources = files (
     'Application.vala',
     'ColorPalette.vala',
     'Drawable.vala',
+    'Editable.vala',
     'MainWindow.vala',
     'Point.vala',
     'Rectangle.vala',
     'State.vala',
+    'Stepper.vala',
     'Constants/Const.vala',
     'HashLife/Pair.vala',
     'HashLife/Quad.vala',
     'HashLife/QuadFactory.vala',
     'HashLife/Quadruplet.vala',
     'HashLife/QuadTree.vala',
-    'HashLife/Stepper.vala',
+    'HashLife/Simulation.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala',
+    'Widgets/PlaybackBar.vala',
     'Widgets/ScrolledBoard.vala'
 )
 

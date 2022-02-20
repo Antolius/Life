@@ -21,7 +21,6 @@
 public class Life.Application : Gtk.Application {
 
     public static Settings settings;
-    public static State state;
 
     public Application () {
         Object (
@@ -32,7 +31,6 @@ public class Life.Application : Gtk.Application {
 
     static construct {
         settings = new Settings (Constants.PROJECT_NAME);
-        state = new State ();
     }
 
     protected override void activate () {
@@ -41,7 +39,11 @@ public class Life.Application : Gtk.Application {
             var window = existing_windows.first ().data as MainWindow;
             window.present ();
         } else {
-            var window = new MainWindow (this);
+            var factory = new HashLife.QuadFactory ();
+            var tree = new HashLife.QuadTree (8, factory);
+            var simulation = new HashLife.Simulation (tree, factory);
+            var state = new State (tree, tree, simulation);
+            var window = new MainWindow (state, this);
             window.show ();
         }
     }

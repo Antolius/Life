@@ -18,7 +18,7 @@
 *
 */
 
-public class Life.HashLife.QuadTree : Object, Drawable {
+public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public const uint32 MAX_LEVEL = 60;
 

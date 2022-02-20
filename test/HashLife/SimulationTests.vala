@@ -20,18 +20,18 @@
 
 // because of consecutive dots:
 // vala-lint=skip-file
-namespace Life.HashLife.StepperTests {
+namespace Life.HashLife.SimulationTests {
 
     public void add_funcs () {
-        Test.add_func ("/HashLife/Stepper/horizontal_blinker", test_horizontal_blinker);
-        Test.add_func ("/HashLife/Stepper/vertical_blinker", test_vertical_blinker);
-        Test.add_func ("/HashLife/Stepper/glider", test_glider);
+        Test.add_func ("/HashLife/Simulation/horizontal_blinker", test_horizontal_blinker);
+        Test.add_func ("/HashLife/Simulation/vertical_blinker", test_vertical_blinker);
+        Test.add_func ("/HashLife/Simulation/glider", test_glider);
     }
 
     void test_horizontal_blinker () {
         var factory = new QuadFactory ();
         var tree = new QuadTree (2, factory);
-        var stepper = new Stepper (tree, factory);
+        var simulation = new Simulation (tree, factory);
         assert (tree.root.width == 4);
         string[] given_starting_blinker_pattern = {
             "....",
@@ -41,7 +41,7 @@ namespace Life.HashLife.StepperTests {
         };
 
         load_plaintext_pattern (tree, given_starting_blinker_pattern);
-        stepper.step ();
+        simulation.step ();
 
         string[] expected_stepped_blinker_pattern = {
             "................",
@@ -67,7 +67,7 @@ namespace Life.HashLife.StepperTests {
     void test_vertical_blinker () {
         var factory = new QuadFactory ();
         var tree = new QuadTree (2, factory);
-        var stepper = new Stepper (tree, factory);
+        var simulation = new Simulation (tree, factory);
         assert (tree.root.width == 4);
         string[] given_starting_blinker_pattern = {
             "....",
@@ -77,7 +77,7 @@ namespace Life.HashLife.StepperTests {
         };
 
         load_plaintext_pattern (tree, given_starting_blinker_pattern);
-        stepper.step ();
+        simulation.step ();
 
         string[] expected_stepped_blinker_pattern = {
             "................",
@@ -103,7 +103,7 @@ namespace Life.HashLife.StepperTests {
     void test_glider () {
         var factory = new QuadFactory ();
         var tree = new QuadTree (4, factory);
-        var stepper = new Stepper (tree, factory);
+        var simulation = new Simulation (tree, factory);
         assert (tree.root.width == 16);
         string[] glider_1_pattern = {
             "................",
@@ -125,7 +125,7 @@ namespace Life.HashLife.StepperTests {
         };
 
         load_plaintext_pattern (tree, glider_1_pattern);
-        stepper.step ();
+        simulation.step ();
 
         string[] glider_2_step = {
             "................",
@@ -147,7 +147,7 @@ namespace Life.HashLife.StepperTests {
         };
         assert_tree_contains_pattern (tree, glider_2_step);
 
-        stepper.step ();
+        simulation.step ();
 
         string[] glider_3_step = {
             "................",
@@ -169,7 +169,7 @@ namespace Life.HashLife.StepperTests {
         };
         assert_tree_contains_pattern (tree, glider_3_step);
 
-        stepper.step ();
+        simulation.step ();
 
         string[] glider_4_step = {
             "................",
@@ -191,7 +191,7 @@ namespace Life.HashLife.StepperTests {
         };
         assert_tree_contains_pattern (tree, glider_4_step);
 
-        stepper.step ();
+        simulation.step ();
 
         string[] glider_5_step = {
             "................",

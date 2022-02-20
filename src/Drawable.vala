@@ -25,7 +25,6 @@ public interface Life.Drawable : Object {
 
     public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
     public abstract void draw_entire (DrawAction draw_action);
-
 }
 
 public delegate void Life.DrawAction (Point p);

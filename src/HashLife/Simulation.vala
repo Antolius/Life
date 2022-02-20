@@ -18,7 +18,7 @@
 *
 */
 
-public class Life.HashLife.Stepper : Object {
+public class Life.HashLife.Simulation : Object, Stepper {
 
     public const uint32 MAX_SPEED = QuadTree.MAX_LEVEL - 2;
 
@@ -27,7 +27,7 @@ public class Life.HashLife.Stepper : Object {
     public QuadFactory factory { get; construct; }
     public Gee.HashMap<Pair<Quad, int>, Quad> steps_cache { get; set; }
 
-    public Stepper (QuadTree tree, QuadFactory factory) {
+    public Simulation (QuadTree tree, QuadFactory factory) {
         Object (
             tree: tree,
             factory: factory,

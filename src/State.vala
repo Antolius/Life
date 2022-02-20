@@ -20,19 +20,69 @@
 
 public class Life.State : Object {
 
-    private static int DEFAULT_SCALE = 10;          // 10px per board point
-    private static int DEFAULT_PLAYBACK_SPEED = 10; // 10 generations per second
+    public const int MIN_SPEED = 1;       // 1 generation per second
+    public const int MAX_SPEED = 20;      // 20 generations per second
+    private const int DEFAULT_SPEED = 10; // 10 generations per second
+    private const int DEFAULT_SCALE = 10; // 10px per board point
 
-    public int scale { get; set; }                  // pix els per board point
-    public int playback_speed { get; set; }         // generations per second
-    public Tool active_tool { get; set; }
+    public int scale { get; set; default = DEFAULT_SCALE; }
+    public int speed { get; set; default = DEFAULT_SPEED; }
+    public bool is_playing { get; set; default = false; }
+    public Tool active_tool { get; set; default = Tool.PENCIL; }
 
-    public State () {
+    public Drawable drawable { get; construct; }
+    public Editable editable { get; construct; }
+    public Stepper stepper { private get; construct; }
+    public int64 generation { get { return stepper.generation; } }
+
+    private uint? timer_id;
+
+    public virtual signal void tick () {
+        stepper.step ();
+    }
+
+    public State (Drawable drawable, Editable editable, Stepper stepper) {
         Object (
-            scale: DEFAULT_SCALE,
-            playback_speed: 10,
-            active_tool: Tool.PENCIL
+            drawable: drawable,
+            editable: editable,
+            stepper: stepper
         );
+        // this.stepper = stepper;
+    }
+
+    construct {
+        notify["is-playing"].connect (() => {
+            if (is_playing) {
+                start_ticking ();
+            } else {
+                stop_ticking ();
+            }
+        });
+
+        notify["speed"].connect (() => {
+            restart_ticking ();
+        });
+    }
+
+    private void restart_ticking () {
+        stop_ticking ();
+        start_ticking ();
+    }
+
+    private void start_ticking () {
+        if (timer_id != null) {
+            return;
+        }
+
+        timer_id = Timeout.add (1000 / speed, () => {
+            tick ();
+            return Source.CONTINUE;
+        });
+    }
+
+    private void stop_ticking () {
+        Source.remove (timer_id);
+        timer_id = null;
     }
 
     public enum Tool {

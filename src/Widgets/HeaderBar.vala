@@ -42,6 +42,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
     private Gtk.ButtonBox create_tool_buttons () {
         var pencil_btn = new Gtk.ToggleButton () {
+            active = state.active_tool == State.Tool.PENCIL,
+            tooltip_text = _("Draw live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit",
                 Gtk.IconSize.SMALL_TOOLBAR
@@ -54,6 +56,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         });
 
         var eraser_btn = new Gtk.ToggleButton () {
+            active = state.active_tool == State.Tool.ERASER,
+            tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit-clear",
                 Gtk.IconSize.SMALL_TOOLBAR
