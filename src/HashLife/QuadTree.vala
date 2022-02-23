@@ -95,6 +95,10 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         );
     }
 
+    public void clear_all () {
+        root = factory.create_empty_quad (level);
+    }
+
     public bool contains (Point p) {
         return root.rect (bottom_left ()).contains (p);
     }

@@ -64,6 +64,12 @@ public class Life.State : Object {
         });
     }
 
+    public void clear () {
+        editable.clear_all ();
+        stepper.generation = 0;
+        tick ();
+    }
+
     private void restart_ticking () {
         stop_ticking ();
         start_ticking ();

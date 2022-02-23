@@ -22,4 +22,5 @@ public interface Life.Editable : Object {
 
     public abstract bool is_alive (Point p);
     public abstract void set_alive (Point p, bool alive);
+    public abstract void clear_all ();
 }

@@ -5,8 +5,6 @@
     <file compressed="true">style.css</file>
 
     <!--Icons-->
-    <file alias="24x24/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-24.svg</file>
-    <file alias="24x24@2/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-24.svg</file>
     <file alias="16x16/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
     <file alias="16x16@2/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
   </gresource>

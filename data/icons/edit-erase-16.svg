@@ -6,334 +6,236 @@
    height="16"
    viewBox="0 0 16 16"
    version="1.1"
-   id="svg1123"
+   id="svg5"
+   sodipodi:docname="edit-erase-16.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview23"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="-75"
+     inkscape:cy="-148.5"
+     inkscape:window-width="1920"
+     inkscape:window-height="1019"
+     inkscape:window-x="0"
+     inkscape:window-y="1110"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5"
+     showborder="false" />
   <defs
-     id="defs1120">
+     id="defs2">
     <linearGradient
-       id="linearGradient5915">
+       inkscape:collect="always"
+       id="linearGradient1904">
       <stop
-         style="stop-color:#ffffff;stop-opacity:1;"
+         style="stop-color:#000000;stop-opacity:1;"
          offset="0"
-         id="stop5911" />
+         id="stop1900" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:0.19684525"
+         style="stop-color:#000000;stop-opacity:0;"
          offset="1"
-         id="stop5913" />
+         id="stop1902" />
     </linearGradient>
-    <marker
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="DistanceStart"
-       style="overflow:visible">
-      <g
-         id="g2300">
-        <path
-           id="path2306"
-           d="M 0,0 H 2"
-           style="fill:none;stroke:context-fill;stroke-width:1.15;stroke-linecap:square" />
-        <path
-           id="path2302"
-           d="M 0,0 13,4 9,0 13,-4 Z"
-           style="fill:context-stroke;fill-rule:evenodd;stroke:none" />
-        <path
-           id="path2304"
-           d="M 0,-4 V 40"
-           style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:square" />
-      </g>
-    </marker>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1992">
+    <linearGradient
+       id="linearGradient1211">
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="0"
+         id="stop1207" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.00036649"
+         offset="1"
+         id="stop1209" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17177">
+      <stop
+         style="stop-color:#002e99;stop-opacity:1;"
+         offset="0"
+         id="stop1180" />
+      <stop
+         style="stop-color:#7a0000;stop-opacity:1"
+         offset="1"
+         id="stop1182" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17177-3">
+      <stop
+         style="stop-color:#002e99;stop-opacity:1;"
+         offset="0"
+         id="stop17173" />
+      <stop
+         style="stop-color:#7a0000;stop-opacity:1"
+         offset="1"
+         id="stop17175" />
+    </linearGradient>
+    <filter
+       id="mask-powermask-path-effect16299_inverse"
+       style="color-interpolation-filters:sRGB"
+       height="100"
+       width="100"
+       x="-50"
+       y="-50">
+      <feColorMatrix
+         id="mask-powermask-path-effect16299_primitive1"
+         values="1"
+         type="saturate"
+         result="fbSourceGraphic" />
+      <feColorMatrix
+         id="mask-powermask-path-effect16299_primitive2"
+         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
+         in="fbSourceGraphic" />
+    </filter>
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask16314">
       <rect
-         style="fill:#3689e6;fill-opacity:1;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round"
-         id="rect1994"
-         width="20"
-         height="18"
-         x="14"
-         y="2"
+         style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.935414;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         id="rect16316"
+         width="9"
+         height="7"
+         x="4"
+         y="0"
          ry="0" />
-    </clipPath>
-    <mask
-       maskUnits="userSpaceOnUse"
-       id="mask2227">
-      <rect
-         style="display:inline;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.04881;stroke-linecap:round;stroke-linejoin:round"
-         id="rect2229"
-         width="16"
-         height="44"
-         x="16"
-         y="-6"
-         ry="2.1999998" />
-    </mask>
-    <mask
-       maskUnits="userSpaceOnUse"
-       id="mask-powermask-path-effect2285">
-      <rect
-         style="display:inline;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.04881;stroke-linecap:round;stroke-linejoin:round"
-         id="rect2283"
-         width="16"
-         height="44"
-         x="16"
-         y="-6"
-         ry="2.1999998"
-         d="m 18.2,-6 h 11.6 c 1.2188,0 2.2,0.9811999 2.2,2.1999998 V 35.8 C 32,37.0188 31.0188,38 29.8,38 H 18.2 C 16.9812,38 16,37.0188 16,35.8 V -3.8000002 C 16,-5.0188001 16.9812,-6 18.2,-6 Z" />
     </mask>
     <filter
-       id="mask-powermask-path-effect2285_inverse"
+       id="mask-powermask-path-effect16377_inverse"
        style="color-interpolation-filters:sRGB"
        height="100"
        width="100"
        x="-50"
        y="-50">
       <feColorMatrix
-         id="mask-powermask-path-effect2285_primitive1"
+         id="mask-powermask-path-effect16377_primitive1"
          values="1"
          type="saturate"
          result="fbSourceGraphic" />
       <feColorMatrix
-         id="mask-powermask-path-effect2285_primitive2"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
-    <filter
-       id="mask-powermask-path-effect2336_inverse"
-       style="color-interpolation-filters:sRGB"
-       height="100"
-       width="100"
-       x="-50"
-       y="-50">
-      <feColorMatrix
-         id="mask-powermask-path-effect2336_primitive1"
-         values="1"
-         type="saturate"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         id="mask-powermask-path-effect2336_primitive2"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
-    <filter
-       id="mask-powermask-path-effect2363_inverse"
-       style="color-interpolation-filters:sRGB"
-       height="100"
-       width="100"
-       x="-50"
-       y="-50">
-      <feColorMatrix
-         id="mask-powermask-path-effect2363_primitive1"
-         values="1"
-         type="saturate"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         id="mask-powermask-path-effect2363_primitive2"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
-    <filter
-       id="mask-powermask-path-effect2557_inverse"
-       style="color-interpolation-filters:sRGB"
-       height="100"
-       width="100"
-       x="-50"
-       y="-50">
-      <feColorMatrix
-         id="mask-powermask-path-effect2557_primitive1"
-         values="1"
-         type="saturate"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         id="mask-powermask-path-effect2557_primitive2"
-         values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
-         in="fbSourceGraphic" />
-    </filter>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2564">
-      <rect
-         style="display:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.04881;stroke-linecap:round;stroke-linejoin:round"
-         id="rect2566"
-         width="16"
-         height="44"
-         x="16"
-         y="-1"
-         ry="2.1999998"
-         d="m 18.2,-1 h 11.6 c 1.2188,0 2.2,0.98119991 2.2,2.1999998 V 40.8 C 32,42.0188 31.0188,43 29.8,43 H 18.2 C 16.9812,43 16,42.0188 16,40.8 V 1.1999998 C 16,-0.01880009 16.9812,-1 18.2,-1 Z" />
-      <path
-         id="lpe_path-effect2568"
-         style="display:inline;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.04881;stroke-linecap:round;stroke-linejoin:round"
-         class="powerclip"
-         d="M 11,-5 H 37 V 50 H 11 Z m 7.2,4 C 16.9812,-1 16,-0.01880009 16,1.1999998 V 40.8 c 0,1.2188 0.9812,2.2 2.2,2.2 H 29.8 C 31.0188,43 32,42.0188 32,40.8 V 1.1999998 C 32,-0.01880009 31.0188,-1 29.8,-1 Z" />
-    </clipPath>
-    <filter
-       id="mask-powermask-path-effect5209_inverse"
-       style="color-interpolation-filters:sRGB"
-       height="100"
-       width="100"
-       x="-50"
-       y="-50">
-      <feColorMatrix
-         id="mask-powermask-path-effect5209_primitive1"
-         values="1"
-         type="saturate"
-         result="fbSourceGraphic" />
-      <feColorMatrix
-         id="mask-powermask-path-effect5209_primitive2"
+         id="mask-powermask-path-effect16377_primitive2"
          values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
          in="fbSourceGraphic" />
     </filter>
     <mask
        maskUnits="userSpaceOnUse"
-       id="mask5215">
+       id="mask16506">
       <rect
-         style="display:inline;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:1.04881;stroke-linecap:round;stroke-linejoin:round"
-         id="rect5217"
-         width="16"
-         height="44"
-         x="16"
-         y="2"
-         ry="2.1999998"
-         mask="url(#mask2227)" />
+         style="display:block;opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.935414;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+         id="rect16508"
+         width="7"
+         height="14"
+         x="5"
+         y="-2"
+         ry="1.79252" />
     </mask>
     <linearGradient
-       xlink:href="#linearGradient5915"
-       id="linearGradient5917"
-       x1="19"
-       y1="35"
-       x2="30"
-       y2="44"
+       xlink:href="#linearGradient17177-3"
+       id="linearGradient17179"
+       x1="8"
+       y1="1"
+       x2="8"
+       y2="15"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.30360248,0,0,0.27830227,3.8203041,-5.0706502)" />
+       gradientTransform="translate(3.612433,-6.4980711)" />
     <filter
-       id="mask-powermask-path-effect6923_inverse"
+       id="mask-powermask-path-effect1789_inverse"
+       inkscape:label="filtermask-powermask-path-effect1789"
        style="color-interpolation-filters:sRGB"
        height="100"
        width="100"
        x="-50"
        y="-50">
       <feColorMatrix
-         id="mask-powermask-path-effect6923_primitive1"
+         id="mask-powermask-path-effect1789_primitive1"
          values="1"
          type="saturate"
          result="fbSourceGraphic" />
       <feColorMatrix
-         id="mask-powermask-path-effect6923_primitive2"
+         id="mask-powermask-path-effect1789_primitive2"
          values="-1 0 0 0 1 0 -1 0 0 1 0 0 -1 0 1 0 0 0 1 0 "
          in="fbSourceGraphic" />
     </filter>
     <radialGradient
-       cx="38"
-       cy="69"
-       r="20"
-       fx="28.603323"
-       fy="69"
-       id="radialGradient6025"
-       xlink:href="#linearGradient6019"
+       inkscape:collect="always"
+       xlink:href="#linearGradient1904"
+       id="radialGradient1906"
+       cx="7.8643303"
+       cy="12.870128"
+       fx="7.8643303"
+       fy="12.870128"
+       r="8.0541859"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.30360248,0,0,0.09108076,-3.4648445,6.9288123)" />
-    <linearGradient
-       id="linearGradient6019">
-      <stop
-         id="stop6021"
-         style="stop-color:#000000;stop-opacity:1"
-         offset="0" />
-      <stop
-         id="stop6023"
-         style="stop-color:#000000;stop-opacity:0"
-         offset="1" />
-    </linearGradient>
+       gradientTransform="matrix(0.83928388,0,0,0.20490457,2.0203689,11.153707)" />
   </defs>
+  <ellipse
+     style="fill:url(#radialGradient1906);fill-opacity:1;fill-rule:evenodd;stroke-width:0.207348;stroke-linecap:round;stroke-linejoin:round;opacity:0.5"
+     id="path1898"
+     cx="8.6207752"
+     cy="13.790854"
+     rx="6.7597485"
+     ry="1.6503395" />
   <g
-     id="g1418"
-     style="display:inline">
+     id="layer1">
     <path
-       style="opacity:0.25;fill:url(#radialGradient6025);fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
-       id="path6017"
-       d="m 14.144099,13.213384 a 6.0720497,1.8216153 0 1 1 -12.1440989,0 6.0720497,1.8216153 0 1 1 12.1440989,0 z" />
-    <rect
-       style="display:inline;fill:#c6262e;fill-opacity:1;fill-rule:evenodd;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect3627-5"
-       width="4.8576393"
-       height="13.358509"
-       x="8.6779442"
-       y="-5.6272545"
-       ry="0.66792536"
-       transform="rotate(36.869898)" />
-    <path
-       style="display:inline;fill:#c6262e;fill-opacity:1;fill-rule:evenodd;stroke-width:3.29378076;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect1996"
-       width="16"
-       height="44"
-       x="16"
-       y="2"
-       ry="2.1999998"
-       mask="url(#mask-powermask-path-effect2285)"
-       transform="matrix(0.24288198,0.18216149,-0.18216149,0.24288198,6.79692,-2.6953853)"
-       d="M 18.2,2 H 29.8 C 31.0188,2 32,2.9811999 32,4.1999998 V 43.8 C 32,45.0188 31.0188,46 29.8,46 H 18.2 C 16.9812,46 16,45.0188 16,43.8 V 4.1999998 C 16,2.9811999 16.9812,2 18.2,2 Z" />
-    <path
-       style="opacity:0.302115;mix-blend-mode:color-dodge;fill:url(#linearGradient5917);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect5781"
-       width="4.8576393"
-       height="3.3396273"
-       x="8.6779442"
-       y="4.3916273"
-       ry="0"
-       d="M 8.6779442,4.3916273 H 13.535583 V 7.7312546 H 8.6779442 Z"
-       transform="rotate(36.869898)" />
-    <path
-       style="display:inline;fill:#fafafa;fill-opacity:1;fill-rule:evenodd;stroke-width:3.29378076;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect1230-3"
-       width="16"
-       height="45"
-       x="16"
-       y="0"
-       ry="2.1999998"
-       clip-path="url(#clipPath2564)"
-       transform="matrix(0.24288198,0.18216149,-0.18216149,0.24288198,7.1612424,-3.1811493)"
-       d="M 18.2,0 H 29.8 C 31.0188,0 32,0.98119991 32,2.1999998 V 42.8 C 32,44.0188 31.0188,45 29.8,45 H 18.2 C 16.9812,45 16,44.0188 16,42.8 V 2.1999998 C 16,0.98119991 16.9812,0 18.2,0 Z" />
-    <rect
-       style="display:inline;fill:#ed5353;fill-opacity:1;fill-rule:evenodd;stroke-width:3.29378076;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect2225"
-       width="16"
-       height="44"
-       x="16"
-       y="2"
-       ry="2.1999998"
-       mask="url(#mask2227)"
-       transform="matrix(0.24288198,0.18216149,-0.18216149,0.24288198,6.79692,-2.6953853)" />
-    <rect
-       style="fill:#3689e6;fill-opacity:1;fill-rule:evenodd;stroke-width:3.29378076;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
-       id="rect1416"
-       width="16"
-       height="44"
-       x="16"
-       y="2"
-       ry="2.1999998"
-       clip-path="url(#clipPath1992)"
-       transform="matrix(0.24288198,0.18216149,-0.18216149,0.24288198,6.79692,-2.6953853)" />
-    <rect
-       style="display:inline;opacity:0.2;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#fafafa;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4527"
-       width="4.2504349"
-       height="10.350442"
-       x="8.9815464"
-       y="-5.3236518"
-       ry="0.58561897"
+       style="opacity:1;fill:#c6262e;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.935414;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       id="rect14815"
+       width="6.125"
+       height="14"
+       x="8.6124325"
+       y="-5.4980707"
+       ry="1.79252"
+       clip-path="none"
        mask="none"
-       transform="rotate(36.869898)" />
+       d="m 10.404953,-5.4980707 h 2.539959 c 0.993057,0 1.79252,0.7994639 1.79252,1.79252 V 6.7094092 c 0,0.9930561 -0.799463,1.7925201 -1.79252,1.7925201 h -2.539959 c -0.9930566,0 -1.7925205,-0.799464 -1.7925205,-1.7925201 V -3.7055507 c 0,-0.9930561 0.7994639,-1.79252 1.7925205,-1.79252 z"
+       transform="rotate(37.964186)" />
+    <rect
+       style="opacity:1;fill:#ed5353;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.935414;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       id="rect14625"
+       width="7"
+       height="14"
+       x="5"
+       y="1"
+       ry="1.79252"
+       mask="url(#mask16506)"
+       transform="matrix(0.68984601,0.53827269,-0.61516879,0.78839544,7.3381834,-2.516313)" />
+    <rect
+       style="opacity:1;fill:#3689e6;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.935414;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       id="rect14817"
+       width="7"
+       height="14"
+       x="5"
+       y="1"
+       ry="1.79252"
+       mask="url(#mask16314)"
+       transform="matrix(0.68984601,0.53827269,-0.61516879,0.78839544,7.3381834,-2.516313)" />
     <path
-       style="display:inline;opacity:0.2;mix-blend-mode:normal;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#1a1a1a;stroke-width:3.29378076;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4983"
-       width="16"
-       height="36"
-       x="16"
-       y="2"
-       ry="3"
-       mask="url(#mask5215)"
-       d="m 19,2 h 10 c 1.662,0 3,1.338 3,3 v 30 c 0,1.662 -1.338,3 -3,3 H 19 c -1.662,0 -3,-1.338 -3,-3 V 5 c 0,-1.662 1.338,-3 3,-3 z"
-       transform="matrix(0.24288198,0.18216149,-0.18216149,0.24288198,6.79692,-2.6953853)" />
+       style="opacity:0.5;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient17179);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path16510"
+       width="6.125"
+       height="14"
+       x="8.6124325"
+       y="-5.4980707"
+       ry="1.79252"
+       clip-path="none"
+       mask="none"
+       d="m 10.404953,-5.4980707 h 2.539959 c 0.993057,0 1.79252,0.7994639 1.79252,1.79252 V 6.7094092 c 0,0.9930561 -0.799463,1.7925201 -1.79252,1.7925201 h -2.539959 c -0.9930566,0 -1.7925205,-0.799464 -1.7925205,-1.7925201 V -3.7055507 c 0,-0.9930561 0.7994639,-1.79252 1.7925205,-1.79252 z"
+       transform="rotate(37.964186)" />
   </g>
+  <ellipse
+     style="fill:#000000;fill-opacity:0.998633;fill-rule:evenodd;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round"
+     id="path1613"
+     cx="13.646523"
+     cy="13.109516"
+     rx="4.7683716e-07"
+     ry="1.2189784" />
 </svg>

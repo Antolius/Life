@@ -36,6 +36,9 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     construct {
         var tools = create_tool_buttons ();
         pack_start (tools);
+        pack_start (new Gtk.Separator (Gtk.Orientation.VERTICAL));
+        var clear = create_clear_button ();
+        pack_start (clear);
         var menu = create_menu ();
         pack_end (menu);
     }
@@ -85,6 +88,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         box.add (pencil_btn);
         box.add (eraser_btn);
         return box;
+    }
+
+    private Gtk.Button create_clear_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "edit-clear",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Clear all")
+        };
+        btn.clicked.connect (state.clear);
+        return btn;
     }
 
     private Gtk.MenuButton create_menu () {
