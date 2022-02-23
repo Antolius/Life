@@ -20,21 +20,22 @@
 
 public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
-    private const int DEFAULT_SCALE = 10; // 1 tree point == 10 pixels
-
+    public State state { get; construct; }
     public Drawable drawable { get; construct; }
-    public int scale { get; construct; }
+    public Editable editable { get; construct; }
     public ColorPalette color_palette { get; construct; }
-    public int width { get { return (int) drawable.width_points * scale; } }
-    public int height { get { return (int) drawable.height_points * scale; } }
-    public double reverse_scale { get { return 1 / ((double) scale); } }
+    public int width { get { return (int) drawable.width_points * state.scale; } }
+    public int height { get { return (int) drawable.height_points * state.scale; } }
+    public double reverse_scale { get { return 1 / ((double) state.scale); } }
+    public Point? cursor_position { get; set; }
 
-    private Point? cursor_position = null;
+    private bool is_pressing = false;
 
-    public DrawingBoard (Drawable drawable) {
+    public DrawingBoard (State state) {
         Object (
-            drawable: drawable,
-            scale: DEFAULT_SCALE,
+            state: state,
+            drawable: state.drawable,
+            editable: state.editable,
             color_palette: new ColorPalette (),
             hexpand: true,
             vexpand: true,
@@ -63,12 +64,25 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
     private void connect_signals () {
         draw.connect (on_draw);
+
         motion_notify_event.connect (on_pointer_move);
-        add_events (Gdk.EventMask.POINTER_MOTION_MASK);
-        button_press_event.connect (on_pressed_pointer_move);
-        add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
+        button_press_event.connect (on_button_press);
+        button_release_event.connect (on_button_release);
         leave_notify_event.connect (on_pointer_leave);
+
+        add_events (Gdk.EventMask.POINTER_MOTION_MASK);
+        add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
+        add_events (Gdk.EventMask.BUTTON_RELEASE_MASK);
         add_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
+
+        state.tick.connect_after (() => {
+            queue_resize ();
+            queue_draw ();
+        });
+        state.notify["scale"].connect (() => {
+            queue_resize ();
+            queue_draw ();
+        });
     }
 
     private bool on_draw (Cairo.Context ctx) {
@@ -92,13 +106,13 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         ctx.set_line_width (2);
 
         for (var i = 0; i <= drawable.width_points; i++) {
-            ctx.move_to (i * scale, 0);
-            ctx.line_to (i * scale, height);
+            ctx.move_to (i * state.scale, 0);
+            ctx.line_to (i * state.scale, height);
         }
 
         for (var j = 0; j <= drawable.height_points; j++) {
-            ctx.move_to (0, j * scale);
-            ctx.line_to (width, j * scale);
+            ctx.move_to (0, j * state.scale);
+            ctx.line_to (width, j * state.scale);
         }
 
         ctx.stroke ();
@@ -110,7 +124,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
         drawable.draw (visible_drawable_rec (ctx), point => {
             var top_left = drawable_to_cairo (point);
-            ctx.rectangle (top_left.x, top_left.y, scale - 2, scale - 2);
+            ctx.rectangle (top_left.x, top_left.y, state.scale - 2, state.scale - 2);
         });
 
         ctx.fill ();
@@ -124,7 +138,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var ac = color_palette.accent_color;
         ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 2);
         var top_left = drawable_to_cairo (cursor_position);
-        ctx.rectangle (top_left.x - 1, top_left.y - 1, scale, scale);
+        ctx.rectangle (top_left.x - 1, top_left.y - 1, state.scale, state.scale);
         ctx.set_line_width (2);
         ctx.stroke ();
     }
@@ -133,7 +147,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         return drawable_point.x_add (drawable.width_points / 2)
             .y_add (-drawable.height_points / 2 + 1)
             .flip_h ()
-            .scale (scale);
+            .scale (state.scale);
     }
 
     private Point cairo_to_drawable (Point cairo_point) {
@@ -167,6 +181,14 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var new_cursor_position = cairo_to_drawable (new_point);
         var window = get_window ();
         if (new_cursor_position != cursor_position && window != null) {
+            if (is_pressing) {
+                if (state.active_tool == State.Tool.PENCIL) {
+                    editable.set_alive (new_cursor_position, true);
+                } else if (state.active_tool == State.Tool.ERASER) {
+                    editable.set_alive (new_cursor_position, false);
+                }
+            }
+
             Point prev_point;
             if (cursor_position != null) {
                 prev_point = drawable_to_cairo (cursor_position);
@@ -175,10 +197,10 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
             }
 
             var rect = Gdk.Rectangle () {
-                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
-                y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
-                width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
-                height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
+                x = (int) int64.min (new_point.x, prev_point.x) - 2 * state.scale,
+                y = (int) int64.min (new_point.y, prev_point.y) - 2 * state.scale,
+                width = (int) (new_point.x - prev_point.x).abs () + 4 * state.scale,
+                height = (int) (new_point.y - prev_point.y).abs () + 4 * state.scale
             };
 
             cursor_position = new_cursor_position;
@@ -189,39 +211,40 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         return false;
     }
 
-    private bool on_pressed_pointer_move (Gdk.EventButton event) {
-        if (event.button != Gdk.BUTTON_PRIMARY
-            && event.button != Gdk.BUTTON_SECONDARY
-            && event.button != Gdk.BUTTON_MIDDLE
-        ) {
+    private bool on_button_press (Gdk.EventButton event) {
+        if (event.button != Gdk.BUTTON_PRIMARY) {
             return false;
         }
 
-        var new_point = new Point (Math.lround (event.x), Math.lround (event.y));
-        var new_cursor_position = cairo_to_drawable (new_point);
-        var window = get_window ();
-        if (new_cursor_position != cursor_position && window != null) {
-            Point prev_point;
-            if (cursor_position != null) {
-                prev_point = drawable_to_cairo (cursor_position);
-            } else {
-                prev_point = new_point;
-            }
-
-            var rect = Gdk.Rectangle () {
-                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scale,
-                y = (int) int64.min (new_point.y, prev_point.y) - 2 * scale,
-                width = (int) (new_point.x - prev_point.x).abs () + 4 * scale,
-                height = (int) (new_point.y - prev_point.y).abs () + 4 * scale
-            };
-
-            cursor_position = new_cursor_position;
-            window.invalidate_rect (rect, false);
-            return true;
+        is_pressing = true;
+        if (state.active_tool == State.Tool.PENCIL) {
+            editable.set_alive (cursor_position, true);
+        } else if (state.active_tool == State.Tool.ERASER) {
+            editable.set_alive (cursor_position, false);
         }
 
+        var window = get_window ();
+        if (window != null) {
+            var rect = Gdk.Rectangle () {
+                x = (int) Math.lround (event.x) - 2 * state.scale,
+                y = (int) Math.lround (event.y) - 2 * state.scale,
+                width = 4 * state.scale,
+                height = 4 * state.scale
+            };
+
+            window.invalidate_rect (rect, false);
+        }
 
         return false;
+    }
+
+    private bool on_button_release (Gdk.EventButton event) {
+        if (event.button != Gdk.BUTTON_PRIMARY) {
+            return false;
+        }
+
+        is_pressing = false;
+        return true;
     }
 
     private bool on_pointer_leave (Gdk.EventCrossing event) {
@@ -229,10 +252,10 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         var window = get_window ();
         if (window != null) {
             var rect = Gdk.Rectangle () {
-                x = (int) event.x - 2 * scale,
-                y = (int) event.y - 2 * scale,
-                width = 4 * scale,
-                height = 4 * scale
+                x = (int) event.x - 2 * state.scale,
+                y = (int) event.y - 2 * state.scale,
+                width = 4 * state.scale,
+                height = 4 * state.scale
             };
 
             window.invalidate_rect (rect, false);

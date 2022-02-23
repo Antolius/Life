@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extra\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-06 19:51+0100\n"
+"POT-Creation-Date: 2022-02-20 19:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,6 +45,14 @@ msgid ""
 "with."
 msgstr ""
 
-#: data/life.appdata.xml.in:24
+#: data/life.appdata.xml.in:21
 msgid "Josip Antoliš"
+msgstr ""
+
+#: data/life.appdata.xml.in:28
+msgid "A game of life showcasing default (light) style"
+msgstr ""
+
+#: data/life.appdata.xml.in:32
+msgid "A game of life showcasing dark style"
 msgstr ""

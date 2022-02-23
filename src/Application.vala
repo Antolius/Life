@@ -34,12 +34,19 @@ public class Life.Application : Gtk.Application {
     }
 
     protected override void activate () {
+        Gtk.IconTheme.get_default ()
+            .add_resource_path ("/hr/from/josipantolis/life");
+
         unowned var existing_windows = get_windows ();
         if (existing_windows.length () > 0) {
             var window = existing_windows.first ().data as MainWindow;
             window.present ();
         } else {
-            var window = new MainWindow (this);
+            var factory = new HashLife.QuadFactory ();
+            var tree = new HashLife.QuadTree (8, factory);
+            var simulation = new HashLife.Simulation (tree, factory);
+            var state = new State (tree, tree, simulation);
+            var window = new MainWindow (state, this);
             window.show ();
         }
     }

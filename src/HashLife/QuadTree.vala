@@ -18,7 +18,7 @@
 *
 */
 
-public class Life.HashLife.QuadTree : Object, Drawable {
+public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public const uint32 MAX_LEVEL = 60;
 
@@ -93,6 +93,10 @@ public class Life.HashLife.QuadTree : Object, Drawable {
             _set_alive (q.se, bottom_left.x_add (w), p, alive),
             _set_alive (q.sw, bottom_left, p, alive)
         );
+    }
+
+    public void clear_all () {
+        root = factory.create_empty_quad (level);
     }
 
     public bool contains (Point p) {

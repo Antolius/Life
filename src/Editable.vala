@@ -18,12 +18,9 @@
 *
 */
 
-namespace Life {
+public interface Life.Editable : Object {
 
-    public void main (string[] args) {
-        Test.init (ref args);
-        HashLife.QuadTreeTests.add_funcs ();
-        HashLife.SimulationTests.add_funcs ();
-        Test.run ();
-    }
+    public abstract bool is_alive (Point p);
+    public abstract void set_alive (Point p, bool alive);
+    public abstract void clear_all ();
 }

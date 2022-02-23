@@ -20,11 +20,14 @@
 
 public class Life.MainWindow : Hdy.ApplicationWindow {
 
+    public State state { get; construct; }
+
     private Gtk.Grid grid;
     private uint configure_id;
 
-    public MainWindow (Application application) {
+    public MainWindow (State state, Application application) {
         Object (
+            state: state,
             application: application,
             title: Constants.SIMPLE_NAME
         );
@@ -100,26 +103,12 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     private void create_layout () {
         grid = new Gtk.Grid ();
-
-        var header_bar = new Widgets.HeaderBar ();
+        var header_bar = new Widgets.HeaderBar (state);
         grid.attach (header_bar, 0, 0);
-
-        // TODO: put all this in a dedicated class
-        var factory = new HashLife.QuadFactory ();
-        var tree = new HashLife.QuadTree (8, factory);
-        fill_tree_with_an_acron (tree);
-        var stepper = new HashLife.Stepper (tree, factory);
-        var board = new Widgets.DrawingBoard (tree);
-
+        var board = new Widgets.DrawingBoard (state);
         var scrolled_board = new Widgets.ScrolledBoard (board);
         grid.attach (scrolled_board, 0, 1);
-
-        Timeout.add (100, () => {
-            stepper.step ();
-            board.queue_resize ();
-            board.queue_draw ();
-            return Source.CONTINUE;
-        });
+        grid.attach (new Widgets.PlaybackBar (state), 0, 2);
 
         child = grid;
     }
