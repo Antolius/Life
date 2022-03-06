@@ -26,10 +26,16 @@ common_sources = files (
     'HashLife/Quadruplet.vala',
     'HashLife/QuadTree.vala',
     'HashLife/Simulation.vala',
+    'Stats/Counter.vala',
+    'Stats/Gauge.vala',
+    'Stats/Metric.vala',
+    'Stats/MetricVisitor.vala',
+    'Stats/Timer.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/PlaybackBar.vala',
-    'Widgets/ScrolledBoard.vala'
+    'Widgets/ScrolledBoard.vala',
+    'Widgets/StatsOverlay.vala'
 )
 
 common_sources += build_constants

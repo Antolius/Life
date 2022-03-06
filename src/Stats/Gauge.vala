@@ -18,14 +18,23 @@
 *
 */
 
-public interface Life.Drawable : Object {
+public class Life.Stats.Gauge : Metric {
 
-    public abstract int64 width_points { get; }
-    public abstract int64 height_points { get; }
+    public double val { get; private set; default = 0; }
 
-    public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
-    public abstract void draw_entire (DrawAction draw_action);
-    public abstract Stats.Metric[] stats ();
+    public override void accept (MetricVisitor visitor) {
+        visitor.visit_gauge (this);
+    }
+
+    public void inc (double dif = 1) {
+        lock (val) {
+            val += dif;
+        }
+    }
+
+    public void dec (double dif = 1) {
+        lock (val) {
+            val -= dif;
+        }
+    }
 }
-
-public delegate void Life.DrawAction (Point p);

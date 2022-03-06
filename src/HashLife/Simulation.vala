@@ -27,6 +27,11 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public QuadFactory factory { get; construct; }
     public Gee.HashMap<Pair<Quad, int>, Quad> steps_cache { get; set; }
 
+    private Stats.Timer step_timer = new Stats.Timer () {
+        name = _("Step timer"),
+        description = _("Time spent in Simulation's step method.")
+    };
+
     public Simulation (QuadTree tree, QuadFactory factory) {
         Object (
             tree: tree,
@@ -43,7 +48,9 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public void step () {
+        var stop_timer = step_timer.start_timer ();
         step_with_speed (0);
+        stop_timer ();
     }
 
     // step forward 2^speed generations
@@ -195,5 +202,9 @@ public class Life.HashLife.Simulation : Object, Stepper {
         while (tree.level < speed + 2) {
             tree.grow ();
         }
+    }
+
+    public Stats.Metric[] stats () {
+        return { step_timer };
     }
 }

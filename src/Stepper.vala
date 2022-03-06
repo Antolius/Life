@@ -22,4 +22,5 @@ public interface Life.Stepper : Object {
 
     public abstract int64 generation { get; set; }
     public abstract void step ();
+    public abstract Stats.Metric[] stats ();
 }

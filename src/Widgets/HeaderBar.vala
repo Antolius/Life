@@ -36,7 +36,6 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     construct {
         var tools = create_tool_buttons ();
         pack_start (tools);
-        pack_start (new Gtk.Separator (Gtk.Orientation.VERTICAL));
         var clear = create_clear_button ();
         pack_start (clear);
         var menu = create_menu ();
@@ -104,6 +103,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     private Gtk.MenuButton create_menu () {
         var menu_grid = new Gtk.Grid () {
             margin_bottom = 4,
+            row_homogeneous = false,
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
@@ -131,6 +131,16 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             state.scale = (int) scale.get_value ();
         });
         menu_grid.attach (scale, 1, 0, 2, 1);
+
+        menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 1, 3);
+
+        var stats_toggle = new Gtk.ModelButton () {
+            text = _("Toggle Stats")
+        };
+        stats_toggle.clicked.connect (() => {
+            state.showing_stats = !state.showing_stats;
+        });
+        menu_grid.attach (stats_toggle, 0, 2, 3);
 
         menu_grid.show_all ();
         return new Gtk.MenuButton () {
