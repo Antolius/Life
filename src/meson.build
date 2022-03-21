@@ -20,6 +20,7 @@ common_sources = files (
     'State.vala',
     'Stepper.vala',
     'Constants/Const.vala',
+    'HashLife/Cache.vala',
     'HashLife/Pair.vala',
     'HashLife/Quad.vala',
     'HashLife/QuadFactory.vala',

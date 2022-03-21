@@ -25,8 +25,8 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public int64 generation { get; set; default = 0; }
     public QuadTree tree { get; construct; }
     public QuadFactory factory { get; construct; }
-    public Gee.HashMap<Pair<Quad, int>, Quad> steps_cache { get; set; }
 
+    private Cache<Pair<Quad, int>> steps_cache;
     private Stats.Timer step_timer = new Stats.Timer () {
         name = _("Step timer"),
         description = _("Time spent in Simulation's step method.")
@@ -35,13 +35,15 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public Simulation (QuadTree tree, QuadFactory factory) {
         Object (
             tree: tree,
-            factory: factory,
-            steps_cache: new_steps_cache ()
+            factory: factory
         );
     }
 
-    private static new Gee.HashMap<Pair<Quad, int>, Quad> new_steps_cache () {
-        return new Gee.HashMap<Pair<Quad, int>, Quad> (
+    construct {
+        steps_cache = new Cache<Pair<Quad, int>> (
+            "Steps cacne",
+            500,
+            _step_quad_with_speed,
             p => p.hash (),
             (p1, p2) => p1.equals (p2)
         );
@@ -67,16 +69,13 @@ public class Life.HashLife.Simulation : Object, Stepper {
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
         var key = new Pair<Quad, int> (quad, speed);
-        var hit = steps_cache[key];
-        if (hit == null) {
-            hit = _step_quad_with_speed (quad, speed);
-            steps_cache[key] = hit;
-        }
-
-        return hit;
+        return steps_cache.retrieve (key);
     }
 
-    private Quad _step_quad_with_speed (Quad quad, int speed) {
+    private Quad _step_quad_with_speed (Pair<Quad, int> quad_and_speed) {
+        var quad = quad_and_speed.first;
+        var speed = quad_and_speed.second;
+
         assert (quad.level >= 2);
         assert (speed >= 0);
         assert (speed <= quad.level - 2);
@@ -205,6 +204,11 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public Stats.Metric[] stats () {
-        return { step_timer };
+        return {
+            step_timer,
+            steps_cache.elements_count,
+            steps_cache.miss_counter,
+            steps_cache.hits_counter
+        };
     }
 }

@@ -26,7 +26,7 @@ public class Life.Stats.Timer : Metric {
     public double min {
         get {
             lock (_dataset) {
-                return _dataset_size > 0 ? _dataset[0] : double.MIN;
+                return _dataset_size > 0 ? _dataset[0] : 0;
             }
         }
     }
@@ -34,7 +34,7 @@ public class Life.Stats.Timer : Metric {
     public double max {
         get {
             lock (_dataset) {
-                return _dataset_size > 0 ? _dataset[_dataset_size - 1] : double.MAX;
+                return _dataset_size > 0 ? _dataset[_dataset_size - 1] : 0;
             }
         }
     }
