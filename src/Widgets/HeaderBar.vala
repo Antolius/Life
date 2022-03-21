@@ -48,7 +48,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             tooltip_text = _("Draw live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.BUTTON
             )
         };
         var pencil_conn_id = pencil_btn.toggled.connect (() => {
@@ -62,7 +62,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit-erase",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.BUTTON
             )
         };
         var eraser_conn_id = eraser_btn.toggled.connect (() => {
@@ -81,7 +81,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         });
 
         var box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
-            layout_style = Gtk.ButtonBoxStyle.EXPAND
+            layout_style = Gtk.ButtonBoxStyle.EXPAND,
+            expand = false,
+            valign = Gtk.Align.CENTER,
+            margin_end = 16
         };
 
         box.add (pencil_btn);
@@ -92,7 +95,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     private Gtk.Button create_clear_button () {
         var btn = new Gtk.Button.from_icon_name (
             "edit-clear",
-            Gtk.IconSize.SMALL_TOOLBAR
+            Gtk.IconSize.LARGE_TOOLBAR
         ) {
             tooltip_text = _("Clear all")
         };
@@ -146,7 +149,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         return new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name (
                 "open-menu",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.LARGE_TOOLBAR
             ),
             popover = new Gtk.Popover (null) {
                 child = menu_grid

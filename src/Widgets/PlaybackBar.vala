@@ -71,13 +71,13 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         var play_tooltip = _("Run simulation");
         var play_icon = new Gtk.Image.from_icon_name (
             "media-playback-start",
-            Gtk.IconSize.SMALL_TOOLBAR
+            Gtk.IconSize.LARGE_TOOLBAR
         );
 
         var pause_tooltip = _("Pause simulation");
         var pause_icon = new Gtk.Image.from_icon_name (
             "media-playback-pause",
-            Gtk.IconSize.SMALL_TOOLBAR
+            Gtk.IconSize.LARGE_TOOLBAR
         );
 
         var btn = new Gtk.Button () {
