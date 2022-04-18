@@ -13,10 +13,10 @@ If you want to you can build Life locally, from source. You can find detailed in
 
 ### Build it with meson
 
-You can meet all dependencies by installing elementary SDK:
+You can meet all dependencies by installing [elementary SDK](https://docs.elementary.io/develop/writing-apps/the-basic-setup#development-libraries) and [GSL](https://www.gnu.org/software/gsl/):
 
 ```sh
-sudo apt install elementary-sdk
+sudo apt install elementary-sdk libgsl-dev
 ```
 
 For a full list of dependencies check out the [meson.build file](meson.build).

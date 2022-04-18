@@ -26,7 +26,7 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public QuadTree tree { get; construct; }
     public QuadFactory factory { get; construct; }
 
-    private Cache<Pair<Quad, int>> steps_cache;
+    private Cache.MonitoredCache<Pair<Quad, int>, Quad> steps_cache;
     private Stats.Timer step_timer = new Stats.Timer () {
         name = _("Step timer"),
         description = _("Time spent in Simulation's step method.")
@@ -40,12 +40,14 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     construct {
-        steps_cache = new Cache<Pair<Quad, int>> (
+        steps_cache = new Cache.MonitoredCache<Pair<Quad, int>, Quad> (
             "Steps cacne",
-            500,
-            _step_quad_with_speed,
-            p => p.hash (),
-            (p1, p2) => p1.equals (p2)
+            new Cache.LfuCache<Pair<Quad, int>, Quad> (
+                1000000,
+                _step_quad_with_speed,
+                p => p.hash (),
+                (p1, p2) => p1.equals (p2)
+            )
         );
     }
 
@@ -69,7 +71,7 @@ public class Life.HashLife.Simulation : Object, Stepper {
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
         var key = new Pair<Quad, int> (quad, speed);
-        return steps_cache.retrieve (key);
+        return steps_cache.access (key);
     }
 
     private Quad _step_quad_with_speed (Pair<Quad, int> quad_and_speed) {
@@ -206,9 +208,10 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public Stats.Metric[] stats () {
         return {
             step_timer,
-            steps_cache.elements_count,
-            steps_cache.miss_counter,
-            steps_cache.hits_counter
+            steps_cache.elements_counter,
+            steps_cache.access_counter,
+            steps_cache.evict_counter,
+            steps_cache.load_counter
         };
     }
 }

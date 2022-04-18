@@ -28,6 +28,7 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
     public StatsOverlay (State state) {
         Object (
             state: state,
+            can_focus: false,
             halign: Gtk.Align.END,
             valign: Gtk.Align.END,
             reveal_child: state.showing_stats,

@@ -112,6 +112,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         };
         var stats = new Widgets.StatsOverlay (state);
         board_overlay.add_overlay (stats);
+        board_overlay.set_overlay_pass_through (stats, true);
         grid.attach (board_overlay, 0, 1);
         grid.attach (new Widgets.PlaybackBar (state), 0, 2);
 

@@ -18,13 +18,16 @@
 *
 */
 
-namespace Life {
+public class Life.HashLife.Cache.Node<K, V> : Object {
 
-    public void main (string[] args) {
-        Test.init (ref args);
-        HashLife.QuadTreeTests.add_funcs ();
-        HashLife.SimulationTests.add_funcs ();
-        HashLife.Cache.LfuCacheTests.add_funcs ();
-        Test.run ();
+    public K key { get; private set; }
+    public V val { get; private set; }
+    public Node<K, V>? prev { get; set; default = null; }
+    public Node<K, V>? next { get; set; default = null; }
+    public Frequency<K, V>? parent { get; set; default = null;  }
+
+    public Node (K key, V val) {
+        this.key = key;
+        this.val = val;
     }
 }

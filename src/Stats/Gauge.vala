@@ -37,4 +37,10 @@ public class Life.Stats.Gauge : Metric {
             val -= dif;
         }
     }
+
+    public void assign (double new_val) {
+        lock (val) {
+            val = new_val;
+        }
+    }
 }

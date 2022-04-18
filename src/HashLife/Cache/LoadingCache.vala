@@ -18,13 +18,16 @@
 *
 */
 
-namespace Life {
 
-    public void main (string[] args) {
-        Test.init (ref args);
-        HashLife.QuadTreeTests.add_funcs ();
-        HashLife.SimulationTests.add_funcs ();
-        HashLife.Cache.LfuCacheTests.add_funcs ();
-        Test.run ();
-    }
+public abstract class Life.HashLife.Cache.LoadingCache<K, V> : Object {
+
+    public signal void loaded (K key, V? val);
+    public signal void evicted (K key, V val);
+
+    public int size { get; set; default = 0; }
+
+    public abstract V? access (K key);
+
 }
+
+public delegate V Life.HashLife.Cache.CacheLoader<K, V> (K key);
