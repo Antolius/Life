@@ -209,9 +209,11 @@ public class Life.HashLife.Simulation : Object, Stepper {
         return {
             step_timer,
             steps_cache.elements_counter,
-            steps_cache.access_counter,
             steps_cache.evict_counter,
-            steps_cache.load_counter
+            factory.quads_cache.elements_counter,
+            factory.quads_cache.evict_counter,
+            factory.empty_quads_cache.elements_counter,
+            factory.empty_quads_cache.evict_counter
         };
     }
 }

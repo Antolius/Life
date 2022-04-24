@@ -20,10 +20,10 @@
 
 public class Life.HashLife.Cache.Frequency<K, V> : Object {
 
-    public Frequency<K, V>? prev { get; set; }
-    public Frequency<K, V>? next { get; set; }
+    public Frequency<K, V>* prev { get; set; }
+    public Frequency<K, V>* next { get; set; }
     public ulong freq { get; set; }
-    public Node<K, V>? node_head { get; set; }
+    public Node<K, V>* node_head { get; set; }
 
     public bool is_empty {
         get { return node_head == null; }
@@ -44,12 +44,11 @@ public class Life.HashLife.Cache.Frequency<K, V> : Object {
         requires (node.next == null)
         ensures (node.parent == this)
         ensures (node.prev == null)
-        ensures (node_head == node)
-    {
+        ensures (node_head == node) {
         node.parent = this;
         if (node_head != null) {
             node.next = node_head;
-            node_head.prev = node;
+            node_head->prev = node;
         }
 
         node_head = node;
@@ -62,13 +61,12 @@ public class Life.HashLife.Cache.Frequency<K, V> : Object {
         ensures (node.prev == null)
         ensures (node.next == null)
         ensures (node.next == null)
-        ensures (node_head != node)
-    {
+        ensures (node_head != node) {
         if (node.prev != null) {
-            node.prev.next = node.next;
+            node.prev->next = node.next;
         }
         if (node.next != null) {
-            node.next.prev = node.prev;
+            node.next->prev = node.prev;
         }
         if (node_head == node) {
             node_head = node.next;
@@ -81,13 +79,12 @@ public class Life.HashLife.Cache.Frequency<K, V> : Object {
 
     public void remove_self ()
         ensures (prev == null)
-        ensures (next == null)
-    {
+        ensures (next == null) {
         if (prev != null) {
-            prev.next = next;
+            prev->next = next;
         }
         if (next != null) {
-            next.prev = prev;
+            next->prev = prev;
         }
 
         prev = null;

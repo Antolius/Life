@@ -22,9 +22,9 @@ public class Life.HashLife.Cache.Node<K, V> : Object {
 
     public K key { get; private set; }
     public V val { get; private set; }
-    public Node<K, V>? prev { get; set; default = null; }
-    public Node<K, V>? next { get; set; default = null; }
-    public Frequency<K, V>? parent { get; set; default = null;  }
+    public Node<K, V>* prev { get; set; default = null; }
+    public Node<K, V>* next { get; set; default = null; }
+    public Frequency<K, V>* parent { get; set; default = null; }
 
     public Node (K key, V val) {
         this.key = key;

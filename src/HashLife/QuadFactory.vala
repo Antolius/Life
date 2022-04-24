@@ -23,8 +23,8 @@ public class Life.HashLife.QuadFactory : Object {
     public static Quad dead = new Quad.zero_level ();
     public static Quad alive = new Quad.zero_level ();
 
-    private Cache.MonitoredCache<uint32, Quad> empty_quads_cache;
-    private Cache.MonitoredCache<Quaduplet<Quad>, Quad> quads_cache;
+    public Cache.MonitoredCache<uint32, Quad> empty_quads_cache { get; set; }
+    public Cache.MonitoredCache<Quaduplet<Quad>, Quad> quads_cache { get; set; }
 
     construct {
         empty_quads_cache = new Cache.MonitoredCache<uint32, Quad> (

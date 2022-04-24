@@ -207,6 +207,8 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public Stats.Metric[] stats () {
-        return { draw_timer };
+        return {
+            draw_timer
+        };
     }
 }

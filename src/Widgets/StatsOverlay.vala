@@ -51,6 +51,18 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
         });
 
         update_stats_grid ();
+        ensure_pass_through ();
+    }
+
+    private void ensure_pass_through () {
+        stats_grid.realize.connect (() => {
+            var window = stats_grid.get_window ();
+            window.set_pass_through (true);
+        });
+        realize.connect (() => {
+            var window = this.get_window ();
+            window.set_pass_through (true);
+        });
     }
 
     private void update_stats_grid () {
@@ -72,11 +84,13 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
 
     public void visit_counter (Stats.Counter counter) {
         var name = new Gtk.Label (counter.name) {
+            halign = Gtk.Align.END,
             justify = Gtk.Justification.RIGHT
         };
         stats_grid.attach (name, 0, rows_count);
 
         var val = new Gtk.Label (("%" + int64.FORMAT).printf (counter.count)) {
+            halign = Gtk.Align.START,
             justify = Gtk.Justification.LEFT
         };
         stats_grid.attach (val, 1, rows_count, 2);
@@ -86,11 +100,13 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
 
     public void visit_gauge (Stats.Gauge gauge) {
         var name = new Gtk.Label (gauge.name) {
+            halign = Gtk.Align.END,
             justify = Gtk.Justification.RIGHT
         };
         stats_grid.attach (name, 0, rows_count);
 
         var val = new Gtk.Label ("%f".printf (gauge.val)) {
+            halign = Gtk.Align.START,
             justify = Gtk.Justification.LEFT
         };
         stats_grid.attach (val, 1, rows_count, 2);
@@ -100,27 +116,21 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
 
     public void visit_timer (Stats.Timer timer) {
         var name = new Gtk.Label (timer.name) {
+            halign = Gtk.Align.END,
             justify = Gtk.Justification.RIGHT
         };
         stats_grid.attach (name, 0, rows_count);
 
-        var format = "Min %.2f μs\n"
-            + "Median %.2f μs\n"
+        var format = "Median %.2f μs\n"
             + "75th percentile %.2f μs\n"
-            + "90th percentile %.2f μs\n"
-            + "95th percentile %.2f μs\n"
-            + "99th percentile %.2f μs\n"
-            + "Max %.2f μs";
+            + "99th percentile %.2f μs";
         var txt = format.printf (
-            timer.min,
             timer.median,
             timer.percentile_75,
-            timer.percentile_90,
-            timer.percentile_95,
-            timer.percentile_99,
-            timer.max
+            timer.percentile_99
         );
         var val = new Gtk.Label (txt) {
+            halign = Gtk.Align.START,
             justify = Gtk.Justification.LEFT
         };
         stats_grid.attach (val, 1, rows_count, 2);

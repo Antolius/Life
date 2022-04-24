@@ -28,7 +28,7 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
     public int max_size { get; construct; }
 
     private Gee.Map<K, Node<K, V>> key_to_node;
-    private Frequency<K, V>? freq_head;
+    private Frequency<K, V>* freq_head;
     private CacheLoader<K, V> cache_loader_func;
 
     public LfuCache (
@@ -45,9 +45,27 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
         key_to_node = new Gee.HashMap<K, Node<K, V>> (
             (owned) key_hash_func,
             (owned) key_equal_func,
-            // TODO: fix this equals function:
-            // (owned) value_equal_func
-            null
+            (n1, n2) => {
+                if (n1 == n2) {
+                    return true;
+                }
+
+                Gee.EqualDataFunc<K> key_eq;
+                if (key_equal_func != null) {
+                    key_eq = (k1, k2) => key_equal_func (k1, k2);
+                } else {
+                    key_eq = Gee.Functions.get_equal_func_for (typeof (K));
+                }
+
+                Gee.EqualDataFunc<V> val_eq;
+                if (value_equal_func != null) {
+                    val_eq = (v1, v2) => value_equal_func (v1, v2);
+                } else {
+                    val_eq = Gee.Functions.get_equal_func_for (typeof (V));
+                }
+
+                return key_eq (n1.key, n2.key) && val_eq (n1.val, n2.val);
+            }
         );
     }
 
@@ -72,30 +90,31 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
 
             // Create next frequency if needed:
             var old_freq = node.parent;
-            var future_freq = old_freq.next;
-            if (future_freq == null || future_freq.freq != old_freq.freq + 1) {
+            var future_freq = old_freq->next;
+            if (future_freq == null || future_freq->freq != old_freq->freq + 1) {
                 // Create next incremental frequency
-                future_freq = new Frequency<K, V> (old_freq.freq + 1);
-                future_freq.prev = old_freq;
-                future_freq.next = old_freq.next;
-                if (old_freq.next != null) {
-                    old_freq.next.prev = future_freq;
+                future_freq = new Frequency<K, V> (old_freq->freq + 1);
+                future_freq->prev = old_freq;
+                future_freq->next = old_freq->next;
+                if (old_freq->next != null) {
+                    old_freq->next->prev = future_freq;
                 }
-                old_freq.next = future_freq;
+                old_freq->next = future_freq;
             }
 
             // Move node into next frequency:
-            old_freq.remove_node (node);
-            future_freq.add_node (node);
+            old_freq->remove_node (node);
+            future_freq->add_node (node);
 
-            if (old_freq.is_empty) {
+            if (old_freq->is_empty) {
                 if (freq_head == old_freq) {
                     // Because we never remove all elements:
-                    assert (freq_head.next != null);
-                    freq_head = freq_head.next;
+                    assert (freq_head->next != null);
+                    freq_head = freq_head->next;
                 }
 
-                old_freq.remove_self ();
+                old_freq->remove_self ();
+                delete old_freq;
             }
 
             return node.val;
@@ -103,15 +122,14 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
     }
 
     private Node<K, V> insert (K key, V val)
-        requires (!key_to_node.has_key(key))
+        requires (!key_to_node.has_key (key))
         ensures (result.parent != null)
-        ensures (result.parent.freq == 1)
+        ensures (result.parent->freq == 1)
         ensures (result == key_to_node[key])
         ensures (freq_head != null)
-        ensures (freq_head.prev == null)
-        ensures (freq_head.node_head != null)
-        ensures (size <= max_size)
-    {
+        ensures (freq_head->prev == null)
+        ensures (freq_head->node_head != null)
+        ensures (size <= max_size) {
         if (size >= max_size) {
             var target_size = max_size * 0.6;
             do {
@@ -122,16 +140,16 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
         // Ensure freq_head has frequency 1:
         if (freq_head == null) {
             freq_head = new Frequency<K, V> ();
-        } else if (freq_head.freq != 1) {
-            var new_freq = new Frequency<K, V> ();
-            new_freq.next = freq_head;
-            freq_head.prev = new_freq;
+        } else if (freq_head->freq != 1) {
+            Frequency<K, V>* new_freq = new Frequency<K, V> ();
+            new_freq->next = freq_head;
+            freq_head->prev = new_freq;
             freq_head = new_freq;
         }
-        assert (freq_head.freq == 1);
+        assert (freq_head->freq == 1);
 
         var node = new Node<K, V> (key, val);
-        freq_head.add_node (node);
+        freq_head->add_node (node);
         key_to_node[key] = node;
         size++;
         return node;
@@ -139,23 +157,23 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
 
     private void evict ()
         requires (freq_head != null)
-        requires (freq_head.node_head != null)
+        requires (freq_head->node_head != null)
         ensures (size < max_size)
-        ensures (freq_head.prev == null)
-        ensures (freq_head.node_head != null)
-    {
-        var node_to_remove = freq_head.node_head;
-        freq_head.remove_node (node_to_remove);
-        key_to_node.unset (node_to_remove.key);
+        ensures (freq_head->prev == null)
+        ensures (freq_head->node_head != null) {
+        var node_to_remove = freq_head->node_head;
+        freq_head->remove_node (node_to_remove);
+        key_to_node.unset (node_to_remove->key);
         size--;
-        evicted (node_to_remove.key, node_to_remove.val);
+        evicted (node_to_remove->key, node_to_remove->val);
 
-        if (freq_head.is_empty) {
+        if (freq_head->is_empty) {
             // Because we never remove all elements:
-            assert (freq_head.next != null);
+            assert (freq_head->next != null);
             var empty_freq = freq_head;
-            freq_head = freq_head.next;
-            empty_freq.remove_self ();
+            freq_head = freq_head->next;
+            empty_freq->remove_self ();
+            delete empty_freq;
         }
     }
 }
