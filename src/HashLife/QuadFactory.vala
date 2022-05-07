@@ -23,41 +23,40 @@ public class Life.HashLife.QuadFactory : Object {
     public static Quad dead = new Quad.zero_level ();
     public static Quad alive = new Quad.zero_level ();
 
-    public Gee.HashMap<uint32, Quad> empty_quads_cache { get; set; }
-    public Gee.HashMap<Quaduplet<Quad>, Quad> quads_cache { get; set; }
+    public Cache.MonitoredCache<uint32, Quad> empty_quads_cache { get; set; }
+    public Cache.MonitoredCache<Quaduplet<Quad>, Quad> quads_cache { get; set; }
 
-    public QuadFactory () {
-        Object (
-            empty_quads_cache: new Gee.HashMap<uint32, Quad> (),
-            quads_cache: new_quads_cache ()
+    construct {
+        empty_quads_cache = new Cache.MonitoredCache<uint32, Quad> (
+            "Empty quads cacne",
+            new Cache.LfuCache<uint32, Quad> (
+                100000,
+                _create_empty_quad
+            )
+        );
+
+        quads_cache = new Cache.MonitoredCache<Quaduplet<Quad>, Quad> (
+            "Quads cacne",
+            new Cache.LfuCache<Quaduplet<Quad>, Quad> (
+                1000000,
+                _create_quad,
+                q => q.hash (),
+                (q1, q2) => q1.equals (q2)
+            )
         );
     }
 
     public Quad create_quad (Quad nw, Quad ne, Quad se, Quad sw) {
         var key = new Quaduplet<Quad> (nw, ne, se, sw);
-        var hit = quads_cache[key];
-        if (hit == null) {
-            hit = new Quad (nw, ne, se, sw);
-            quads_cache[key] = hit;
-        }
-
-        return hit;
+        return quads_cache.access (key);
     }
 
-    public void clear_quads_cache (
-        Gee.HashMap<Quaduplet<Quad>, Quad> replacement
-    ) {
-        quads_cache = replacement ?? new_quads_cache ();
+    private Quad _create_quad (Quaduplet<Quad> q) {
+        return new Quad (q.first, q.second, q.third, q.fourth);
     }
 
     public Quad create_empty_quad (uint32 level) {
-        var hit = empty_quads_cache[level];
-        if (hit == null) {
-            hit = _create_empty_quad (level);
-            empty_quads_cache[level] = hit;
-        }
-
-        return hit;
+        return empty_quads_cache.access (level);
     }
 
     private Quad _create_empty_quad (uint32 level) {
@@ -67,16 +66,5 @@ public class Life.HashLife.QuadFactory : Object {
 
         var sub = create_empty_quad (level - 1);
         return create_quad (sub, sub, sub, sub);
-    }
-
-    public void clear_empty_quads_cache (Gee.HashMap<uint32, Quad> replacement) {
-        empty_quads_cache = replacement ?? new Gee.HashMap<uint32, Quad> ();
-    }
-
-    private static new Gee.HashMap<Quaduplet<Quad>, Quad> new_quads_cache () {
-        return new Gee.HashMap<Quaduplet<Quad>, Quad> (
-            q => q.hash (),
-            (q1, q2) => q1.equals (q2)
-        );
     }
 }

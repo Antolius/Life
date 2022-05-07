@@ -36,7 +36,6 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     construct {
         var tools = create_tool_buttons ();
         pack_start (tools);
-        pack_start (new Gtk.Separator (Gtk.Orientation.VERTICAL));
         var clear = create_clear_button ();
         pack_start (clear);
         var menu = create_menu ();
@@ -49,7 +48,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             tooltip_text = _("Draw live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.BUTTON
             )
         };
         var pencil_conn_id = pencil_btn.toggled.connect (() => {
@@ -63,7 +62,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
                 "edit-erase",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.BUTTON
             )
         };
         var eraser_conn_id = eraser_btn.toggled.connect (() => {
@@ -82,7 +81,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         });
 
         var box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
-            layout_style = Gtk.ButtonBoxStyle.EXPAND
+            layout_style = Gtk.ButtonBoxStyle.EXPAND,
+            expand = false,
+            valign = Gtk.Align.CENTER,
+            margin_end = 16
         };
 
         box.add (pencil_btn);
@@ -93,7 +95,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     private Gtk.Button create_clear_button () {
         var btn = new Gtk.Button.from_icon_name (
             "edit-clear",
-            Gtk.IconSize.SMALL_TOOLBAR
+            Gtk.IconSize.LARGE_TOOLBAR
         ) {
             tooltip_text = _("Clear all")
         };
@@ -104,6 +106,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     private Gtk.MenuButton create_menu () {
         var menu_grid = new Gtk.Grid () {
             margin_bottom = 4,
+            row_homogeneous = false,
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
@@ -132,11 +135,21 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         });
         menu_grid.attach (scale, 1, 0, 2, 1);
 
+        menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 1, 3);
+
+        var stats_toggle = new Gtk.ModelButton () {
+            text = _("Toggle Stats")
+        };
+        stats_toggle.clicked.connect (() => {
+            state.showing_stats = !state.showing_stats;
+        });
+        menu_grid.attach (stats_toggle, 0, 2, 3);
+
         menu_grid.show_all ();
         return new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name (
                 "open-menu",
-                Gtk.IconSize.SMALL_TOOLBAR
+                Gtk.IconSize.LARGE_TOOLBAR
             ),
             popover = new Gtk.Popover (null) {
                 child = menu_grid

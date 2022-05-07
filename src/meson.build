@@ -20,16 +20,27 @@ common_sources = files (
     'State.vala',
     'Stepper.vala',
     'Constants/Const.vala',
+    'HashLife/Cache/Frequency.vala',
+    'HashLife/Cache/LfuCache.vala',
+    'HashLife/Cache/LoadingCache.vala',
+    'HashLife/Cache/MonitoredCache.vala',
+    'HashLife/Cache/Node.vala',
     'HashLife/Pair.vala',
     'HashLife/Quad.vala',
     'HashLife/QuadFactory.vala',
     'HashLife/Quadruplet.vala',
     'HashLife/QuadTree.vala',
     'HashLife/Simulation.vala',
+    'Stats/Counter.vala',
+    'Stats/Gauge.vala',
+    'Stats/Metric.vala',
+    'Stats/MetricVisitor.vala',
+    'Stats/Timer.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/PlaybackBar.vala',
-    'Widgets/ScrolledBoard.vala'
+    'Widgets/ScrolledBoard.vala',
+    'Widgets/StatsOverlay.vala'
 )
 
 common_sources += build_constants

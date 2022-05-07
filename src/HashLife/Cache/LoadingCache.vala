@@ -18,14 +18,16 @@
 *
 */
 
-public interface Life.Drawable : Object {
 
-    public abstract int64 width_points { get; }
-    public abstract int64 height_points { get; }
+public abstract class Life.HashLife.Cache.LoadingCache<K, V> : Object {
 
-    public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
-    public abstract void draw_entire (DrawAction draw_action);
-    public abstract Stats.Metric[] stats ();
+    public signal void loaded (K key, V? val);
+    public signal void evicted (K key, V val);
+
+    public int size { get; set; default = 0; }
+
+    public abstract V? access (K key);
+
 }
 
-public delegate void Life.DrawAction (Point p);
+public delegate V Life.HashLife.Cache.CacheLoader<K, V> (K key);

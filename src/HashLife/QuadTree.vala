@@ -26,8 +26,12 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     public QuadFactory factory { get; construct; }
     public int64 width_points { get { return root.width; } }
     public int64 height_points { get { return root.width; } }
-
     public uint level { get { return root.level; } }
+
+    private Stats.Timer draw_timer = new Stats.Timer () {
+        name = _("Draw timer"),
+        description = _("Time spent in QuatTree's draw method.")
+    };
 
     public QuadTree (int level = 1, QuadFactory factory = new QuadFactory ()) {
         Object (
@@ -108,7 +112,9 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public void draw (Rectangle drawing_area, DrawAction draw_action) {
+        var stop_timer = draw_timer.start_timer ();
         _draw (root, bottom_left (), drawing_area, draw_action);
+        stop_timer ();
     }
 
     public void _draw (
@@ -198,5 +204,11 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
             factory.create_quad (root.se, border, border, border),
             factory.create_quad (border, root.sw, border, border)
         );
+    }
+
+    public Stats.Metric[] stats () {
+        return {
+            draw_timer
+        };
     }
 }

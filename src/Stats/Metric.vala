@@ -18,14 +18,11 @@
 *
 */
 
-public interface Life.Drawable : Object {
+public abstract class Life.Stats.Metric : Object {
 
-    public abstract int64 width_points { get; }
-    public abstract int64 height_points { get; }
+    public string name { get; set; }
+    public string description { get; set; }
 
-    public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
-    public abstract void draw_entire (DrawAction draw_action);
-    public abstract Stats.Metric[] stats ();
+    public abstract void accept (MetricVisitor visitor);
+
 }
-
-public delegate void Life.DrawAction (Point p);

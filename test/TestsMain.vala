@@ -24,6 +24,7 @@ namespace Life {
         Test.init (ref args);
         HashLife.QuadTreeTests.add_funcs ();
         HashLife.SimulationTests.add_funcs ();
+        HashLife.Cache.LfuCacheTests.add_funcs ();
         Test.run ();
     }
 }

@@ -29,6 +29,7 @@ public class Life.State : Object {
     public int speed { get; set; default = DEFAULT_SPEED; }
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
+    public bool showing_stats { get; set; default = false; }
 
     public Drawable drawable { get; construct; }
     public Editable editable { get; construct; }
@@ -47,7 +48,6 @@ public class Life.State : Object {
             editable: editable,
             stepper: stepper
         );
-        // this.stepper = stepper;
     }
 
     construct {
@@ -68,6 +68,19 @@ public class Life.State : Object {
         editable.clear_all ();
         stepper.generation = 0;
         tick ();
+    }
+
+    public Stats.Metric[] stats () {
+        var drawable_stats = drawable.stats ();
+        var stepper_stats = stepper.stats ();
+        Stats.Metric[] stats = {};
+        foreach (var stat in drawable_stats) {
+            stats += stat;
+        }
+        foreach (var stat in stepper_stats) {
+            stats += stat;
+        }
+        return stats;
     }
 
     private void restart_ticking () {

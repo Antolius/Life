@@ -16,6 +16,7 @@ add_project_arguments (
 
 # Listing dependencies
 dependencies = [
+    dependency ('gsl'),
     dependency ('granite'),
     dependency ('gtk+-3.0'),
     dependency ('gee-0.8'),

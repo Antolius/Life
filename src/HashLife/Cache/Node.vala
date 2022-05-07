@@ -18,14 +18,16 @@
 *
 */
 
-public interface Life.Drawable : Object {
+public class Life.HashLife.Cache.Node<K, V> : Object {
 
-    public abstract int64 width_points { get; }
-    public abstract int64 height_points { get; }
+    public K key { get; private set; }
+    public V val { get; private set; }
+    public Node<K, V>* prev { get; set; default = null; }
+    public Node<K, V>* next { get; set; default = null; }
+    public Frequency<K, V>* parent { get; set; default = null; }
 
-    public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
-    public abstract void draw_entire (DrawAction draw_action);
-    public abstract Stats.Metric[] stats ();
+    public Node (K key, V val) {
+        this.key = key;
+        this.val = val;
+    }
 }
-
-public delegate void Life.DrawAction (Point p);
