@@ -15,6 +15,7 @@ common_sources = files (
     'Drawable.vala',
     'Editable.vala',
     'MainWindow.vala',
+    'Pattern.vala',
     'Point.vala',
     'Rectangle.vala',
     'State.vala',
@@ -38,8 +39,10 @@ common_sources = files (
     'Stats/Timer.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/HeaderBar.vala',
+    'Widgets/LibraryPane.vala',
     'Widgets/PlaybackBar.vala',
     'Widgets/ScrolledBoard.vala',
+    'Widgets/SimulationPane.vala',
     'Widgets/StatsOverlay.vala'
 )
 
