@@ -22,7 +22,6 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
 
     public State state { get; construct; }
 
-
     public SimulationPane (State state) {
         Object (
             state: state
@@ -30,7 +29,12 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
     }
 
     construct {
-        var board = new Widgets.DrawingBoard (state);
+        var board = new Widgets.EditingBoard (state);
+        state.tick.connect_after (() => {
+            board.queue_resize ();
+            board.queue_draw ();
+        });
+
         var scrolled_board = new Widgets.ScrolledBoard (board);
         var board_overlay = new Gtk.Overlay () {
             child = scrolled_board
@@ -43,5 +47,4 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
         var playback_bar = new Widgets.PlaybackBar (state);
         attach (playback_bar, 0, 1);
     }
-
 }

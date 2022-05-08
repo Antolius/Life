@@ -18,23 +18,33 @@
 *
 */
 
-public class Life.Widgets.LibraryPane : Gtk.Grid {
+public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
 
     public State state { get; construct; }
 
+    private ListStore patterns_store = new ListStore (typeof (Pattern));
+
     public LibraryPane (State state) {
         Object (
-            state: state,
-            column_spacing: 8,
-            row_spacing: 8,
-            margin: 4
+            state: state
         );
     }
 
     construct {
+        var content = new Gtk.Grid ();
         var label = new Gtk.Label (_("Patterns library"));
         label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
-        attach (label, 0, 0);
+        content.attach (label, 0, 0);
+
+        var list_box = new Gtk.ListBox () {
+            selection_mode = Gtk.SelectionMode.NONE,
+            hexpand = true
+        };
+        list_box.bind_model (patterns_store, create_row);
+        list_box.get_style_context ().add_class ("library");
+        content.attach (list_box, 0, 1);
+
+        child = content;
 
         load_library.begin ();
     }
@@ -44,13 +54,16 @@ public class Life.Widgets.LibraryPane : Gtk.Grid {
         var patterns_path = "/" + Constants.resource_base () + "/patterns";
         var files = resources_enumerate_children (patterns_path, no_flags);
 
-        var patterns = new Gee.LinkedList<Pattern> ();
         foreach (var file_name in files) {
             var path = patterns_path + "/" + file_name;
             var input = resources_open_stream (path, no_flags);
             var pattern = yield Pattern.from_plaintext (input);
-            patterns.add (pattern);
+            patterns_store.append (pattern);
         }
     }
 
+    private Gtk.ListBoxRow create_row (Object element) {
+        var pattern = (Pattern) element;
+        return new PatternLibraryRow (pattern);
+    }
 }
