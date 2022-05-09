@@ -30,7 +30,7 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
 
     construct {
         var board = new Widgets.EditingBoard (state);
-        state.tick.connect_after (() => {
+        state.simulation_updated.connect_after (() => {
             board.queue_resize ();
             board.queue_draw ();
         });

@@ -19,6 +19,7 @@ common_sources = files (
     'Point.vala',
     'Rectangle.vala',
     'Scaleable.vala',
+    'Shape.vala',
     'State.vala',
     'Stepper.vala',
     'Constants/Const.vala',

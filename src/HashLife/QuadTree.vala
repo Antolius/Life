@@ -50,6 +50,10 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     // --------------------||------------------
     // (-2, -2) | (-1, -2) || (0, -2) | (1, -2)
 
+    public bool is_empty () {
+        return _is_empty (root);
+    }
+
     public bool is_alive (Point p) {
         return _is_alive (root, bottom_left (), p);
     }
@@ -123,7 +127,7 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         Rectangle drawing_area,
         DrawAction draw_action
     ) {
-        if (is_empty (q)) {
+        if (_is_empty (q)) {
             return;
         }
 
@@ -143,7 +147,7 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         _draw (q.sw, bottom_left, drawing_area, draw_action);
     }
 
-    public bool is_empty (Quad q) {
+    public bool _is_empty (Quad q) {
         return q == factory.create_empty_quad (q.level);
     }
 
@@ -186,10 +190,10 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     private bool _has_empty_edges (Quad q) {
         return q.level >= 2
-            && is_empty (q.nw.nw) && is_empty (q.nw.ne) && is_empty (q.nw.sw)
-            && is_empty (q.ne.nw) && is_empty (q.ne.ne) && is_empty (q.ne.se)
-            && is_empty (q.se.ne) && is_empty (q.se.se) && is_empty (q.se.sw)
-            && is_empty (q.sw.nw) && is_empty (q.sw.se) && is_empty (q.sw.sw);
+            && _is_empty (q.nw.nw) && _is_empty (q.nw.ne) && _is_empty (q.nw.sw)
+            && _is_empty (q.ne.nw) && _is_empty (q.ne.ne) && _is_empty (q.ne.se)
+            && _is_empty (q.se.ne) && _is_empty (q.se.se) && _is_empty (q.se.sw)
+            && _is_empty (q.sw.nw) && _is_empty (q.sw.se) && _is_empty (q.sw.sw);
     }
 
     public void grow () {

@@ -20,14 +20,17 @@
 
 public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
 
-    private static Scaleable DEFAULT_SCALE = new ConstantScale ();
+    private static Scaleable default_scale = new ConstantScale ();
 
     public Pattern pattern { get; construct; }
+    public State state { get; construct; }
 
-    public PatternLibraryRow (Pattern pattern) {
+    public PatternLibraryRow (Pattern pattern, State state) {
         Object (
             pattern: pattern,
+            state: state,
             margin: 8,
+            margin_bottom: 16,
             activatable: false,
             selectable: false,
             can_focus: false,
@@ -72,18 +75,95 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
 
         }
 
+        var board_grid = new Gtk.Grid ();
+
         var board_margin = 8;
-        var board = new DrawingBoard (DEFAULT_SCALE, pattern) {
+        var board = new DrawingBoard (default_scale, pattern) {
             margin = board_margin
         };
         var scrolled_board = new Gtk.ScrolledWindow (null, null) {
-            min_content_height = int.min(160, board.height + 2 * board_margin),
+            min_content_height = int.min (160, board.height + 2 * board_margin),
             max_content_height = 160,
             max_content_width = 240,
             child = board
         };
+        board_grid.attach (scrolled_board, 0, 0);
+
+        var actions = new Gtk.ActionBar ();
+
+        var flip_horizontally_btn = new Gtk.Button.from_icon_name (
+            "object-flip-horizontal-symbolic",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Flip horizontally"),
+        };
+        flip_horizontally_btn.clicked.connect (() => {
+            pattern.flip_horizontally ();
+            board.queue_draw ();
+        });
+        actions.pack_start (flip_horizontally_btn);
+
+        var flip_vertically_btn = new Gtk.Button.from_icon_name (
+            "object-flip-vertical-symbolic",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Flip vertically"),
+        };
+        flip_vertically_btn.clicked.connect (() => {
+            pattern.flip_vertically ();
+            board.queue_draw ();
+        });
+        actions.pack_start (flip_vertically_btn);
+
+        var rotate_clockwise = new Gtk.Button.from_icon_name (
+            "object-rotate-right-symbolic",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Rotate clockwise"),
+        };
+        rotate_clockwise.clicked.connect (() => {
+            pattern.rotate_clockwise ();
+            board.queue_resize ();
+            board.queue_draw ();
+            var new_height = int.min (160, board.height + 2 * board_margin);
+            scrolled_board.min_content_height = new_height;
+        });
+        actions.pack_start (rotate_clockwise);
+
+        var rotate_counter_clockwise = new Gtk.Button.from_icon_name (
+            "object-rotate-left-symbolic",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Rotate counter-clockwise"),
+        };
+        rotate_counter_clockwise.clicked.connect (() => {
+            pattern.rotate_counter_clockwise ();
+            board.queue_resize ();
+            board.queue_draw ();
+            var new_height = int.min (160, board.height + 2 * board_margin);
+            scrolled_board.min_content_height = new_height;
+        });
+        actions.pack_start (rotate_counter_clockwise);
+
+        var import_btn = new Gtk.Button.from_icon_name (
+            "document-import-symbolic",
+            Gtk.IconSize.SMALL_TOOLBAR
+        ) {
+            tooltip_text = _("Import into simulation"),
+        };
+        import_btn.clicked.connect (() => {
+            if (!state.editable.is_empty ()) {
+                state.clear ();
+            }
+
+            pattern.write_into (state.editable);
+            state.simulation_updated ();
+        });
+        actions.pack_end (import_btn);
+
+        board_grid.attach (actions, 0, 1);
         var board_frame = new Gtk.Frame (null) {
-            child = scrolled_board,
+            child = board_grid,
             margin_top = 4,
             margin_bottom = 4,
             hexpand = true
@@ -93,7 +173,7 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
 
         if (pattern.link != null) {
             var label = _("Learn more");
-            var link = new Gtk.LinkButton.with_label (pattern.link, label){
+            var link = new Gtk.LinkButton.with_label (pattern.link, label) {
                 halign = Gtk.Align.START
             };
             content.attach_next_to (link, last, bottom, 1, 1);

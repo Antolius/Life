@@ -18,21 +18,12 @@
 *
 */
 
-public class Life.Pattern : Object, Drawable {
+public class Life.Pattern : Shape {
 
     public string name { get; set; default = "unnamed pattern"; }
     public string? author { get; set; }
     public string? description { get; set; }
     public string? link { get; set; }
-
-    private int64 _width_points = 0;
-    public override int64 width_points { get { return _width_points; } }
-
-    private int64 _height_points = 0;
-    public override int64 height_points { get { return _height_points; } }
-
-    private Gee.List<Gee.List<bool>> data =
-        new Gee.LinkedList<Gee.LinkedList<bool>> ();
 
     public static async Pattern from_plaintext (InputStream stream) {
         var pattern = new Pattern ();
@@ -71,54 +62,12 @@ public class Life.Pattern : Object, Drawable {
             }
         }
 
-        return pattern;
-    }
-
-    // !Stream
-    // .O
-    // ..O
-    // OOO
-
-    // data: [
-    //    0: [0: false, 1: true],
-    //    1: [0: false, 1: false, 2: true],
-    //    2: [0: true,  1: true,  2: true],
-    // ]
-    // width_points: 3
-    // height_points: 3
-
-    // Point coordinates:
-    //
-    // (-1,  0) F | (0,  0) T | (1,  0) F
-    // -----------|-----------|----------
-    // (-1, -1) F | (0, -1) F | (1, -1) T
-    // -----------|-----------|----------
-    // (-1, -2) T | (0, -2) T | (1, -2) T
-
-    public void draw (Rectangle drawing_area, DrawAction draw_action) {
-        for (int j = 0; j < height_points; j++) {
-            for (int i = 0; i < width_points; i++) {
-                var point = new Point (i - (width_points / 2),
-                    (height_points / 2) - j - 1
-                );
-                if (drawing_area.contains (point)) {
-                    var row = data[j];
-                    if (row.size > i && row[i]) {
-                        draw_action (point);
-                    }
-                }
+        // Normalize row lengths
+        foreach (var row in pattern.data) {
+            for (int i = row.size; i < pattern.width_points; i++) {
+                row.add (false);
             }
         }
+        return pattern;
     }
-
-    public void draw_entire (DrawAction draw_action) {
-        var bottom_left = new Point (-width_points / 2, -height_points / 2);
-        var full_rec = new Rectangle (bottom_left, height_points, width_points);
-        draw (full_rec, draw_action);
-    }
-
-    public Stats.Metric[] stats () {
-        return {};
-    }
-
 }

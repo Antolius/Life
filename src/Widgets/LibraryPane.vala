@@ -64,6 +64,6 @@ public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
 
     private Gtk.ListBoxRow create_row (Object element) {
         var pattern = (Pattern) element;
-        return new PatternLibraryRow (pattern);
+        return new PatternLibraryRow (pattern, state);
     }
 }

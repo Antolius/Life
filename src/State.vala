@@ -38,8 +38,7 @@ public class Life.State : Object, Scaleable {
 
     private uint? timer_id;
 
-    public virtual signal void tick () {
-        stepper.step ();
+    public virtual signal void simulation_updated () {
     }
 
     public State (Drawable drawable, Editable editable, Stepper stepper) {
@@ -64,10 +63,16 @@ public class Life.State : Object, Scaleable {
         });
     }
 
+    public void step_by_one () {
+        stepper.step ();
+        simulation_updated ();
+    }
+
     public void clear () {
         editable.clear_all ();
         stepper.generation = 0;
-        tick ();
+        simulation_updated ();
+        is_playing = false;
     }
 
     public Stats.Metric[] stats () {
@@ -94,7 +99,7 @@ public class Life.State : Object, Scaleable {
         }
 
         timer_id = Timeout.add (1000 / speed, () => {
-            tick ();
+            step_by_one ();
             return Source.CONTINUE;
         });
     }

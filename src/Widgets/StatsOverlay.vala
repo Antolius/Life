@@ -40,13 +40,14 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
         rows_count = 0;
         stats_grid = new Gtk.Grid () {
             column_spacing = 8,
-            row_spacing = 16
+            row_spacing = 16,
+            margin = 16
         };
         child = stats_grid;
         state.notify["showing-stats"].connect (() => {
             reveal_child = state.showing_stats;
         });
-        state.tick.connect (() => {
+        state.simulation_updated.connect (() => {
             update_stats_grid ();
         });
 
