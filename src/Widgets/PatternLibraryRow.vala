@@ -81,6 +81,39 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
         var board = new DrawingBoard (default_scale, pattern) {
             margin = board_margin
         };
+        board.add_events (Gdk.EventMask.ENTER_NOTIFY_MASK);
+        board.add_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
+        board.enter_notify_event.connect (event => {
+            var window = board.get_window ();
+            if (window != null) {
+                window.set_cursor (new Gdk.Cursor.from_name (
+                    window.get_display (),
+                    "grab"
+                ));
+            }
+        });
+        board.leave_notify_event.connect (event => {
+            var window = board.get_window ();
+            if (window != null) {
+                window.set_cursor (new Gdk.Cursor.from_name (
+                    window.get_display (),
+                    "none"
+                ));
+            }
+        });
+        Gtk.drag_source_set (
+            board,
+            Gdk.ModifierType.BUTTON1_MASK,
+            EditingBoard.TARGET_ENTRIES,
+            Gdk.DragAction.COPY
+        );
+        board.drag_data_get.connect ((ctx, data, info, time_) => {
+            var pattern_data = new uchar[(sizeof (Pattern))];
+            ((Pattern[])pattern_data)[0] = pattern;
+            var pattern_atom = Gdk.Atom.intern ("PATTERN", false);
+            data.set (pattern_atom, 0, pattern_data);
+        });
+
         var scrolled_board = new Gtk.ScrolledWindow (null, null) {
             min_content_height = int.min (160, board.height + 2 * board_margin),
             max_content_height = 160,
@@ -145,21 +178,21 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
         });
         actions.pack_start (rotate_counter_clockwise);
 
-        var import_btn = new Gtk.Button.from_icon_name (
-            "document-import-symbolic",
+        var load_btn = new Gtk.Button.from_icon_name (
+            "document-export-symbolic",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            tooltip_text = _("Import into simulation"),
+            tooltip_text = _("Load into simulation"),
         };
-        import_btn.clicked.connect (() => {
+        load_btn.clicked.connect (() => {
             if (!state.editable.is_empty ()) {
                 state.clear ();
             }
 
-            pattern.write_into (state.editable);
+            pattern.write_into_centered (state.editable);
             state.simulation_updated ();
         });
-        actions.pack_end (import_btn);
+        actions.pack_end (load_btn);
 
         board_grid.attach (actions, 0, 1);
         var board_frame = new Gtk.Frame (null) {

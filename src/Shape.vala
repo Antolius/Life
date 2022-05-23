@@ -73,15 +73,26 @@ public class Life.Shape : Object, Drawable {
         draw (full_rec, draw_action);
     }
 
-    public void write_into (Editable editable) {
+    public void write_into_centered (Editable editable) {
+        write_into (editable, new Point (0, 0));
+    }
+
+    public void write_into (
+        Editable editable,
+        Point center,
+        bool override_with_dead_cells = true
+    ) {
         for (int j = 0; j < height_points; j++) {
             for (int i = 0; i < width_points; i++) {
                 var point = new Point (
-                    i - (width_points / 2),
-                    (height_points / 2) - j - 1
+                    i - (width_points / 2) + center.x,
+                    (height_points / 2) - j - 1 + center.y
                 );
                 var row = data[j];
-                editable.set_alive (point, row[i]);
+                var is_alive = row[i];
+                if (is_alive || override_with_dead_cells) {
+                    editable.set_alive (point, is_alive);
+                }
             }
         }
     }

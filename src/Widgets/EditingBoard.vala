@@ -20,6 +20,10 @@
 
 public class Life.Widgets.EditingBoard : DrawingBoard {
 
+    public const Gtk.TargetEntry[] TARGET_ENTRIES = {
+        {"PATTERN", Gtk.TargetFlags.SAME_APP | Gtk.TargetFlags.OTHER_WIDGET, 0}
+    };
+
     public State state { get; set; }
 
     private bool is_pressing = false;
@@ -31,6 +35,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
 
     construct {
         connect_signals ();
+        set_up_drag_target ();
     }
 
     private void connect_signals () {
@@ -43,6 +48,20 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
         add_events (Gdk.EventMask.BUTTON_RELEASE_MASK);
         add_events (Gdk.EventMask.LEAVE_NOTIFY_MASK);
+    }
+
+    private void set_up_drag_target () {
+        Gtk.drag_dest_set (
+            this,
+            Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.MOTION,
+            TARGET_ENTRIES,
+            Gdk.DragAction.COPY
+        );
+
+        drag_motion.connect (on_drag_motion);
+        drag_leave.connect (on_drag_leave);
+        drag_drop.connect (on_drag_drop);
+        drag_data_received.connect (on_drag_data_received);
     }
 
 
@@ -60,7 +79,14 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private bool on_pointer_move (Gdk.EventMotion event) {
-        var new_point = new Point (Math.lround (event.x), Math.lround (event.y));
+        return on_pointer_move_xy (
+            (int) event.x,
+            (int) event.y
+        );
+    }
+
+    private bool on_pointer_move_xy (int x, int y) {
+        var new_point = new Point (x, y);
         var new_cursor_position = cairo_to_drawable (new_point);
         var window = get_window ();
         if (new_cursor_position != cursor_position && window != null) {
@@ -131,12 +157,16 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private bool on_pointer_leave (Gdk.EventCrossing event) {
+        return on_pointer_leave_xy ((int) event.x, (int) event.y);
+    }
+
+    private bool on_pointer_leave_xy (int x, int y) {
         cursor_position = null;
         var window = get_window ();
         if (window != null) {
             var rect = Gdk.Rectangle () {
-                x = (int) event.x - 2 * scaleable.scale,
-                y = (int) event.y - 2 * scaleable.scale,
+                x = x - 2 * scaleable.scale,
+                y = y - 2 * scaleable.scale,
                 width = 4 * scaleable.scale,
                 height = 4 * scaleable.scale
             };
@@ -145,5 +175,40 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         }
 
         return true;
+    }
+
+    private bool on_drag_motion (Gdk.DragContext ctx, int x, int y, uint time_) {
+        on_pointer_move_xy (x, y);
+        return true;
+    }
+
+    private void on_drag_leave (Gdk.DragContext ctx, uint time_) {
+        if (cursor_position != null) {
+            var point = drawable_to_cairo (cursor_position);
+            on_pointer_leave_xy ((int) point.x, (int) point.y);
+        }
+    }
+
+    private bool on_drag_drop (Gdk.DragContext ctx, int x, int y, uint time_) {
+        Gtk.drag_get_data (this, ctx, Gdk.Atom.intern ("PATTERN", false), time_);
+        return true;
+    }
+
+    private void on_drag_data_received (
+        Gdk.DragContext ctx,
+        int x,
+        int y,
+        Gtk.SelectionData data,
+        uint target_type,
+        uint time_
+    ) {
+        var pattern = ((Pattern[]) data.get_data ())[0];
+        var center = cairo_to_drawable (new Point (x, y));
+        pattern.write_into (state.editable, center, false);
+        state.simulation_updated ();
+
+        on_pointer_move_xy (x, y);
+
+        Gtk.drag_finish (ctx, true, false, time_);
     }
 }
