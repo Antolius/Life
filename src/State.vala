@@ -18,14 +18,14 @@
 *
 */
 
-public class Life.State : Object {
+public class Life.State : Object, Scaleable {
 
     public const int MIN_SPEED = 1;       // 1 generation per second
     public const int MAX_SPEED = 20;      // 20 generations per second
-    private const int DEFAULT_SPEED = 10; // 10 generations per second
-    private const int DEFAULT_SCALE = 10; // 10px per board point
+    public const int DEFAULT_SPEED = 10; // 10 generations per second
+    public const int DEFAULT_SCALE = 10; // 10px per board point
 
-    public int scale { get; set; default = DEFAULT_SCALE; }
+    public override int scale { get; set; default = DEFAULT_SCALE; }
     public int speed { get; set; default = DEFAULT_SPEED; }
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
@@ -38,8 +38,7 @@ public class Life.State : Object {
 
     private uint? timer_id;
 
-    public virtual signal void tick () {
-        stepper.step ();
+    public virtual signal void simulation_updated () {
     }
 
     public State (Drawable drawable, Editable editable, Stepper stepper) {
@@ -64,10 +63,16 @@ public class Life.State : Object {
         });
     }
 
+    public void step_by_one () {
+        stepper.step ();
+        simulation_updated ();
+    }
+
     public void clear () {
         editable.clear_all ();
         stepper.generation = 0;
-        tick ();
+        simulation_updated ();
+        is_playing = false;
     }
 
     public Stats.Metric[] stats () {
@@ -94,7 +99,7 @@ public class Life.State : Object {
         }
 
         timer_id = Timeout.add (1000 / speed, () => {
-            tick ();
+            step_by_one ();
             return Source.CONTINUE;
         });
     }

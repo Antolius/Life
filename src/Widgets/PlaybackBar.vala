@@ -131,14 +131,14 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         };
         btn.clicked.connect (() => {
             state.is_playing = false;
-            state.tick ();
+            state.step_by_one ();
         });
         return btn;
     }
 
     private Gtk.Label create_generation_counter () {
         var counter = new Gtk.Label (generation_txt ());
-        state.tick.connect (() => {
+        state.simulation_updated.connect (() => {
             counter.label = generation_txt ();
         });
         return counter;

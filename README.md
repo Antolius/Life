@@ -1,3 +1,4 @@
+<img align="left" width="64" height="64" src="data/icons/64.svg">
 <h1>Life</h1>
 
 [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) made for [elementary OS](https://elementary.io/).

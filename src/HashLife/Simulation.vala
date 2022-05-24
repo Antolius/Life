@@ -82,7 +82,7 @@ public class Life.HashLife.Simulation : Object, Stepper {
         assert (speed >= 0);
         assert (speed <= quad.level - 2);
 
-        if (tree.is_empty (quad)) {
+        if (tree._is_empty (quad)) {
             return factory.create_empty_quad (quad.level - 1);
         }
 

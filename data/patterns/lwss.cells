@@ -1,0 +1,8 @@
+!Name: Lightweight spaceship
+!Author: John Conway
+!Description: The smallest known orthogonally moving spaceship, and the second most common spaceship (after the glider).
+!Link: https://conwaylife.com/wiki/Lightweight_spaceship
+.O..O
+O
+O...O
+OOOO

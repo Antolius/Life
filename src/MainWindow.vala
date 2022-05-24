@@ -39,7 +39,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     private static void load_style () {
         var provider = new Gtk.CssProvider ();
-        var resource_name = Life.Constants.resource_base () + "/style.css";
+        var resource_name = Constants.resource_base () + "/style.css";
         provider.load_from_resource (resource_name);
         var screen = Gdk.Screen.get_default ();
         Gtk.StyleContext.add_provider_for_screen (
@@ -103,18 +103,23 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     private void create_layout () {
         grid = new Gtk.Grid ();
+
         var header_bar = new Widgets.HeaderBar (state);
         grid.attach (header_bar, 0, 0);
-        var board = new Widgets.DrawingBoard (state);
-        var scrolled_board = new Widgets.ScrolledBoard (board);
-        var board_overlay = new Gtk.Overlay () {
-            child = scrolled_board
+
+        int pane_position;
+        Application.settings.get ("pane-position", "i", out pane_position);
+        var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
+            position = pane_position
         };
-        var stats = new Widgets.StatsOverlay (state);
-        board_overlay.add_overlay (stats);
-        board_overlay.set_overlay_pass_through (stats, true);
-        grid.attach (board_overlay, 0, 1);
-        grid.attach (new Widgets.PlaybackBar (state), 0, 2);
+        paned.notify["position"].connect (() => {
+            Application.settings.set ("pane-position", "i", paned.position);
+        });
+        var library = new Widgets.LibraryPane (state);
+        paned.pack1 (library, false, true);
+        var simulation = new Widgets.SimulationPane (state);
+        paned.pack2 (simulation, true, false);
+        grid.attach (paned, 0, 1);
 
         child = grid;
     }

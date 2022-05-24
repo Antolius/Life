@@ -18,10 +18,10 @@
 *
 */
 
-public interface Life.Editable : Object {
+public interface Life.Scaleable : Object {
+    public abstract int scale { get; set; }
+}
 
-    public abstract bool is_alive (Point p);
-    public abstract void set_alive (Point p, bool alive);
-    public abstract bool is_empty ();
-    public abstract void clear_all ();
+public class Life.ConstantScale : Object, Scaleable {
+    public override int scale { get; set; default = State.DEFAULT_SCALE; }
 }

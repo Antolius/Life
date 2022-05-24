@@ -16,5 +16,10 @@
       <summary>Most recent window size</summary>
       <description>Most recent window size (width, height)</description>
     </key>
+    <key name="pane-position" type="i">
+      <default>120</default>
+      <summary>Size of the library pane</summary>
+      <description>Most recent size of the library pane (size)</description>
+    </key>
   </schema>
 </schemalist>

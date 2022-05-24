@@ -7,5 +7,18 @@
     <!--Icons-->
     <file alias="16x16/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
     <file alias="16x16@2/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
+
+    <!--Patterns-->
+    <file compressed="true">patterns/acorn.cells</file>
+    <file compressed="true">patterns/blinker.cells</file>
+    <file compressed="true">patterns/block.cells</file>
+    <file compressed="true">patterns/eater1.cells</file>
+    <file compressed="true">patterns/glider.cells</file>
+    <file compressed="true">patterns/gosperglidergun.cells</file>
+    <file compressed="true">patterns/herschel.cells</file>
+    <file compressed="true">patterns/lwss.cells</file>
+    <file compressed="true">patterns/rpentomino.cells</file>
+    <file compressed="true">patterns/simkinglidergun.cells</file>
+    <file compressed="true">patterns/switchengine.cells</file>
   </gresource>
 </gresources>
