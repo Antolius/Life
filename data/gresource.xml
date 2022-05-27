@@ -7,6 +7,8 @@
     <!--Icons-->
     <file alias="16x16/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
     <file alias="16x16@2/actions/edit-erase.svg" compressed="true" preprocess="xml-stripblanks">icons/edit-erase-16.svg</file>
+    <file alias="16x16/actions/pointer.svg" compressed="true" preprocess="xml-stripblanks">icons/pointer-16.svg</file>
+    <file alias="16x16@2/actions/pointer.svg" compressed="true" preprocess="xml-stripblanks">icons/pointer-16.svg</file>
 
     <!--Patterns-->
     <file compressed="true">patterns/acorn.cells</file>

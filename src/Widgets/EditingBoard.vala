@@ -27,10 +27,15 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     public State state { get; set; }
 
     private bool is_pressing = false;
+    private Gee.List<SelectionArea> select_area = new Gee.LinkedList<SelectionArea> ();
 
     public EditingBoard (State state) {
         base (state, state.drawable);
         this.state = state;
+
+        state.simulation_updated.connect_after (() => {
+            select_area.clear ();
+        });
     }
 
     construct {
@@ -66,16 +71,38 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
 
 
     protected override void apply_highlights (Cairo.Context ctx) {
-        if (cursor_position == null) {
-            return;
+        var ac = color_palette.accent_color;
+
+        if (cursor_position != null
+            && (state.active_tool == State.Tool.PENCIL
+            || state.active_tool == State.Tool.ERASER)) {
+            ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 2);
+            var top_left = drawable_to_cairo (cursor_position);
+            ctx.rectangle (
+                top_left.x - 1,
+                top_left.y - 1,
+                scaleable.scale,
+                scaleable.scale
+            );
+            ctx.set_line_width (2);
+            ctx.stroke ();
         }
 
-        var ac = color_palette.accent_color;
-        ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 2);
-        var top_left = drawable_to_cairo (cursor_position);
-        ctx.rectangle (top_left.x - 1, top_left.y - 1, scaleable.scale, scaleable.scale);
-        ctx.set_line_width (2);
-        ctx.stroke ();
+        if (!select_area.is_empty) {
+            foreach (var select in select_area) {
+                var drawable_point = select.rect.top_left ().y_add (-1);
+                var top_left = drawable_to_cairo (drawable_point);
+                ctx.rectangle (
+                    top_left.x - 1,
+                    top_left.y - 1,
+                    scaleable.scale * select.rect.width + 1,
+                    scaleable.scale * select.rect.height + 1
+                );
+            }
+
+            ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 6);
+            ctx.fill_preserve ();
+        }
     }
 
     private bool on_pointer_move (Gdk.EventMotion event) {
@@ -91,29 +118,20 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         var window = get_window ();
         if (new_cursor_position != cursor_position && window != null) {
             if (is_pressing) {
-                if (state.active_tool == State.Tool.PENCIL) {
+                if (state.active_tool == State.Tool.POINTER) {
+                    if (!select_area.is_empty) {
+                        var selection = select_area.last ();
+                        selection.expand_to (new_cursor_position);
+                    }
+                } else if (state.active_tool == State.Tool.PENCIL) {
                     state.editable.set_alive (new_cursor_position, true);
                 } else if (state.active_tool == State.Tool.ERASER) {
                     state.editable.set_alive (new_cursor_position, false);
                 }
             }
 
-            Point prev_point;
-            if (cursor_position != null) {
-                prev_point = drawable_to_cairo (cursor_position);
-            } else {
-                prev_point = new_point;
-            }
-
-            var rect = Gdk.Rectangle () {
-                x = (int) int64.min (new_point.x, prev_point.x) - 2 * scaleable.scale,
-                y = (int) int64.min (new_point.y, prev_point.y) - 2 * scaleable.scale,
-                width = (int) (new_point.x - prev_point.x).abs () + 4 * scaleable.scale,
-                height = (int) (new_point.y - prev_point.y).abs () + 4 * scaleable.scale
-            };
-
             cursor_position = new_cursor_position;
-            window.invalidate_rect (rect, false);
+            window.invalidate_rect (null, false);
             return true;
         }
 
@@ -121,28 +139,102 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private bool on_button_press (Gdk.EventButton event) {
-        if (event.button != Gdk.BUTTON_PRIMARY) {
-            return false;
+        if (event.button == Gdk.BUTTON_PRIMARY) {
+            return on_primary_button_press (event);
+        } else if (event.button == Gdk.BUTTON_SECONDARY){
+            return on_secondary_button_press (event);
         }
 
+        return false;
+    }
+
+    private bool on_primary_button_press (Gdk.EventButton event) {
+        var cairo_x = (int) Math.lround (event.x);
+        var cairo_y = (int) Math.lround (event.y);
+
         is_pressing = true;
-        if (state.active_tool == State.Tool.PENCIL) {
+        if (state.active_tool == State.Tool.POINTER) {
+            var adding = (event.state & Gdk.ModifierType.SHIFT_MASK) != 0;
+            if (!adding) {
+                select_area.clear ();
+            }
+
+            var point = cairo_to_drawable (new Point (cairo_x, cairo_y));
+            var selection = new SelectionArea (point);
+            select_area.add (selection);
+        } else if (state.active_tool == State.Tool.PENCIL) {
             state.editable.set_alive (cursor_position, true);
+            select_area.clear ();
         } else if (state.active_tool == State.Tool.ERASER) {
             state.editable.set_alive (cursor_position, false);
+            select_area.clear ();
         }
 
         var window = get_window ();
         if (window != null) {
-            var rect = Gdk.Rectangle () {
-                x = (int) Math.lround (event.x) - 2 * scaleable.scale,
-                y = (int) Math.lround (event.y) - 2 * scaleable.scale,
-                width = 4 * scaleable.scale,
-                height = 4 * scaleable.scale
-            };
-
-            window.invalidate_rect (rect, false);
+            window.invalidate_rect (null, false);
         }
+
+        return false;
+    }
+
+    private bool on_secondary_button_press (Gdk.EventButton event) {
+        var cairo_x = (int) Math.lround (event.x);
+        var cairo_y = (int) Math.lround (event.y);
+        var drawable_point = cairo_to_drawable (new Point (cairo_x, cairo_y));
+
+        var clicked_inside_selected_area = false;
+        foreach (var select in select_area) {
+            if (select.rect.contains (drawable_point)) {
+                clicked_inside_selected_area = true;
+            }
+        }
+        if (!clicked_inside_selected_area) {
+            return false;
+        }
+
+        var popover_menu = new Gtk.Menu ();
+
+        var fill_item = new Gtk.MenuItem.with_label (_("Fill With Live Cells"));
+        fill_item.activate.connect (() => {
+            foreach (var select in select_area) {
+                var bottom_left = select.rect.bottom_left;
+                var top_rigth = select.rect.top_rigth ();
+                for (var x = bottom_left.x; x < top_rigth.x; x++) {
+                    for (var y = bottom_left.y; y < top_rigth.y; y++) {
+                        state.editable.set_alive (new Point (x, y), true);
+                    }
+                }
+            }
+
+            var window = get_window ();
+            if (window != null) {
+                window.invalidate_rect (null, false);
+            }
+        });
+        popover_menu.append (fill_item);
+
+        var clear_item = new Gtk.MenuItem.with_label (_("Clear Highlighted Cells"));
+        clear_item.activate.connect (() => {
+            foreach (var select in select_area) {
+                var bottom_left = select.rect.bottom_left;
+                var top_rigth = select.rect.top_rigth ();
+                for (var x = bottom_left.x; x < top_rigth.x; x++) {
+                    for (var y = bottom_left.y; y < top_rigth.y; y++) {
+                        state.editable.set_alive (new Point (x, y), false);
+                    }
+                }
+            }
+
+            var window = get_window ();
+            if (window != null) {
+                window.invalidate_rect (null, false);
+            }
+        });
+        popover_menu.append (clear_item);
+
+        popover_menu.show_all ();
+        popover_menu.popup_at_pointer (event);
 
         return false;
     }
@@ -210,5 +302,28 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         on_pointer_move_xy (x, y);
 
         Gtk.drag_finish (ctx, true, false, time_);
+    }
+}
+
+class Life.Widgets.SelectionArea : Object {
+    public Point starting_point { get; construct; }
+    public Rectangle rect { get; set; }
+
+    public SelectionArea (Point starting_point) {
+        Object (
+            starting_point: starting_point,
+            rect: new Rectangle (starting_point, 1, 1)
+        );
+    }
+
+    public void expand_to (Point point) {
+        rect = new Rectangle (
+            new Point (
+                int64.min (starting_point.x, point.x),
+                int64.min (starting_point.y, point.y)
+            ),
+            (starting_point.y - point.y).abs () + 1,
+            (starting_point.x - point.x).abs () + 1
+        );
     }
 }
