@@ -40,6 +40,13 @@ public class Life.Rectangle : Object {
         return new Point (bottom_left.x, bottom_left.y + height);
     }
 
+    public Point center () {
+        return new Point (
+            bottom_left.x + (int) Math.floor (width * 0.5),
+            bottom_left.y + (int) Math.ceil (height * 0.5)
+        );
+    }
+
     public bool contains (Point point) {
         return bottom_left.x <= point.x && point.x < bottom_left.x + width
             && bottom_left.y <= point.y && point.y < bottom_left.y + height;

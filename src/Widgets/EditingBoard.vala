@@ -27,7 +27,8 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     public State state { get; set; }
 
     private bool is_pressing = false;
-    private Gee.List<SelectionArea> select_area = new Gee.LinkedList<SelectionArea> ();
+    private Gee.List<SelectionArea> select_area =
+        new Gee.LinkedList<SelectionArea> ();
 
     public EditingBoard (State state) {
         base (state, state.drawable);
@@ -115,8 +116,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     private bool on_pointer_move_xy (int x, int y) {
         var new_point = new Point (x, y);
         var new_cursor_position = cairo_to_drawable (new_point);
-        var window = get_window ();
-        if (new_cursor_position != cursor_position && window != null) {
+        if (new_cursor_position != cursor_position) {
             if (is_pressing) {
                 if (state.active_tool == State.Tool.POINTER) {
                     if (!select_area.is_empty) {
@@ -131,7 +131,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
             }
 
             cursor_position = new_cursor_position;
-            window.invalidate_rect (null, false);
+            trigger_redraw ();
             return true;
         }
 
@@ -141,7 +141,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     private bool on_button_press (Gdk.EventButton event) {
         if (event.button == Gdk.BUTTON_PRIMARY) {
             return on_primary_button_press (event);
-        } else if (event.button == Gdk.BUTTON_SECONDARY){
+        } else if (event.button == Gdk.BUTTON_SECONDARY) {
             return on_secondary_button_press (event);
         }
 
@@ -170,10 +170,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
             select_area.clear ();
         }
 
-        var window = get_window ();
-        if (window != null) {
-            window.invalidate_rect (null, false);
-        }
+        trigger_redraw ();
 
         return false;
     }
@@ -181,60 +178,19 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     private bool on_secondary_button_press (Gdk.EventButton event) {
         var cairo_x = (int) Math.lround (event.x);
         var cairo_y = (int) Math.lround (event.y);
-        var drawable_point = cairo_to_drawable (new Point (cairo_x, cairo_y));
+        var point = cairo_to_drawable (new Point (cairo_x, cairo_y));
 
-        var clicked_inside_selected_area = false;
+        var select_rects = new Gee.LinkedList<Rectangle> ();
         foreach (var select in select_area) {
-            if (select.rect.contains (drawable_point)) {
-                clicked_inside_selected_area = true;
-            }
-        }
-        if (!clicked_inside_selected_area) {
-            return false;
+            select_rects.add (select.rect);
         }
 
-        var popover_menu = new Gtk.Menu ();
-
-        var fill_item = new Gtk.MenuItem.with_label (_("Fill With Live Cells"));
-        fill_item.activate.connect (() => {
-            foreach (var select in select_area) {
-                var bottom_left = select.rect.bottom_left;
-                var top_rigth = select.rect.top_rigth ();
-                for (var x = bottom_left.x; x < top_rigth.x; x++) {
-                    for (var y = bottom_left.y; y < top_rigth.y; y++) {
-                        state.editable.set_alive (new Point (x, y), true);
-                    }
-                }
-            }
-
-            var window = get_window ();
-            if (window != null) {
-                window.invalidate_rect (null, false);
-            }
+        var menu = new EditingBoardPopupMenu (state, point, select_rects);
+        menu.drawable_updated.connect (() => {
+            select_area.clear ();
+            trigger_redraw ();
         });
-        popover_menu.append (fill_item);
-
-        var clear_item = new Gtk.MenuItem.with_label (_("Clear Highlighted Cells"));
-        clear_item.activate.connect (() => {
-            foreach (var select in select_area) {
-                var bottom_left = select.rect.bottom_left;
-                var top_rigth = select.rect.top_rigth ();
-                for (var x = bottom_left.x; x < top_rigth.x; x++) {
-                    for (var y = bottom_left.y; y < top_rigth.y; y++) {
-                        state.editable.set_alive (new Point (x, y), false);
-                    }
-                }
-            }
-
-            var window = get_window ();
-            if (window != null) {
-                window.invalidate_rect (null, false);
-            }
-        });
-        popover_menu.append (clear_item);
-
-        popover_menu.show_all ();
-        popover_menu.popup_at_pointer (event);
+        menu.popup_at_pointer (event);
 
         return false;
     }
@@ -269,20 +225,20 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         return true;
     }
 
-    private bool on_drag_motion (Gdk.DragContext ctx, int x, int y, uint time_) {
+    private bool on_drag_motion (Gdk.DragContext ctx, int x, int y, uint time) {
         on_pointer_move_xy (x, y);
         return true;
     }
 
-    private void on_drag_leave (Gdk.DragContext ctx, uint time_) {
+    private void on_drag_leave (Gdk.DragContext ctx, uint time) {
         if (cursor_position != null) {
             var point = drawable_to_cairo (cursor_position);
             on_pointer_leave_xy ((int) point.x, (int) point.y);
         }
     }
 
-    private bool on_drag_drop (Gdk.DragContext ctx, int x, int y, uint time_) {
-        Gtk.drag_get_data (this, ctx, Gdk.Atom.intern ("PATTERN", false), time_);
+    private bool on_drag_drop (Gdk.DragContext ctx, int x, int y, uint time) {
+        Gtk.drag_get_data (this, ctx, Gdk.Atom.intern ("PATTERN", false), time);
         return true;
     }
 
@@ -292,7 +248,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         int y,
         Gtk.SelectionData data,
         uint target_type,
-        uint time_
+        uint time
     ) {
         var pattern = ((Pattern[]) data.get_data ())[0];
         var center = cairo_to_drawable (new Point (x, y));
@@ -301,7 +257,14 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
 
         on_pointer_move_xy (x, y);
 
-        Gtk.drag_finish (ctx, true, false, time_);
+        Gtk.drag_finish (ctx, true, false, time);
+    }
+
+    private void trigger_redraw () {
+        var window = get_window ();
+        if (window != null) {
+            window.invalidate_rect (null, false);
+        }
     }
 }
 
