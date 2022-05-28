@@ -34,12 +34,44 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     construct {
+        var library_expander = create_library_expander_button ();
+        pack_start (library_expander);
         var tools = create_tool_buttons ();
         pack_start (tools);
         var clear = create_clear_button ();
         pack_start (clear);
         var menu = create_menu ();
         pack_end (menu);
+    }
+
+    private Gtk.Revealer create_library_expander_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "accessories-dictionary",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("Show Patterns library")
+        };
+        btn.clicked.connect (() => {
+            state.library_position = 360;
+        });
+
+        var revealer = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
+            child = btn
+        };
+        state.bind_property (
+            "library-position",
+            revealer,
+            "reveal-child",
+            BindingFlags.SYNC_CREATE | BindingFlags.DEFAULT,
+            (binding, srcval, ref targetval) => {
+                var position = (int) srcval;
+                targetval.set_boolean (position == 0);
+                return true;
+            }
+        );
+
+        return revealer;
     }
 
     private Gtk.ButtonBox create_tool_buttons () {
@@ -107,6 +139,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             layout_style = Gtk.ButtonBoxStyle.EXPAND,
             expand = false,
             valign = Gtk.Align.CENTER,
+            margin_start = 16,
             margin_end = 16
         };
 

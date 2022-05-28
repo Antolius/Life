@@ -32,7 +32,7 @@ public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
 
     construct {
         var content = new Gtk.Grid ();
-        var label = new Gtk.Label (_("Patterns library"));
+        var label = new Gtk.Label (_("Patterns Library"));
         label.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
         content.attach (label, 0, 0);
 

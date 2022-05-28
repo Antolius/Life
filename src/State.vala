@@ -30,6 +30,7 @@ public class Life.State : Object, Scaleable {
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
+    public int library_position { get; set; }
 
     public Drawable drawable { get; construct; }
     public Editable editable { get; construct; }
