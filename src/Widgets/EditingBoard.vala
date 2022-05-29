@@ -29,6 +29,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     private bool is_pressing = false;
     private Gee.List<SelectionArea> select_area =
         new Gee.LinkedList<SelectionArea> ();
+    private SelectionArea? starting_select_area = null;
 
     public EditingBoard (State state) {
         base (state, state.drawable);
@@ -117,6 +118,11 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         if (new_cursor_position != cursor_position) {
             if (is_pressing) {
                 if (state.active_tool == State.Tool.POINTER) {
+                    if (starting_select_area != null) {
+                        select_area.add (starting_select_area);
+                        starting_select_area = null;
+                    }
+
                     if (!select_area.is_empty) {
                         var selection = select_area.last ();
                         selection.expand_to (new_cursor_position);
@@ -158,14 +164,15 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
             }
 
             var point = cairo_to_drawable (new Point (cairo_x, cairo_y));
-            var selection = new SelectionArea (point);
-            select_area.add (selection);
+            starting_select_area = new SelectionArea (point);
         } else if (state.active_tool == State.Tool.PENCIL) {
             state.editable.set_alive (cursor_position, true);
             select_area.clear ();
+            starting_select_area = null;
         } else if (state.active_tool == State.Tool.ERASER) {
             state.editable.set_alive (cursor_position, false);
             select_area.clear ();
+            starting_select_area = null;
         }
 
         trigger_redraw ();
