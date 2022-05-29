@@ -61,12 +61,13 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
 
         append (new Gtk.SeparatorMenuItem ());
 
-        var copy_item = create_item (
-            _("Copy Selection"),
-            selection_exists
-        );
+        var copy_item = create_item (_("Copy"), selection_exists);
         copy_item.activate.connect (copy_selection);
         append (copy_item);
+
+        var cut_item = create_item (_("Cut"), selection_exists);
+        cut_item.activate.connect (cut_selection);
+        append (cut_item);
 
         var atom = Gdk.Atom.intern_static_string (Constants.SHAPES);
         var clipboard_full = state.clipboard.wait_is_target_available (atom);
@@ -157,8 +158,22 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
     }
 
     private void copy_selection () {
+        copy_to_clipboard (extract_shape_selections ());
+    }
+
+    private void cut_selection () {
+        var shape_selections = extract_shape_selections ();
+        var copy_succeeded = copy_to_clipboard (shape_selections);
+        if (copy_succeeded) {
+            foreach (var shape_select in shape_selections) {
+                fill_rect (shape_select.select, false);
+            }
+        }
+    }
+
+    private bool copy_to_clipboard (Gee.List<ShapeSelection> shape_selections) {
         Gee.List<ShapeSelection>* pointer = new Gee.LinkedList<ShapeSelection> ();
-        foreach (var shape in extract_shape_selections ()) {
+        foreach (var shape in shape_selections) {
             pointer->add (shape);
         }
 
@@ -180,6 +195,8 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
         if (!copy_succeeded) {
             warning ("Copy failed!");
         }
+
+        return copy_succeeded;
     }
 
     private void paste_selection () {
