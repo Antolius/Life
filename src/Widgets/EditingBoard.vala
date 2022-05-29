@@ -21,7 +21,7 @@
 public class Life.Widgets.EditingBoard : DrawingBoard {
 
     public const Gtk.TargetEntry[] TARGET_ENTRIES = {
-        {"PATTERN", Gtk.TargetFlags.SAME_APP | Gtk.TargetFlags.OTHER_WIDGET, 0}
+        {Constants.PATTERN, Gtk.TargetFlags.SAME_APP | Gtk.TargetFlags.OTHER_WIDGET, 0}
     };
 
     public State state { get; set; }
@@ -74,9 +74,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     protected override void apply_highlights (Cairo.Context ctx) {
         var ac = color_palette.accent_color;
 
-        if (cursor_position != null
-            && (state.active_tool == State.Tool.PENCIL
-            || state.active_tool == State.Tool.ERASER)) {
+        if (cursor_position != null) {
             ctx.set_source_rgba (ac.red, ac.green, ac.blue, ac.alpha / 2);
             var top_left = drawable_to_cairo (cursor_position);
             ctx.rectangle (
@@ -238,7 +236,8 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private bool on_drag_drop (Gdk.DragContext ctx, int x, int y, uint time) {
-        Gtk.drag_get_data (this, ctx, Gdk.Atom.intern ("PATTERN", false), time);
+        var pattern_atom = Gdk.Atom.intern_static_string (Constants.PATTERN);
+        Gtk.drag_get_data (this, ctx, pattern_atom, time);
         return true;
     }
 

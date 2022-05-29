@@ -110,7 +110,7 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
         board.drag_data_get.connect ((ctx, data, info, time_) => {
             var pattern_data = new uchar[(sizeof (Pattern))];
             ((Pattern[])pattern_data)[0] = pattern;
-            var pattern_atom = Gdk.Atom.intern ("PATTERN", false);
+            var pattern_atom = Gdk.Atom.intern_static_string (Constants.PATTERN);
             data.set (pattern_atom, 0, pattern_data);
         });
 

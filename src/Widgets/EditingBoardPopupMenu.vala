@@ -20,6 +20,10 @@
 
 public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
 
+    public const Gtk.TargetEntry[] TARGET_ENTRIES = {
+        {Constants.SHAPES, Gtk.TargetFlags.SAME_APP | Gtk.TargetFlags.OTHER_WIDGET, 0}
+    };
+
     public State state { get; construct; }
     public Point drawable_click_point { get; construct; }
     public Gee.List<Rectangle> select_rects { get; construct; }
@@ -64,10 +68,9 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
         copy_item.activate.connect (copy_selection);
         append (copy_item);
 
-        var paste_item = create_item (
-            _("Paste"),
-            true // TODO: check if copy buffer is full
-        );
+        var atom = Gdk.Atom.intern_static_string (Constants.SHAPES);
+        var clipboard_full = state.clipboard.wait_is_target_available (atom);
+        var paste_item = create_item (_("Paste"), clipboard_full);
         paste_item.activate.connect (paste_selection);
         append (paste_item);
 
@@ -154,76 +157,120 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
     }
 
     private void copy_selection () {
-        // TODO: implement
+        Gee.List<ShapeSelection>* pointer = new Gee.LinkedList<ShapeSelection> ();
+        foreach (var shape in extract_shape_selections ()) {
+            pointer->add (shape);
+        }
+
+        var copy_succeeded = state.clipboard.set_with_data (
+            TARGET_ENTRIES,
+            (_clipboard, selection_data, info, _pointer) => {
+                var shapes_ptr = (Gee.List<ShapeSelection>*) _pointer;
+                var shapes_data = new uint8[(sizeof (Gee.List<ShapeSelection>))];
+                ((Gee.List<ShapeSelection>[])shapes_data)[0] = shapes_ptr;
+                var atom = Gdk.Atom.intern_static_string (Constants.SHAPES);
+                selection_data.set (atom, 0, shapes_data);
+            },
+            (_clipboard, _pointer) => {
+                delete (Gee.List<ShapeSelection>*) _pointer;
+            },
+            pointer
+        );
+
+        if (!copy_succeeded) {
+            warning ("Copy failed!");
+        }
     }
 
     private void paste_selection () {
-        // TODO: implement
+        var atom = Gdk.Atom.intern_static_string (Constants.SHAPES);
+        var data = state.clipboard.wait_for_contents (atom);
+        if (data == null) {
+            warning ("Could not find shapes in clipboard!");
+            return;
+        }
+
+        var shape_selections = ((Gee.List<ShapeSelection>[]) data.get_data ())[0];
+        var min_x = int.MAX;
+        var min_y = int.MAX;
+        var max_x = int.MIN;
+        var max_y = int.MIN;
+        foreach (var shape_select in shape_selections) {
+            var select = shape_select.select;
+            min_x = int.min (min_x, (int) select.bottom_left.x);
+            min_y = int.min (min_y, (int) select.bottom_left.y);
+            max_x = int.max (max_x, (int) select.top_rigth ().x);
+            max_y = int.max (max_y, (int) select.top_rigth ().y);
+        }
+        var dif_x = drawable_click_point.x - min_x - ((max_x - min_x) / 2);
+        var dif_y = drawable_click_point.y - min_y - ((max_y - min_y) / 2);
+
+        foreach (var shape_select in shape_selections) {
+            var center = shape_select.select.center ()
+                .x_add (dif_x)
+                .y_add (dif_y);
+            draw_shape_at_point (center, shape_select.shape);
+        }
+
+        drawable_updated ();
     }
 
     private void flip_horizontally () {
-        var shapes = extract_selected_shapes ();
-        for (var i = 0; i < shapes.size; i++) {
-            var select = select_rects[i];
-            var shape = shapes[i];
-
-            shape.flip_horizontally ();
-            draw_shape_at_point (select.center (), shape);
+        var shape_selections = extract_shape_selections ();
+        foreach (var shape_select in shape_selections) {
+            shape_select.shape.flip_horizontally ();
+            var center = shape_select.select.center ();
+            draw_shape_at_point (center, shape_select.shape);
         }
 
         drawable_updated ();
     }
 
     private void flip_vertically () {
-        var shapes = extract_selected_shapes ();
-        for (var i = 0; i < shapes.size; i++) {
-            var select = select_rects[i];
-            var shape = shapes[i];
-
-            shape.flip_vertically ();
-            draw_shape_at_point (select.center (), shape);
+        var shape_selections = extract_shape_selections ();
+        foreach (var shape_select in shape_selections) {
+            shape_select.shape.flip_vertically ();
+            var center = shape_select.select.center ();
+            draw_shape_at_point (center, shape_select.shape);
         }
 
         drawable_updated ();
     }
 
     private void rotate_clockwise () {
-        var shapes = extract_selected_shapes ();
-        for (var i = 0; i < shapes.size; i++) {
-            var select = select_rects[i];
-            var shape = shapes[i];
-
-            shape.rotate_clockwise ();
-            fill_rect (select, false);
-            draw_shape_at_point (select.center (), shape, false);
+        var shape_selections = extract_shape_selections ();
+        foreach (var shape_select in shape_selections) {
+            shape_select.shape.rotate_clockwise ();
+            fill_rect (shape_select.select, false);
+            var center = shape_select.select.center ();
+            draw_shape_at_point (center, shape_select.shape, false);
         }
 
         drawable_updated ();
     }
 
     private void rotate_counter_clockwise () {
-        var shapes = extract_selected_shapes ();
-        for (var i = 0; i < shapes.size; i++) {
-            var select = select_rects[i];
-            var shape = shapes[i];
-
-            shape.rotate_counter_clockwise ();
-            fill_rect (select, false);
-            draw_shape_at_point (select.center (), shape, false);
+        var shape_selections = extract_shape_selections ();
+        foreach (var shape_select in shape_selections) {
+            shape_select.shape.rotate_counter_clockwise ();
+            fill_rect (shape_select.select, false);
+            var center = shape_select.select.center ();
+            draw_shape_at_point (center, shape_select.shape, false);
         }
 
         drawable_updated ();
     }
 
-    private Gee.List<Shape> extract_selected_shapes () {
+    private Gee.List<ShapeSelection> extract_shape_selections () {
         var drawable = state.drawable;
-        var shapes = new Gee.LinkedList<Shape> ();
+        var shape_selections = new Gee.LinkedList<ShapeSelection> ();
 
         foreach (var select in select_rects) {
-            shapes.add (new CutoutShape (select, drawable));
+            var shape = new CutoutShape (select, drawable);
+            shape_selections.add (new ShapeSelection (select, shape));
         }
 
-        return shapes;
+        return shape_selections;
     }
 
     private void fill_rect (Rectangle rect, bool alive) {
@@ -243,5 +290,14 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
     ) {
         var editable = state.editable;
         shape.write_into (editable, center_point, override_with_dead_cells);
+    }
+}
+
+private class Life.Widgets.ShapeSelection : Object {
+    public Rectangle select { get; construct; }
+    public Shape shape { get; construct; }
+
+    public ShapeSelection (Rectangle select, Shape shape) {
+        Object (select: select, shape: shape);
     }
 }
