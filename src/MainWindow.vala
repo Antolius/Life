@@ -115,6 +115,13 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         paned.notify["position"].connect (() => {
             Application.settings.set ("pane-position", "i", paned.position);
         });
+        paned.bind_property (
+            "position",
+            state,
+            "library_position",
+            BindingFlags.SYNC_CREATE | BindingFlags.BIDIRECTIONAL
+        );
+
         var library = new Widgets.LibraryPane (state);
         paned.pack1 (library, false, true);
         var simulation = new Widgets.SimulationPane (state);

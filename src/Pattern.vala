@@ -68,6 +68,7 @@ public class Life.Pattern : Shape {
                 row.add (false);
             }
         }
+
         return pattern;
     }
 }

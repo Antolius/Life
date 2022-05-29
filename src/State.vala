@@ -20,8 +20,8 @@
 
 public class Life.State : Object, Scaleable {
 
-    public const int MIN_SPEED = 1;       // 1 generation per second
-    public const int MAX_SPEED = 20;      // 20 generations per second
+    public const int MIN_SPEED = 1;      //  1 generation per second
+    public const int MAX_SPEED = 20;     // 20 generations per second
     public const int DEFAULT_SPEED = 10; // 10 generations per second
     public const int DEFAULT_SCALE = 10; // 10px per board point
 
@@ -30,7 +30,9 @@ public class Life.State : Object, Scaleable {
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
+    public int library_position { get; set; }
 
+    public Gtk.Clipboard clipboard { get; construct; }
     public Drawable drawable { get; construct; }
     public Editable editable { get; construct; }
     public Stepper stepper { private get; construct; }
@@ -43,6 +45,9 @@ public class Life.State : Object, Scaleable {
 
     public State (Drawable drawable, Editable editable, Stepper stepper) {
         Object (
+            clipboard: Gtk.Clipboard.get (
+                Gdk.Atom.intern_static_string (Constants.APP_CLIPBOARD)
+            ),
             drawable: drawable,
             editable: editable,
             stepper: stepper

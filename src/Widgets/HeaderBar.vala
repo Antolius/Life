@@ -34,6 +34,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     construct {
+        var library_expander = create_library_expander_button ();
+        pack_start (library_expander);
         var tools = create_tool_buttons ();
         pack_start (tools);
         var clear = create_clear_button ();
@@ -42,7 +44,53 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         pack_end (menu);
     }
 
+    private Gtk.Revealer create_library_expander_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "accessories-dictionary",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("Show Patterns library")
+        };
+        btn.clicked.connect (() => {
+            state.library_position = 360;
+        });
+
+        var revealer = new Gtk.Revealer () {
+            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
+            child = btn
+        };
+        state.bind_property (
+            "library-position",
+            revealer,
+            "reveal-child",
+            BindingFlags.SYNC_CREATE | BindingFlags.DEFAULT,
+            (binding, srcval, ref targetval) => {
+                var position = (int) srcval;
+                targetval.set_boolean (position == 0);
+                return true;
+            }
+        );
+
+        return revealer;
+    }
+
     private Gtk.ButtonBox create_tool_buttons () {
+        var pointer_btn = new Gtk.ToggleButton () {
+            active = state.active_tool == State.Tool.POINTER,
+            tooltip_text = _("Select cells"),
+            image = new Gtk.Image.from_icon_name (
+                "pointer",
+                Gtk.IconSize.BUTTON
+            )
+        };
+        var pointer_conn_id = pointer_btn.toggled.connect (() => {
+            if (pointer_btn.active) {
+                state.active_tool = State.Tool.POINTER;
+            } else {
+                pointer_btn.active = true;
+            }
+        });
+
         var pencil_btn = new Gtk.ToggleButton () {
             active = state.active_tool == State.Tool.PENCIL,
             tooltip_text = _("Draw live cells"),
@@ -52,9 +100,11 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             )
         };
         var pencil_conn_id = pencil_btn.toggled.connect (() => {
-            state.active_tool = pencil_btn.active
-                ? State.Tool.PENCIL
-                : State.Tool.POINTER;
+            if (pencil_btn.active) {
+                state.active_tool = State.Tool.PENCIL;
+            } else {
+                pencil_btn.active = true;
+            }
         });
 
         var eraser_btn = new Gtk.ToggleButton () {
@@ -66,16 +116,21 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             )
         };
         var eraser_conn_id = eraser_btn.toggled.connect (() => {
-            state.active_tool = eraser_btn.active
-                ? State.Tool.ERASER
-                : State.Tool.POINTER;
+            if (eraser_btn.active) {
+                state.active_tool = State.Tool.ERASER;
+            } else {
+                eraser_btn.active = true;
+            }
         });
 
         state.notify["active-tool"].connect (() => {
+            SignalHandler.block (pointer_btn, pointer_conn_id);
             SignalHandler.block (pencil_btn, pencil_conn_id);
             SignalHandler.block (eraser_btn, eraser_conn_id);
+            pointer_btn.active = state.active_tool == State.Tool.POINTER;
             pencil_btn.active = state.active_tool == State.Tool.PENCIL;
             eraser_btn.active = state.active_tool == State.Tool.ERASER;
+            SignalHandler.unblock (pointer_btn, pointer_conn_id);
             SignalHandler.unblock (pencil_btn, pencil_conn_id);
             SignalHandler.unblock (eraser_btn, eraser_conn_id);
         });
@@ -84,9 +139,11 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             layout_style = Gtk.ButtonBoxStyle.EXPAND,
             expand = false,
             valign = Gtk.Align.CENTER,
+            margin_start = 16,
             margin_end = 16
         };
 
+        box.add (pointer_btn);
         box.add (pencil_btn);
         box.add (eraser_btn);
         return box;

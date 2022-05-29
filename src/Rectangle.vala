@@ -36,6 +36,17 @@ public class Life.Rectangle : Object {
         return new Point (bottom_left.x + width, bottom_left.y + height);
     }
 
+    public Point top_left () {
+        return new Point (bottom_left.x, bottom_left.y + height);
+    }
+
+    public Point center () {
+        return new Point (
+            bottom_left.x + (int) Math.floor (width * 0.5),
+            bottom_left.y + (int) Math.ceil (height * 0.5)
+        );
+    }
+
     public bool contains (Point point) {
         return bottom_left.x <= point.x && point.x < bottom_left.x + width
             && bottom_left.y <= point.y && point.y < bottom_left.y + height;
@@ -50,5 +61,12 @@ public class Life.Rectangle : Object {
             && other_top_right.x > this_bottom_left.x
             && other_bottom_left.y < this_top_right.y
             && other_top_right.y > this_bottom_left.y;
+    }
+
+    public string to_string () {
+        return ("[%s/%s]".printf (
+            bottom_left.to_string (),
+            top_rigth ().to_string ()
+        ));
     }
 }

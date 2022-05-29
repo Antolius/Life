@@ -20,4 +20,7 @@
 
 namespace Life.Constants {
     public const string SIMPLE_NAME = _("Life");
+    public const string APP_CLIPBOARD = PROJECT_NAME + "-Clipboard";
+    public const string PATTERN = "PATTERN";
+    public const string SHAPES = "SHAPES";
 }

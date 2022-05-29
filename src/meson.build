@@ -12,6 +12,7 @@ build_constants = configure_file (
 common_sources = files (
     'Application.vala',
     'ColorPalette.vala',
+    'CutoutShape.vala',
     'Drawable.vala',
     'Editable.vala',
     'MainWindow.vala',
@@ -41,6 +42,7 @@ common_sources = files (
     'Stats/Timer.vala',
     'Widgets/DrawingBoard.vala',
     'Widgets/EditingBoard.vala',
+    'Widgets/EditingBoardPopupMenu.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/LibraryPane.vala',
     'Widgets/PatternLibraryRow.vala',
