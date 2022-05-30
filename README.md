@@ -42,7 +42,7 @@ hr.from.josipantolis.life
 You may need to install elementary flatpak runtime first. You can do that with:
 
 ```sh
-flatpak install --user io.elementary.Sdk//6.1
+flatpak install --user io.elementary.Sdk//7
 ```
 
 To install Life use `flatpak-builder`, from project root directory run:

@@ -23,26 +23,26 @@
     https://arpitbhayani.me/blogs/lfu
     http://dhruvbird.com/lfu.pdf
 */
-public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
+public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value> {
 
     public int max_size { get; construct; }
 
-    private Gee.Map<K, Node<K, V>> key_to_node;
-    private Frequency<K, V>* freq_head;
-    private CacheLoader<K, V> cache_loader_func;
+    private Gee.Map<Key, Node<Key, Value>> key_to_node;
+    private Frequency<Key, Value>* freq_head;
+    private CacheLoader<Key, Value> cache_loader_func;
 
     public LfuCache (
         int max_size,
-        owned CacheLoader<K, V> cache_loader_func,
-        owned Gee.HashDataFunc<K>? key_hash_func = null,
-        owned Gee.EqualDataFunc<K>? key_equal_func = null,
-        owned Gee.EqualDataFunc<V>? value_equal_func = null
+        owned CacheLoader<Key, Value> cache_loader_func,
+        owned Gee.HashDataFunc<Key>? key_hash_func = null,
+        owned Gee.EqualDataFunc<Key>? key_equal_func = null,
+        owned Gee.EqualDataFunc<Value>? value_equal_func = null
     ) {
         Object (max_size : max_size);
 
         this.cache_loader_func = (owned) cache_loader_func;
         freq_head = null;
-        key_to_node = new Gee.HashMap<K, Node<K, V>> (
+        key_to_node = new Gee.HashMap<Key, Node<Key, Value>> (
             (owned) key_hash_func,
             (owned) key_equal_func,
             (n1, n2) => {
@@ -50,18 +50,18 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
                     return true;
                 }
 
-                Gee.EqualDataFunc<K> key_eq;
+                Gee.EqualDataFunc<Key> key_eq;
                 if (key_equal_func != null) {
                     key_eq = (k1, k2) => key_equal_func (k1, k2);
                 } else {
-                    key_eq = Gee.Functions.get_equal_func_for (typeof (K));
+                    key_eq = Gee.Functions.get_equal_func_for (typeof (Key));
                 }
 
-                Gee.EqualDataFunc<V> val_eq;
+                Gee.EqualDataFunc<Value> val_eq;
                 if (value_equal_func != null) {
                     val_eq = (v1, v2) => value_equal_func (v1, v2);
                 } else {
-                    val_eq = Gee.Functions.get_equal_func_for (typeof (V));
+                    val_eq = Gee.Functions.get_equal_func_for (typeof (Value));
                 }
 
                 return key_eq (n1.key, n2.key) && val_eq (n1.val, n2.val);
@@ -69,7 +69,7 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
         );
     }
 
-    public override V? access (K key) {
+    public override Value? access (Key key) {
         lock (key_to_node) {
             var node = key_to_node[key];
             if (node == null) {
@@ -93,7 +93,7 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
             var future_freq = old_freq->next;
             if (future_freq == null || future_freq->freq != old_freq->freq + 1) {
                 // Create next incremental frequency
-                future_freq = new Frequency<K, V> (old_freq->freq + 1);
+                future_freq = new Frequency<Key, Value> (old_freq->freq + 1);
                 future_freq->prev = old_freq;
                 future_freq->next = old_freq->next;
                 if (old_freq->next != null) {
@@ -121,7 +121,7 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
         }
     }
 
-    private Node<K, V> insert (K key, V val)
+    private Node<Key, Value> insert (Key key, Value val)
         requires (!key_to_node.has_key (key))
         ensures (result.parent != null)
         ensures (result.parent->freq == 1)
@@ -139,16 +139,16 @@ public class Life.HashLife.Cache.LfuCache<K, V> : LoadingCache<K, V> {
 
         // Ensure freq_head has frequency 1:
         if (freq_head == null) {
-            freq_head = new Frequency<K, V> ();
+            freq_head = new Frequency<Key, Value> ();
         } else if (freq_head->freq != 1) {
-            Frequency<K, V>* new_freq = new Frequency<K, V> ();
+            Frequency<Key, Value>* new_freq = new Frequency<Key, Value> ();
             new_freq->next = freq_head;
             freq_head->prev = new_freq;
             freq_head = new_freq;
         }
         assert (freq_head->freq == 1);
 
-        var node = new Node<K, V> (key, val);
+        var node = new Node<Key, Value> (key, val);
         freq_head->add_node (node);
         key_to_node[key] = node;
         size++;
