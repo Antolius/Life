@@ -18,7 +18,7 @@
 *
 */
 
-public class Life.HashLife.Cache.MonitoredCache<K, V> : LoadingCache<K, V> {
+public class Life.HashLife.Cache.MonitoredCache<Key, Value> : LoadingCache<Key, Value> {
 
     public string name { get; construct; }
     public Stats.Counter access_counter { get; construct; }
@@ -26,11 +26,11 @@ public class Life.HashLife.Cache.MonitoredCache<K, V> : LoadingCache<K, V> {
     public Stats.Counter evict_counter { get; construct; }
     public Stats.Gauge elements_counter { get; construct; }
 
-    private LoadingCache<K, V> base_cache;
+    private LoadingCache<Key, Value> base_cache;
 
     public MonitoredCache (
         string name,
-        LoadingCache<K, V> base_cache
+        LoadingCache<Key, Value> base_cache
     ) {
         Object (
             name: name,
@@ -56,7 +56,7 @@ public class Life.HashLife.Cache.MonitoredCache<K, V> : LoadingCache<K, V> {
         connect_signals ();
     }
 
-    public override V? access (K key) {
+    public override Value? access (Key key) {
         access_counter.inc ();
         return base_cache.access (key);
     }
