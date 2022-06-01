@@ -31,6 +31,8 @@ public class Life.State : Object, Scaleable {
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
     public int library_position { get; set; }
+    public string title { get; set; default = "Untitled*"; }
+    public File? file { get; set; }
 
     public Gtk.Clipboard clipboard { get; construct; }
     public Drawable drawable { get; construct; }
@@ -91,6 +93,56 @@ public class Life.State : Object, Scaleable {
             stats += stat;
         }
         return stats;
+    }
+
+    public async void open (string path) {
+        try {
+            file = File.new_for_path (path);
+            var stream = yield file.read_async ();
+            var pattern = yield Pattern.from_plaintext (stream);
+            title = pattern.name;
+            clear ();
+            pattern.write_into_centered (editable);
+            simulation_updated ();
+        } catch (Error err) {
+            print ("Message: \"%s\"\n", err.message);
+            print ("Error code: %d\n", err.code);
+            print ("Error domain: %" + uint32.FORMAT + "\n", err.domain);
+        }
+    }
+
+    public async bool save (string? new_path = null) {
+        if (new_path != null) {
+            var new_path_with_suffix = new_path;
+            if (!new_path_with_suffix.has_suffix (".cells")) {
+                new_path_with_suffix += ".cells";
+            }
+
+            file = File.new_for_path (new_path_with_suffix);
+            var filename = file.get_basename ();
+            title = filename.substring (0, filename.length - 6);
+        }
+
+        if (file == null) {
+            return false;
+        }
+
+        try {
+            var stream = yield file.replace_readwrite_async (
+                null,
+                false,
+                FileCreateFlags.REPLACE_DESTINATION
+            );
+            var shape = new CutoutShape.entire (drawable);
+            var pattern = Pattern.from_shape (title, shape);
+            pattern.write_as_plaintext (stream.output_stream);
+            return true;
+        } catch (Error err) {
+            print ("Message: \"%s\"\n", err.message);
+            print ("Error code: %d\n", err.code);
+            print ("Error domain: %" + uint32.FORMAT + "\n", err.domain);
+            return false;
+        }
     }
 
     private void restart_ticking () {

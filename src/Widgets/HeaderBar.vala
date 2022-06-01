@@ -27,21 +27,29 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             state: state,
             has_subtitle: false,
             show_close_button: true,
-            title: Constants.SIMPLE_NAME,
             hexpand: true,
             halign: Gtk.Align.FILL
         );
     }
 
     construct {
+        state.bind_property ("title", this, "title", BindingFlags.SYNC_CREATE);
+
         var library_expander = create_library_expander_button ();
         pack_start (library_expander);
-        var tools = create_tool_buttons ();
-        pack_start (tools);
-        var clear = create_clear_button ();
-        pack_start (clear);
+        var open_button = create_open_button ();
+        pack_start (open_button);
+        var save_button = create_save_button ();
+        pack_start (save_button);
+        var save_as_button = create_save_as_button ();
+        pack_start (save_as_button);
+
         var menu = create_menu ();
         pack_end (menu);
+        var clear = create_clear_button ();
+        pack_end (clear);
+        var tools = create_tool_buttons ();
+        pack_end (tools);
     }
 
     private Gtk.Revealer create_library_expander_button () {
@@ -49,7 +57,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "accessories-dictionary",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            tooltip_text = _("Show Patterns library")
+            tooltip_text = _("Show Patterns library"),
+            margin_end = 16
         };
         btn.clicked.connect (() => {
             state.library_position = 360;
@@ -72,6 +81,102 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         );
 
         return revealer;
+    }
+
+    private Gtk.Button create_open_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "document-open",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("Open a file")
+        };
+
+        btn.clicked.connect (() => {
+            var dialog = new Gtk.FileChooserNative (
+                null,
+                null,
+                Gtk.FileChooserAction.OPEN,
+                null,
+                null
+            ) {
+                filter = cells_filter ()
+            };
+
+            var res = dialog.run ();
+            if (res == Gtk.ResponseType.ACCEPT) {
+                var filename = dialog.get_filename ();
+                state.open.begin (filename);
+            }
+        });
+
+        return btn;
+    }
+
+    private Gtk.Button create_save_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "document-save",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("Save this file")
+        };
+
+        btn.clicked.connect (() => {
+            if (state.file != null) {
+                state.save.begin ();
+            } else {
+
+                var dialog = new Gtk.FileChooserNative (
+                    null,
+                    null,
+                    Gtk.FileChooserAction.SAVE,
+                    null,
+                    null
+                ) {
+                    filter = cells_filter (),
+                    do_overwrite_confirmation = true
+                };
+                dialog.set_current_name (state.title + ".cells");
+
+                var res = dialog.run ();
+                if (res == Gtk.ResponseType.ACCEPT) {
+                    var filename = dialog.get_filename ();
+                    state.save.begin (filename);
+                }
+            }
+        });
+
+        return btn;
+    }
+
+    private Gtk.Button create_save_as_button () {
+        var btn = new Gtk.Button.from_icon_name (
+            "document-save-as",
+            Gtk.IconSize.LARGE_TOOLBAR
+        ) {
+            tooltip_text = _("Save this file with a different name")
+        };
+
+        btn.clicked.connect (() => {
+            var dialog = new Gtk.FileChooserNative (
+                null,
+                null,
+                Gtk.FileChooserAction.SAVE,
+                null,
+                null
+            ) {
+                filter = cells_filter (),
+                do_overwrite_confirmation = true
+            };
+            dialog.set_current_name ("New " + state.title + ".cells");
+
+            var res = dialog.run ();
+            if (res == Gtk.ResponseType.ACCEPT) {
+                var filename = dialog.get_filename ();
+                state.save.begin (filename);
+            }
+        });
+
+        return btn;
     }
 
     private Gtk.ButtonBox create_tool_buttons () {
@@ -154,7 +259,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "edit-clear",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            tooltip_text = _("Clear all")
+            tooltip_text = _("Clear all"),
+            margin_end = 16
         };
         btn.clicked.connect (state.clear);
         return btn;
@@ -212,5 +318,12 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
                 child = menu_grid
             }
         };
+    }
+
+    private Gtk.FileFilter cells_filter () {
+        var cells_filter = new Gtk.FileFilter ();
+        cells_filter.set_filter_name (_("Cells files"));
+        cells_filter.add_pattern ("*.cells");
+        return cells_filter;
     }
 }

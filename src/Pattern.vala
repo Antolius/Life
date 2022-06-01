@@ -25,11 +25,21 @@ public class Life.Pattern : Shape {
     public string? description { get; set; }
     public string? link { get; set; }
 
+    public static Pattern from_shape (string name, Shape shape) {
+        var pattern = new Pattern ();
+        pattern.name = name;
+        pattern._width_points = shape._width_points;
+        pattern._height_points = shape._height_points;
+        pattern.data = shape.data;
+        return pattern;
+    }
+
     public static async Pattern from_plaintext (InputStream stream) {
         var pattern = new Pattern ();
 
         var ds = new DataInputStream (stream);
         string? line = null;
+        bool is_first_line = true;
 
         while (true) {
             line = yield ds.read_line_async ();
@@ -46,6 +56,8 @@ public class Life.Pattern : Shape {
                     pattern.description = line.substring ("!Description: ".length);
                 } else if (line.has_prefix ("!Link: ")) {
                     pattern.link = line.substring ("!Link: ".length);
+                } else if (is_first_line) {
+                    pattern.name = line.substring (1)._strip ();
                 }
             } else {
                 pattern._height_points++;
@@ -60,6 +72,8 @@ public class Life.Pattern : Shape {
                 }
                 pattern.data.add (row);
             }
+
+            is_first_line = false;
         }
 
         // Normalize row lengths
@@ -70,5 +84,29 @@ public class Life.Pattern : Shape {
         }
 
         return pattern;
+    }
+
+    public void write_as_plaintext (OutputStream stream) {
+        var ds = new DataOutputStream (stream);
+
+        ds.put_string ("!Name: %s\n".printf (name));
+        if (author != null) {
+            ds.put_string ("!Author: %s\n".printf (author));
+        }
+        if (description != null) {
+            ds.put_string ("!Description: %s\n".printf (description));
+        }
+        if (link != null) {
+            ds.put_string ("!Link: %s\n".printf (link));
+        }
+
+        foreach (var row in data) {
+            var builder = new StringBuilder ();
+            foreach (var cell in row) {
+                builder.append_c (cell ? 'O' : '.');
+            }
+            builder.append_c ('\n');
+            ds.put_string (builder.str);
+        }
     }
 }
