@@ -21,7 +21,7 @@
 public class Life.Widgets.SimulationPane : Gtk.Grid {
 
     public State state { get; construct; }
-    private ulong infobar_response_handler_id;
+    private ulong? infobar_response_handler_id;
 
     public SimulationPane (State state) {
         Object (
@@ -72,12 +72,15 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
             actions.remove (widget);
         }
 
-        infobar.disconnect (infobar_response_handler_id);
+        if (infobar_response_handler_id != null) {
+            infobar.disconnect (infobar_response_handler_id);
+            infobar_response_handler_id = null;
+        }
 
         if (model.action_label != null && model.action_handler != null) {
             infobar.add_button (model.action_label, 1);
 
-            infobar_response_handler_id= infobar.response.connect (id => {
+            infobar_response_handler_id = infobar.response.connect (id => {
                 infobar.revealed = false;
 
                 if (id == 1) {

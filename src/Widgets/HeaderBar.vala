@@ -203,13 +203,22 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 1, 3);
 
+        var autosave_switch = new Granite.SwitchModelButton (_("Autosave"));
+        state.bind_property (
+            "autosave",
+            autosave_switch,
+            "active",
+            BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE
+        );
+        menu_grid.attach (autosave_switch, 0, 2, 3);
+
         var stats_toggle = new Gtk.ModelButton () {
             text = _("Toggle Stats")
         };
         stats_toggle.clicked.connect (() => {
             state.showing_stats = !state.showing_stats;
         });
-        menu_grid.attach (stats_toggle, 0, 2, 3);
+        menu_grid.attach (stats_toggle, 0, 3, 3);
 
         menu_grid.show_all ();
         return new Gtk.MenuButton () {
@@ -256,8 +265,8 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var res = dialog.run ();
         if (res == Gtk.ResponseType.ACCEPT) {
-            var filename = dialog.get_filename ();
-            if (filename == null) {
+            var path = dialog.get_filename ();
+            if (path == null) {
                 state.info (new InfoModel (
                     _("No readable file was selected"),
                     Gtk.MessageType.WARNING,
@@ -267,7 +276,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
                 return;
             }
 
-            state.open.begin (filename, (obj, res) => {
+            state.open.begin (path, (obj, res) => {
                 var ok = state.open.end (res);
                 if (!ok) {
                     state.info (new InfoModel (
@@ -333,13 +342,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         ) {
             filter = cells_filter ()
         };
-        dialog.set_current_name ("New " + state.title + ".cells");
+        var filename = state.title + ".cells";
+        if (state.file != null) {
+            filename = "New " + filename;
+        }
+        dialog.set_current_name (filename);
         dialog.set_do_overwrite_confirmation (true);
 
         var res = dialog.run ();
         if (res == Gtk.ResponseType.ACCEPT) {
-            var filename = dialog.get_filename ();
-            if (filename == null) {
+            var path = dialog.get_filename ();
+            if (path == null) {
                 state.info (new InfoModel (
                     _("No writeable file was selected"),
                     Gtk.MessageType.WARNING,
@@ -349,7 +362,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
                 return;
             }
 
-            state.save.begin (filename, (obj, res) => {
+            state.save.begin (path, (obj, res) => {
                 var ok = state.save.end (res);
                 if (!ok) {
                     state.info (new Life.InfoModel (

@@ -37,8 +37,9 @@ public class Life.State : Object, Scaleable {
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
     public int library_position { get; set; }
-    public string title { get; set; default = "Untitled*"; }
+    public string title { get; set; default = "Untitled simulation*"; }
     public File? file { get; set; }
+    public bool autosave { get; set; default = true; }
 
     public Gtk.Clipboard clipboard { get; construct; }
     public Drawable drawable { get; construct; }
@@ -47,6 +48,7 @@ public class Life.State : Object, Scaleable {
     public int64 generation { get { return stepper.generation; } }
 
     private uint? timer_id;
+    private uint? autosave_debounce_timer_id;
 
     public virtual signal void simulation_updated () {}
 
@@ -75,6 +77,9 @@ public class Life.State : Object, Scaleable {
         notify["speed"].connect (() => {
             restart_ticking ();
         });
+
+        simulation_updated.connect (autosave_with_debounce);
+        load_internal_autosave ();
     }
 
     public void step_by_one () {
@@ -102,10 +107,63 @@ public class Life.State : Object, Scaleable {
         return stats;
     }
 
+    private void autosave_with_debounce () {
+        if (!autosave) {
+            return;
+        }
+
+        if (autosave_debounce_timer_id != null) {
+            GLib.Source.remove (autosave_debounce_timer_id);
+        }
+
+        var five_seconds = 1000;
+        autosave_debounce_timer_id = Timeout.add (five_seconds, () => {
+            autosave_debounce_timer_id = null;
+            do_autosave ();
+            return false;
+        });
+    }
+
+    private void do_autosave () {
+        if (!autosave) {
+            return;
+        }
+
+        var path = internal_backup_file_path ();
+        save.begin (path, (obj, res) => {
+            var ok = save.end (res);
+            if (!ok) {
+                warning ("Autosave to internal file failed!");
+            }
+        });
+
+        if (file != null && file.get_path () != path) {
+            save.begin (null, (obj, res) => {
+                var ok = save.end (res);
+                if (!ok) {
+                    warning ("Autosave to external file failed!");
+                }
+            });
+        }
+    }
+
+    private void load_internal_autosave () {
+        var path = internal_backup_file_path ();
+        open.begin (path, (obj, res) => {
+            var ok = open.end (res);
+            if (!ok) {
+                warning ("Autoload from internal file failed.");
+            }
+        });
+    }
+
     public async bool open (string path) {
         try {
-            file = File.new_for_path (path);
-            var stream = yield file.read_async ();
+            var file_to_open = File.new_for_path (path);
+            if (path != internal_backup_file_path ()) {
+                file = file_to_open;
+            }
+            var stream = yield file_to_open.read_async ();
             var pattern = yield Pattern.from_plaintext (stream);
             title = pattern.name;
             clear ();
@@ -122,39 +180,45 @@ public class Life.State : Object, Scaleable {
         }
     }
 
+    private string internal_backup_file_path () {
+        return Environment.get_user_data_dir () + "/simulation.cells";
+    }
+
     public async bool save (string? new_path = null) {
-        var saved_file_title = title;
+        var file_to_save = file;
         if (new_path != null) {
             var new_path_with_suffix = new_path;
             if (!new_path_with_suffix.has_suffix (".cells")) {
                 new_path_with_suffix += ".cells";
             }
 
-            file = File.new_for_path (new_path_with_suffix);
-            var filename = file.get_basename ();
-            saved_file_title = filename.substring (0, filename.length - 6);
+            file_to_save = File.new_for_path (new_path_with_suffix);
+            if (new_path != internal_backup_file_path ()) {
+                file = file_to_save;
+                var filename = file.get_basename ();
+                title = filename.substring (0, filename.length - 6);
+            }
         }
 
-        if (file == null) {
+        if (file_to_save == null) {
             warning ("Cannot save null file");
             return false;
         }
 
         try {
-            var stream = yield file.replace_readwrite_async (
+            var stream = yield file_to_save.replace_readwrite_async (
                 null,
                 false,
                 FileCreateFlags.REPLACE_DESTINATION
             );
             var shape = new CutoutShape.entire (drawable);
-            var pattern = Pattern.from_shape (saved_file_title, shape);
+            var pattern = Pattern.from_shape (title, shape);
             pattern.write_as_plaintext (stream.output_stream);
-            title = saved_file_title;
             return true;
         } catch (Error err) {
             warning (
                 "Failed to save file %s, %s",
-                file.get_uri (),
+                file_to_save.get_uri (),
                 print_err (err)
             );
             return false;
