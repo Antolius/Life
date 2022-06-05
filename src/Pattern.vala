@@ -34,7 +34,7 @@ public class Life.Pattern : Shape {
         return pattern;
     }
 
-    public static async Pattern from_plaintext (InputStream stream) {
+    public static async Pattern from_plaintext (InputStream stream) throws IOError {
         var pattern = new Pattern ();
 
         var ds = new DataInputStream (stream);
@@ -86,7 +86,7 @@ public class Life.Pattern : Shape {
         return pattern;
     }
 
-    public void write_as_plaintext (OutputStream stream) {
+    public void write_as_plaintext (OutputStream stream) throws IOError {
         var ds = new DataOutputStream (stream);
 
         ds.put_string ("!Name: %s\n".printf (name));

@@ -21,6 +21,7 @@
 public class Life.Widgets.SimulationPane : Gtk.Grid {
 
     public State state { get; construct; }
+    private ulong infobar_response_handler_id;
 
     public SimulationPane (State state) {
         Object (
@@ -29,6 +30,15 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
     }
 
     construct {
+        var infobar = new Gtk.InfoBar () {
+            show_close_button = true,
+            revealed = false
+        };
+        state.info.connect (model => {
+            update_infobar (infobar, model);
+        });
+        attach (infobar, 0, 0);
+
         var board = new Widgets.EditingBoard (state);
         state.simulation_updated.connect_after (() => {
             board.queue_resize ();
@@ -42,9 +52,41 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
         var stats = new Widgets.StatsOverlay (state);
         board_overlay.add_overlay (stats);
         board_overlay.set_overlay_pass_through (stats, true);
-        attach (board_overlay, 0, 0);
+        attach (board_overlay, 0, 1);
 
         var playback_bar = new Widgets.PlaybackBar (state);
-        attach (playback_bar, 0, 1);
+        attach (playback_bar, 0, 2);
+    }
+
+    private void update_infobar (Gtk.InfoBar infobar, InfoModel model) {
+        var content = infobar.get_content_area ();
+        foreach (var widget in content.get_children ()) {
+            content.remove (widget);
+        }
+        content.child = new Gtk.Label (model.message);
+
+        infobar.message_type = model.message_type;
+
+        var actions = infobar.get_action_area ();
+        foreach (var widget in actions.get_children ()) {
+            actions.remove (widget);
+        }
+
+        infobar.disconnect (infobar_response_handler_id);
+
+        if (model.action_label != null && model.action_handler != null) {
+            infobar.add_button (model.action_label, 1);
+
+            infobar_response_handler_id= infobar.response.connect (id => {
+                infobar.revealed = false;
+
+                if (id == 1) {
+                    model.action_handler ();
+                }
+            });
+        }
+
+        infobar.show_all ();
+        infobar.revealed = true;
     }
 }

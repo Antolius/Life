@@ -1,4 +1,4 @@
-/*
+    /*
 * Copyright 2022 Josip Antoliš. (https://josipantolis.from.hr)
 *
 * This program is free software; you can redistribute it and/or
@@ -19,6 +19,12 @@
 */
 
 public class Life.State : Object, Scaleable {
+
+    public enum Tool {
+        POINTER,
+        PENCIL,
+        ERASER,
+    }
 
     public const int MIN_SPEED = 1;      //  1 generation per second
     public const int MAX_SPEED = 20;     // 20 generations per second
@@ -42,8 +48,9 @@ public class Life.State : Object, Scaleable {
 
     private uint? timer_id;
 
-    public virtual signal void simulation_updated () {
-    }
+    public virtual signal void simulation_updated () {}
+
+    public signal void info (InfoModel model) {}
 
     public State (Drawable drawable, Editable editable, Stepper stepper) {
         Object (
@@ -95,7 +102,7 @@ public class Life.State : Object, Scaleable {
         return stats;
     }
 
-    public async void open (string path) {
+    public async bool open (string path) {
         try {
             file = File.new_for_path (path);
             var stream = yield file.read_async ();
@@ -104,14 +111,19 @@ public class Life.State : Object, Scaleable {
             clear ();
             pattern.write_into_centered (editable);
             simulation_updated ();
+            return true;
         } catch (Error err) {
-            print ("Message: \"%s\"\n", err.message);
-            print ("Error code: %d\n", err.code);
-            print ("Error domain: %" + uint32.FORMAT + "\n", err.domain);
+            warning (
+                "Failed to open file %s, %s",
+                path,
+                print_err (err)
+            );
+            return false;
         }
     }
 
     public async bool save (string? new_path = null) {
+        var saved_file_title = title;
         if (new_path != null) {
             var new_path_with_suffix = new_path;
             if (!new_path_with_suffix.has_suffix (".cells")) {
@@ -120,10 +132,11 @@ public class Life.State : Object, Scaleable {
 
             file = File.new_for_path (new_path_with_suffix);
             var filename = file.get_basename ();
-            title = filename.substring (0, filename.length - 6);
+            saved_file_title = filename.substring (0, filename.length - 6);
         }
 
         if (file == null) {
+            warning ("Cannot save null file");
             return false;
         }
 
@@ -134,13 +147,16 @@ public class Life.State : Object, Scaleable {
                 FileCreateFlags.REPLACE_DESTINATION
             );
             var shape = new CutoutShape.entire (drawable);
-            var pattern = Pattern.from_shape (title, shape);
+            var pattern = Pattern.from_shape (saved_file_title, shape);
             pattern.write_as_plaintext (stream.output_stream);
+            title = saved_file_title;
             return true;
         } catch (Error err) {
-            print ("Message: \"%s\"\n", err.message);
-            print ("Error code: %d\n", err.code);
-            print ("Error domain: %" + uint32.FORMAT + "\n", err.domain);
+            warning (
+                "Failed to save file %s, %s",
+                file.get_uri (),
+                print_err (err)
+            );
             return false;
         }
     }
@@ -166,9 +182,36 @@ public class Life.State : Object, Scaleable {
         timer_id = null;
     }
 
-    public enum Tool {
-        POINTER,
-        PENCIL,
-        ERASER,
+    private string print_err (Error err) {
+        var format = "Error Message: \"%s\", Error code: %d, Error domain: %";
+        format += uint32.FORMAT;
+        return (format).printf (
+            err.message,
+            err.code,
+            err.domain
+        );
     }
 }
+
+public class Life.InfoModel : Object {
+
+    public string message;
+    public Gtk.MessageType message_type;
+    public string? action_label;
+    public InfoActionHandler? action_handler;
+
+    public InfoModel (
+        string message,
+        Gtk.MessageType message_type,
+        string? action_label = null,
+        owned InfoActionHandler? action_handler = null
+    ) {
+        this.message = message;
+        this.message_type = message_type;
+        this.action_label = action_label;
+        this.action_handler = (owned) action_handler;
+    }
+
+}
+
+public delegate void Life.InfoActionHandler ();
