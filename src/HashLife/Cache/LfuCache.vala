@@ -18,11 +18,6 @@
 *
 */
 
-
-/* Refferences:
-    https://arpitbhayani.me/blogs/lfu
-    http://dhruvbird.com/lfu.pdf
-*/
 public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value> {
 
     public int max_size { get; construct; }
