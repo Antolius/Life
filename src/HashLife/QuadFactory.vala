@@ -46,7 +46,11 @@ public class Life.HashLife.QuadFactory : Object {
         );
     }
 
-    public Quad create_quad (Quad nw, Quad ne, Quad se, Quad sw) {
+    public Quad create_quad (Quad nw, Quad ne, Quad se, Quad sw)
+        requires (nw.level == ne.level)
+        requires (ne.level == se.level)
+        requires (se.level == sw.level)
+        ensures (result.level == sw.level + 1) {
         var key = new Quaduplet<Quad> (nw, ne, se, sw);
         return quads_cache.access (key);
     }
@@ -59,7 +63,8 @@ public class Life.HashLife.QuadFactory : Object {
         return empty_quads_cache.access (level);
     }
 
-    private Quad _create_empty_quad (uint32 level) {
+    private Quad _create_empty_quad (uint32 level)
+        ensures (result.level == level) {
         if (level == 0) {
             return dead;
         }

@@ -167,7 +167,7 @@ public class Life.State : Object, Scaleable {
             var pattern = yield Pattern.from_plaintext (stream);
             title = pattern.name;
             clear ();
-            pattern.write_into_centered (editable);
+            pattern.write_into_centered (editable, false);
             simulation_updated ();
             return true;
         } catch (Error err) {

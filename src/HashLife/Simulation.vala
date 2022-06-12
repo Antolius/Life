@@ -58,15 +58,16 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     // step forward 2^speed generations
-    public void step_with_speed (int speed) {
-        assert (speed <= MAX_SPEED);
-        assert (speed >= 0);
+    public void step_with_speed (int speed)
+        requires (speed <= MAX_SPEED)
+        requires (speed >= 0) {
+        lock (tree) {
+            grow_tree_if_necessery (speed);
+            tree.root = step_quad_with_speed (tree.root, speed);
+            tree.grow ();
 
-        grow_tree_if_necessery (speed);
-        tree.root = step_quad_with_speed (tree.root, speed);
-        tree.grow ();
-
-        generation += ((int64) 1) << speed;
+            generation += ((int64) 1) << speed;
+        }
     }
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
@@ -74,13 +75,12 @@ public class Life.HashLife.Simulation : Object, Stepper {
         return steps_cache.access (key);
     }
 
-    private Quad _step_quad_with_speed (Pair<Quad, int> quad_and_speed) {
+    private Quad _step_quad_with_speed (Pair<Quad, int> quad_and_speed)
+        requires (quad_and_speed.first.level >= 2)
+        requires (quad_and_speed.second >= 0)
+        requires (quad_and_speed.second <= quad_and_speed.first.level - 2) {
         var quad = quad_and_speed.first;
         var speed = quad_and_speed.second;
-
-        assert (quad.level >= 2);
-        assert (speed >= 0);
-        assert (speed <= quad.level - 2);
 
         if (tree._is_empty (quad)) {
             return factory.create_empty_quad (quad.level - 1);
@@ -93,9 +93,9 @@ public class Life.HashLife.Simulation : Object, Stepper {
         return recursivelly_step_quad_with_speed (quad, speed);
     }
 
-    private Quad step_two_quad_by_one (Quad two_quad) {
-        assert (two_quad.level == 2);
-
+    private Quad step_two_quad_by_one (Quad two_quad)
+        requires (two_quad.level == 2)
+        ensures (result.level == 1) {
         /*
             nw_nw   nw_ne   ne_nw   ne_ne
             nw_sw  *nw_se* *ne_sw*  ne_se
@@ -136,9 +136,9 @@ public class Life.HashLife.Simulation : Object, Stepper {
     private Quad step_zero_quad_with_neighbours_count (
         Quad zero_quad,
         int number_of_live_neighbours
-    ) {
-        assert (zero_quad.level == 0);
-
+    )
+        requires (zero_quad.level == 0)
+        ensures (result.level == 0) {
         if (number_of_live_neighbours == 2) {
             return zero_quad;
         }
@@ -192,7 +192,8 @@ public class Life.HashLife.Simulation : Object, Stepper {
         }
     }
 
-    private void grow_tree_if_necessery (int speed) {
+    private void grow_tree_if_necessery (int speed)
+        ensures (tree.level >= speed + 2) {
         if (!tree.has_empty_edges ()) {
             tree.grow ();
             tree.grow ();

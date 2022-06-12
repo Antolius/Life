@@ -36,11 +36,6 @@ public class Life.CutoutShape : Shape {
 
             data[(int) j][(int) i] = true;
         });
-
-        bool trimmed_outline = false;
-        do {
-            trimmed_outline = trim_outer_dead_cells ();
-        } while (trimmed_outline);
     }
 
     public CutoutShape (Rectangle boundary, Drawable larger_drawable) {

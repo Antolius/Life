@@ -73,8 +73,11 @@ public class Life.Shape : Object, Drawable {
         draw (full_rec, draw_action);
     }
 
-    public void write_into_centered (Editable editable) {
-        write_into (editable, new Point (0, 0));
+    public void write_into_centered (
+        Editable editable,
+        bool override_with_dead_cells = true
+    ) {
+        write_into (editable, new Point (0, 0), override_with_dead_cells);
     }
 
     public void write_into (
@@ -82,16 +85,15 @@ public class Life.Shape : Object, Drawable {
         Point center,
         bool override_with_dead_cells = true
     ) {
+        editable.resize_to_encompass (width_points, height_points);
         for (int j = 0; j < height_points; j++) {
+            var row = data[j];
+            var point_y = (height_points / 2) - j - 1 + center.y;
             for (int i = 0; i < width_points; i++) {
-                var point = new Point (
-                    i - (width_points / 2) + center.x,
-                    (height_points / 2) - j - 1 + center.y
-                );
-                var row = data[j];
                 var is_alive = row[i];
                 if (is_alive || override_with_dead_cells) {
-                    editable.set_alive (point, is_alive);
+                    var point_x = i - (width_points / 2) + center.x;
+                    editable.set_alive (new Point (point_x, point_y), is_alive);
                 }
             }
         }

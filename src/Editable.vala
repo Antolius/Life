@@ -24,4 +24,5 @@ public interface Life.Editable : Object {
     public abstract void set_alive (Point p, bool alive);
     public abstract bool is_empty ();
     public abstract void clear_all ();
+    public abstract void resize_to_encompass (int64 max_width, int64 max_height);
 }
