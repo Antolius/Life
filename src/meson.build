@@ -30,6 +30,7 @@ common_sources = files (
     'HashLife/Cache/MonitoredCache.vala',
     'HashLife/Cache/Node.vala',
     'HashLife/Pair.vala',
+    'HashLife/ParallelStepper.vala',
     'HashLife/Quad.vala',
     'HashLife/QuadFactory.vala',
     'HashLife/Quadruplet.vala',

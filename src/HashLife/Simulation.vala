@@ -67,6 +67,7 @@ public class Life.HashLife.Simulation : Object, Stepper {
             tree.grow ();
 
             generation += ((int64) 1) << speed;
+            step_completed ();
         }
     }
 

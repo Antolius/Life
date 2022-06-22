@@ -45,7 +45,8 @@ public class Life.Application : Gtk.Application {
             var factory = new HashLife.QuadFactory ();
             var tree = new HashLife.QuadTree (8, factory);
             var simulation = new HashLife.Simulation (tree, factory);
-            var state = new State (tree, tree, simulation);
+            var parallel_stepper = new HashLife.ParallelStepper (simulation);
+            var state = new State (tree, tree, parallel_stepper);
             var window = new MainWindow (state, this);
             window.show ();
         }

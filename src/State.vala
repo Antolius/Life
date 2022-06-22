@@ -1,4 +1,4 @@
-    /*
+/*
 * Copyright 2022 Josip Antoliš. (https://josipantolis.from.hr)
 *
 * This program is free software; you can redistribute it and/or
@@ -48,6 +48,7 @@ public class Life.State : Object, Scaleable {
     public int64 generation { get { return stepper.generation; } }
 
     private uint? timer_id;
+    private bool is_stepping = false;
     private uint? autosave_debounce_timer_id;
 
     public virtual signal void simulation_updated () {}
@@ -78,13 +79,14 @@ public class Life.State : Object, Scaleable {
             restart_ticking ();
         });
 
+        stepper.step_completed.connect (on_step_completed);
         simulation_updated.connect (autosave_with_debounce);
         load_internal_autosave ();
     }
 
     public void step_by_one () {
+        is_stepping = true;
         stepper.step ();
-        simulation_updated ();
     }
 
     public void clear () {
@@ -236,7 +238,10 @@ public class Life.State : Object, Scaleable {
         }
 
         timer_id = Timeout.add (1000 / speed, () => {
-            step_by_one ();
+            if (!is_stepping) {
+                step_by_one ();
+            }
+
             return Source.CONTINUE;
         });
     }
@@ -244,6 +249,11 @@ public class Life.State : Object, Scaleable {
     private void stop_ticking () {
         Source.remove (timer_id);
         timer_id = null;
+    }
+
+    private void on_step_completed () {
+        is_stepping = false;
+        simulation_updated ();
     }
 
     private string print_err (Error err) {
