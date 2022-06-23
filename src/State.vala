@@ -31,38 +31,48 @@ public class Life.State : Object, Scaleable {
     public const int DEFAULT_SPEED = 10; // 10 generations per second
     public const int DEFAULT_SCALE = 10; // 10px per board point
 
+    // Managers to delegate functionality to
+    public Gtk.Clipboard clipboard { get; construct; }
+    public Drawable drawable { get; construct; }
+    public Editable editable { get; construct; }
+    public Stepper stepper { private get; construct; }
+    public FileManager file_manager { private get; construct; }
+
+    // State of the app
     public override int scale { get; set; default = DEFAULT_SCALE; }
     public int speed { get; set; default = DEFAULT_SPEED; }
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
     public int library_position { get; set; }
-    public string title { get; set; default = "Untitled simulation*"; }
-    public File? file { get; set; }
+    public string title { get; set; default = Pattern.DEFAULT_NAME; }
     public bool autosave { get; set; default = true; }
 
-    public Gtk.Clipboard clipboard { get; construct; }
-    public Drawable drawable { get; construct; }
-    public Editable editable { get; construct; }
-    public Stepper stepper { private get; construct; }
+    // Derived state
+    public File? file { get { return file_manager.open_file; } }
     public int64 generation { get { return stepper.generation; } }
+
+    // Signals for state changes
+    public virtual signal void simulation_updated () {}
+    public signal void info (InfoModel model) {}
 
     private uint? timer_id;
     private bool is_stepping = false;
-    private uint? autosave_debounce_timer_id;
 
-    public virtual signal void simulation_updated () {}
-
-    public signal void info (InfoModel model) {}
-
-    public State (Drawable drawable, Editable editable, Stepper stepper) {
+    public State (
+        Drawable drawable,
+        Editable editable,
+        Stepper stepper,
+        FileManager file_manager
+    ) {
         Object (
             clipboard: Gtk.Clipboard.get (
                 Gdk.Atom.intern_static_string (Constants.APP_CLIPBOARD)
             ),
             drawable: drawable,
             editable: editable,
-            stepper: stepper
+            stepper: stepper,
+            file_manager: file_manager
         );
     }
 
@@ -80,8 +90,8 @@ public class Life.State : Object, Scaleable {
         });
 
         stepper.step_completed.connect (on_step_completed);
-        simulation_updated.connect (autosave_with_debounce);
-        load_internal_autosave ();
+        simulation_updated.connect (trigger_autosave);
+        open_autosave ();
     }
 
     public void step_by_one () {
@@ -109,120 +119,42 @@ public class Life.State : Object, Scaleable {
         return stats;
     }
 
-    private void autosave_with_debounce () {
-        if (!autosave) {
-            return;
-        }
-
-        if (autosave_debounce_timer_id != null) {
-            GLib.Source.remove (autosave_debounce_timer_id);
-        }
-
-        var five_seconds = 1000;
-        autosave_debounce_timer_id = Timeout.add (five_seconds, () => {
-            autosave_debounce_timer_id = null;
-            do_autosave ();
-            return false;
-        });
-    }
-
-    private void do_autosave () {
-        if (!autosave) {
-            return;
-        }
-
-        var path = internal_backup_file_path ();
-        save.begin (path, (obj, res) => {
-            var ok = save.end (res);
-            if (!ok) {
-                warning ("Autosave to internal file failed!");
-            }
-        });
-
-        if (file != null && file.get_path () != path) {
-            save.begin (null, (obj, res) => {
-                var ok = save.end (res);
-                if (!ok) {
-                    warning ("Autosave to external file failed!");
-                }
-            });
+    private void trigger_autosave () {
+        if (autosave) {
+            file_manager.autosave_with_debounce ();
         }
     }
 
-    private void load_internal_autosave () {
-        var path = internal_backup_file_path ();
-        open.begin (path, (obj, res) => {
-            var ok = open.end (res);
-            if (!ok) {
-                warning ("Autoload from internal file failed.");
+    private void open_autosave () {
+        file_manager.open_internal_autosave.begin ((obj, res) => {
+            var pattern = file_manager.open_internal_autosave.end (res);
+            if (pattern != null) {
+                title = pattern.name;
+                stepper.generation = 0;
+                simulation_updated ();
             }
         });
     }
 
     public async bool open (string path) {
-        try {
-            var file_to_open = File.new_for_path (path);
-            if (path != internal_backup_file_path ()) {
-                file = file_to_open;
-            }
-            var stream = yield file_to_open.read_async ();
-            var pattern = yield Pattern.from_plaintext (stream);
+        is_playing = false;
+        var pattern = yield file_manager.open (path);
+        if (pattern != null) {
             title = pattern.name;
-            clear ();
-            pattern.write_into_centered (editable, false);
+            stepper.generation = 0;
             simulation_updated ();
             return true;
-        } catch (Error err) {
-            warning (
-                "Failed to open file %s, %s",
-                path,
-                print_err (err)
-            );
+        } else {
             return false;
         }
-    }
-
-    private string internal_backup_file_path () {
-        return Environment.get_user_data_dir () + "/simulation.cells";
     }
 
     public async bool save (string? new_path = null) {
-        var file_to_save = file;
-        if (new_path != null) {
-            var new_path_with_suffix = new_path;
-            if (!new_path_with_suffix.has_suffix (".cells")) {
-                new_path_with_suffix += ".cells";
-            }
-
-            file_to_save = File.new_for_path (new_path_with_suffix);
-            if (new_path != internal_backup_file_path ()) {
-                file = file_to_save;
-                var filename = file.get_basename ();
-                title = filename.substring (0, filename.length - 6);
-            }
-        }
-
-        if (file_to_save == null) {
-            warning ("Cannot save null file");
-            return false;
-        }
-
-        try {
-            var stream = yield file_to_save.replace_readwrite_async (
-                null,
-                false,
-                FileCreateFlags.REPLACE_DESTINATION
-            );
-            var shape = new CutoutShape.entire (drawable);
-            var pattern = Pattern.from_shape (title, shape);
-            pattern.write_as_plaintext (stream.output_stream);
+        var pattern = yield file_manager.save (new_path);
+        if (pattern != null) {
+            title = pattern.name;
             return true;
-        } catch (Error err) {
-            warning (
-                "Failed to save file %s, %s",
-                file_to_save.get_uri (),
-                print_err (err)
-            );
+        } else {
             return false;
         }
     }
@@ -247,23 +179,15 @@ public class Life.State : Object, Scaleable {
     }
 
     private void stop_ticking () {
-        Source.remove (timer_id);
-        timer_id = null;
+        if (timer_id != null) {
+            Source.remove (timer_id);
+            timer_id = null;
+        }
     }
 
     private void on_step_completed () {
         is_stepping = false;
         simulation_updated ();
-    }
-
-    private string print_err (Error err) {
-        var format = "Error Message: \"%s\", Error code: %d, Error domain: %";
-        format += uint32.FORMAT;
-        return (format).printf (
-            err.message,
-            err.code,
-            err.domain
-        );
     }
 }
 

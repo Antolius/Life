@@ -15,6 +15,7 @@ common_sources = files (
     'CutoutShape.vala',
     'Drawable.vala',
     'Editable.vala',
+    'FileManager.vala',
     'MainWindow.vala',
     'Pattern.vala',
     'Point.vala',

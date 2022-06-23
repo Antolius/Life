@@ -73,6 +73,16 @@ public class Life.Shape : Object, Drawable {
         draw (full_rec, draw_action);
     }
 
+    public void draw_optimal (
+        OptimizedDrawAction draw_action,
+        out int64 optimal_width,
+        out int64 optimal_height
+    ) {
+        optimal_width = width_points;
+        optimal_height = height_points;
+        draw_entire ((p) => draw_action (p, width_points, height_points));
+    }
+
     public void write_into_centered (
         Editable editable,
         bool override_with_dead_cells = true

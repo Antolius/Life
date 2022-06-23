@@ -20,7 +20,9 @@
 
 public class Life.Pattern : Shape {
 
-    public string name { get; set; default = "unnamed pattern"; }
+    public const string DEFAULT_NAME = "Untitled";
+
+    public string name { get; set; }
     public string? author { get; set; }
     public string? description { get; set; }
     public string? link { get; set; }
@@ -34,12 +36,14 @@ public class Life.Pattern : Shape {
         return pattern;
     }
 
-    public static async Pattern from_plaintext (InputStream stream) throws IOError {
+    public static async Pattern from_plaintext (
+        InputStream stream,
+        string filename = DEFAULT_NAME
+    ) throws IOError {
         var pattern = new Pattern ();
 
         var ds = new DataInputStream (stream);
         string? line = null;
-        bool is_first_line = true;
 
         while (true) {
             line = yield ds.read_line_async ();
@@ -56,8 +60,6 @@ public class Life.Pattern : Shape {
                     pattern.description = line.substring ("!Description: ".length);
                 } else if (line.has_prefix ("!Link: ")) {
                     pattern.link = line.substring ("!Link: ".length);
-                } else if (is_first_line) {
-                    pattern.name = line.substring (1)._strip ();
                 }
             } else {
                 pattern._height_points++;
@@ -72,8 +74,10 @@ public class Life.Pattern : Shape {
                 }
                 pattern.data.add (row);
             }
+        }
 
-            is_first_line = false;
+        if (pattern.name == null) {
+            pattern.name = filename;
         }
 
         // Normalize row lengths
@@ -86,10 +90,12 @@ public class Life.Pattern : Shape {
         return pattern;
     }
 
-    public void write_as_plaintext (OutputStream stream) throws IOError {
+    public async void write_as_plaintext (OutputStream stream) throws IOError {
         var ds = new DataOutputStream (stream);
 
-        ds.put_string ("!Name: %s\n".printf (name));
+        if (name != DEFAULT_NAME) {
+            ds.put_string ("!Name: %s\n".printf (name));
+        }
         if (author != null) {
             ds.put_string ("!Author: %s\n".printf (author));
         }
@@ -99,6 +105,8 @@ public class Life.Pattern : Shape {
         if (link != null) {
             ds.put_string ("!Link: %s\n".printf (link));
         }
+        Idle.add (write_as_plaintext.callback);
+        yield;
 
         foreach (var row in data) {
             var builder = new StringBuilder ();
@@ -107,6 +115,8 @@ public class Life.Pattern : Shape {
             }
             builder.append_c ('\n');
             ds.put_string (builder.str);
+            Idle.add (write_as_plaintext.callback);
+            yield;
         }
     }
 }

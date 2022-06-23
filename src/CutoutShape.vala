@@ -21,11 +21,16 @@
 public class Life.CutoutShape : Shape {
 
     public CutoutShape.entire (Drawable drawable) {
-        _width_points = drawable.width_points;
-        _height_points = drawable.height_points;
-        zero_out_cells ();
+        bool is_zeroed_out = false;
 
-        drawable.draw_entire ((point_in_dravable) => {
+        drawable.draw_optimal ((point_in_dravable, max_width, max_height) => {
+            if (!is_zeroed_out) {
+                _width_points = max_width;
+                _height_points = max_height;
+                zero_out_cells ();
+                is_zeroed_out = true;
+            }
+
             var relative_point_in_cutout = new Point (
                 point_in_dravable.x + (width_points / 2),
                 point_in_dravable.y + (height_points / 2)
@@ -35,7 +40,11 @@ public class Life.CutoutShape : Shape {
             var j = height_points - relative_point_in_cutout.y - 1;
 
             data[(int) j][(int) i] = true;
-        });
+        }, out _width_points, out _height_points);
+
+        if (!is_zeroed_out) {
+            zero_out_cells ();
+        }
     }
 
     public CutoutShape (Rectangle boundary, Drawable larger_drawable) {
