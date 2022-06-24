@@ -25,11 +25,7 @@ public interface Life.Drawable : Object {
 
     public abstract void draw (Rectangle drawing_area, DrawAction draw_action);
     public abstract void draw_entire (DrawAction draw_action);
-    public abstract void draw_optimal (
-        OptimizedDrawAction draw_action,
-        out int64 optimal_width,
-        out int64 optimal_height
-    );
+    public abstract void draw_optimal (OptimizedDrawAction draw_action);
 
     public abstract Stats.Metric[] stats ();
 }

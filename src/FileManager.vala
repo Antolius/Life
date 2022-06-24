@@ -36,6 +36,11 @@ public class Life.FileManager : Object {
         );
     }
 
+    public bool autosave_exists () {
+        var internal_autosave_file = internal_autosave_file ();
+        return internal_autosave_file.query_exists ();
+    }
+
     public async Pattern? open (string path) {
         var source_file = File.new_for_path (path);
         var pattern = yield read (source_file);
@@ -91,10 +96,11 @@ public class Life.FileManager : Object {
     }
 
     private async void do_autosave () {
-        var autosave_file = internal_autosave_file ();
         if (open_file != null) {
-            yield write (open_file, autosave_file);
+            yield write (open_file);
+            yield try_to_clean_up_autosave ();
         } else {
+            var autosave_file = internal_autosave_file ();
             yield write (autosave_file);
         }
     }
@@ -121,43 +127,25 @@ public class Life.FileManager : Object {
         }
     }
 
-    private async Pattern? write (
-        File primary_destination_file,
-        File? secondary_destination_file = null
-    ) {
-        var shape = new CutoutShape.entire (drawable);
-        var title = file_name_without_extension (primary_destination_file);
-        var pattern = Pattern.from_shape (title, shape);
-
-        var ok = yield write_pattern_into_file (pattern, primary_destination_file);
-
-        if (secondary_destination_file != null) {
-            yield write_pattern_into_file (pattern, secondary_destination_file);
-        }
-
-        return ok ? pattern : null;
-    }
-
-    private async bool write_pattern_into_file (
-        Pattern pattern,
-        File destination_file
-    ) {
+    private async Pattern? write (File destination_file) {
         try {
+            var shape = new CutoutShape.entire (drawable);
+            var title = file_name_without_extension (destination_file);
+            var pattern = Pattern.from_shape (title, shape);
             var stream = yield destination_file.replace_readwrite_async (
                 null,
                 false,
                 FileCreateFlags.REPLACE_DESTINATION
             );
             yield pattern.write_as_plaintext (stream.output_stream);
-            return true;
+            return pattern;
         } catch (Error err) {
             warning (
-                "Failed to write pattern %s into file %s, %s",
-                pattern.name,
+                "Failed to write pattern into file %s, %s",
                 destination_file.get_uri (),
                 print_err (err)
             );
-            return false;
+            return null;
         }
     }
 
@@ -172,6 +160,19 @@ public class Life.FileManager : Object {
         }
 
         return filename;
+    }
+
+    private async void try_to_clean_up_autosave () {
+        var autosave_file = internal_autosave_file ();
+        try {
+            yield autosave_file.delete_async ();
+        } catch (Error err) {
+            debug (
+                "Failed to delete old autosave file %s, %s",
+                autosave_file.get_uri (),
+                print_err (err)
+            );
+        }
     }
 
     private File internal_autosave_file () {

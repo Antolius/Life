@@ -154,19 +154,12 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         draw (root.rect (bottom_left ()), draw_action);
     }
 
-    public void draw_optimal (
-        OptimizedDrawAction draw_action,
-        out int64 optimal_width,
-        out int64 optimal_height
-    ) {
+    public void draw_optimal (OptimizedDrawAction draw_action) {
         lock (root) {
             var trimmed_root = root;
             while (_has_empty_edges (trimmed_root) && trimmed_root.level > 2) {
                 trimmed_root = center (trimmed_root);
             }
-
-            optimal_width = trimmed_root.width;
-            optimal_height = trimmed_root.width;
 
             var bottom_left = new Point (
                 -trimmed_root.width / 2,

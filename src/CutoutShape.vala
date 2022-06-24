@@ -40,9 +40,12 @@ public class Life.CutoutShape : Shape {
             var j = height_points - relative_point_in_cutout.y - 1;
 
             data[(int) j][(int) i] = true;
-        }, out _width_points, out _height_points);
+        });
 
         if (!is_zeroed_out) {
+            _width_points = 1;
+            _height_points = 1;
+            zero_out_cells ();
             zero_out_cells ();
         }
     }
