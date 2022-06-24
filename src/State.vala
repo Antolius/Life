@@ -47,6 +47,8 @@ public class Life.State : Object, Scaleable {
     public int library_position { get; set; }
     public string title { get; set; default = Pattern.DEFAULT_NAME; }
     public bool autosave { get; set; default = true; }
+    public bool saving_in_progress { get; set; default = false; }
+    public bool opening_in_progress { get; set; default = false; }
 
     // Derived state
     public File? file { get { return file_manager.open_file; } }
@@ -121,13 +123,17 @@ public class Life.State : Object, Scaleable {
 
     private void trigger_autosave () {
         if (autosave) {
+            saving_in_progress = true;
             file_manager.autosave_with_debounce ();
+            saving_in_progress = false;
         }
     }
 
     private void open_autosave () {
+        opening_in_progress = true;
         file_manager.open_internal_autosave.begin ((obj, res) => {
             var pattern = file_manager.open_internal_autosave.end (res);
+            opening_in_progress = false;
             if (pattern != null) {
                 title = pattern.name;
                 stepper.generation = 0;
@@ -137,8 +143,10 @@ public class Life.State : Object, Scaleable {
     }
 
     public async bool open (string path) {
+        opening_in_progress = true;
         is_playing = false;
         var pattern = yield file_manager.open (path);
+        opening_in_progress = false;
         if (pattern != null) {
             title = pattern.name;
             stepper.generation = 0;
@@ -150,7 +158,9 @@ public class Life.State : Object, Scaleable {
     }
 
     public async bool save (string? new_path = null) {
+        saving_in_progress = true;
         var pattern = yield file_manager.save (new_path);
+        saving_in_progress = false;
         if (pattern != null) {
             title = pattern.name;
             return true;

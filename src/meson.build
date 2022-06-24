@@ -45,6 +45,7 @@ common_sources = files (
     'Widgets/DrawingBoard.vala',
     'Widgets/EditingBoard.vala',
     'Widgets/EditingBoardPopupMenu.vala',
+    'Widgets/FileControls.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/LibraryPane.vala',
     'Widgets/PatternLibraryRow.vala',

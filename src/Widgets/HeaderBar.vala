@@ -33,8 +33,6 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     construct {
-        state.bind_property ("title", this, "title", BindingFlags.SYNC_CREATE);
-
         var library_expander = create_library_expander_button ();
         pack_start (library_expander);
         var tools = create_tool_buttons ();
@@ -42,14 +40,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         var clear = create_clear_button ();
         pack_start (clear);
 
+        custom_title = new FileControls (state);
+
         var menu = create_menu ();
         pack_end (menu);
-        var save_as_button = create_save_as_button ();
-        pack_end (save_as_button);
-        var save_button = create_save_button ();
-        pack_end (save_button);
-        var open_button = create_open_button ();
-        pack_end (open_button);
     }
 
     private Gtk.Revealer create_library_expander_button () {
@@ -60,9 +54,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             tooltip_text = _("Show Patterns library"),
             margin_end = 16
         };
-        btn.clicked.connect (() => {
-            state.library_position = 360;
-        });
+        btn.clicked.connect (animate_library_pane_opening);
 
         var revealer = new Gtk.Revealer () {
             transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
@@ -81,6 +73,14 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         );
 
         return revealer;
+    }
+
+    private async void animate_library_pane_opening () {
+        while (state.library_position < 360) {
+            state.library_position += 120;
+            Idle.add (animate_library_pane_opening.callback);
+            yield;
+        }
     }
 
 
@@ -179,7 +179,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var scale_label = new Gtk.Label (_("Scale")) {
             justify = Gtk.Justification.RIGHT,
-            valign = Gtk.Align.START,
+            valign = Gtk.Align.CENTER,
             margin = 8,
         };
         menu_grid.attach (scale_label, 0, 0, 1, 1);
@@ -230,149 +230,5 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
                 child = menu_grid
             }
         };
-    }
-
-    private Gtk.FileFilter cells_filter () {
-        var cells_filter = new Gtk.FileFilter ();
-        cells_filter.set_filter_name (_("Cells files"));
-        cells_filter.add_pattern ("*.cells");
-        return cells_filter;
-    }
-
-
-    private Gtk.Button create_open_button () {
-        var btn = new Gtk.Button.from_icon_name (
-            "document-open",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            tooltip_text = _("Open a file")
-        };
-
-        btn.clicked.connect (on_open_button_clicked);
-        return btn;
-    }
-
-    private void on_open_button_clicked () {
-        var dialog = new Gtk.FileChooserNative (
-            null,
-            null,
-            Gtk.FileChooserAction.OPEN,
-            null,
-            null
-        ) {
-            filter = cells_filter ()
-        };
-
-        var res = dialog.run ();
-        if (res == Gtk.ResponseType.ACCEPT) {
-            var path = dialog.get_filename ();
-            if (path == null) {
-                state.info (new InfoModel (
-                    _("No readable file was selected"),
-                    Gtk.MessageType.WARNING,
-                    _("Try opening another file"),
-                    () => on_open_button_clicked ()
-                ));
-                return;
-            }
-
-            state.open.begin (path, (obj, res) => {
-                var ok = state.open.end (res);
-                if (!ok) {
-                    state.info (new InfoModel (
-                        _("Failed to open file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try opening another file"),
-                        () => on_open_button_clicked ()
-                    ));
-                }
-            });
-        }
-    }
-
-    private Gtk.Button create_save_button () {
-        var btn = new Gtk.Button.from_icon_name (
-            "document-save",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            tooltip_text = _("Save this file")
-        };
-
-        btn.clicked.connect (on_save_button_clicked);
-        return btn;
-    }
-
-    private void on_save_button_clicked () {
-        if (state.file != null) {
-            state.save.begin (null, (obj, res) => {
-                var ok = state.save.end (res);
-                if (!ok) {
-                    state.info (new InfoModel (
-                        _("Failed to save current file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try saving under a new name"),
-                        () => on_save_as_button_clicked ()
-                    ));
-                }
-            });
-        } else {
-            on_save_as_button_clicked ();
-        }
-    }
-
-    private Gtk.Button create_save_as_button () {
-        var btn = new Gtk.Button.from_icon_name (
-            "document-save-as",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            tooltip_text = _("Save this file with a different name")
-        };
-
-        btn.clicked.connect (on_save_as_button_clicked);
-        return btn;
-    }
-
-    private void on_save_as_button_clicked () {
-        var dialog = new Gtk.FileChooserNative (
-            null,
-            null,
-            Gtk.FileChooserAction.SAVE,
-            null,
-            null
-        ) {
-            filter = cells_filter ()
-        };
-        var filename = state.title + ".cells";
-        if (state.file != null) {
-            filename = "New " + filename;
-        }
-        dialog.set_current_name (filename);
-        dialog.set_do_overwrite_confirmation (true);
-
-        var res = dialog.run ();
-        if (res == Gtk.ResponseType.ACCEPT) {
-            var path = dialog.get_filename ();
-            if (path == null) {
-                state.info (new InfoModel (
-                    _("No writeable file was selected"),
-                    Gtk.MessageType.WARNING,
-                    _("Try saving under a new name"),
-                    () => on_save_as_button_clicked ()
-                ));
-                return;
-            }
-
-            state.save.begin (path, (obj, res) => {
-                var ok = state.save.end (res);
-                if (!ok) {
-                    state.info (new Life.InfoModel (
-                        _("Failed to save file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try saving under a new name"),
-                        () => on_save_as_button_clicked ()
-                    ));
-                }
-            });
-        }
     }
 }

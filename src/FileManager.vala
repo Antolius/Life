@@ -29,6 +29,11 @@ public class Life.FileManager : Object {
     private uint? autosave_debounce_timer_id;
     private bool autosave_in_progress = false;
 
+    public signal void pattern_opened (Pattern pattern);
+    public signal void failed_to_open ();
+    public signal void pattern_saved (Pattern pattern);
+    public signal void failed_to_save ();
+
     public FileManager (Drawable drawable, Editable editable) {
         Object (
             drawable: drawable,
@@ -46,6 +51,9 @@ public class Life.FileManager : Object {
         var pattern = yield read (source_file);
         if (pattern != null) {
             open_file = source_file;
+            pattern_opened (pattern);
+        } else {
+            failed_to_open ();
         }
         return pattern;
     }
@@ -64,12 +72,16 @@ public class Life.FileManager : Object {
 
         if (destination_file == null) {
             warning ("Cannot save to null file");
+            failed_to_save ();
             return null;
         }
 
         var pattern = yield write (destination_file);
         if (pattern != null) {
             open_file = destination_file;
+            pattern_saved (pattern);
+        } else {
+            failed_to_save ();
         }
 
         return pattern;
