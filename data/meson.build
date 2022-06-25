@@ -33,10 +33,17 @@ install_data (
     install_dir: join_paths (get_option ('datadir'), 'glib-2.0', 'schemas')
 )
 
-# Install icons
+# Install custom file types
+install_data(
+    join_paths('custom-mime-types.xml'),
+    install_dir: join_paths(get_option('datadir'), 'mime', 'packages'),
+    rename: meson.project_name () + '.xml'
+)
 
+# Install icons
 icon_sizes = ['16', '24', '32', '48', '64', '128']
 
+# App icon
 foreach i : icon_sizes
     install_data(
         join_paths ('icons', i + '.svg'),
@@ -47,5 +54,19 @@ foreach i : icon_sizes
         join_paths ('icons', i + '.svg'),
         install_dir: join_paths (get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'apps'),
         rename: meson.project_name() + '.svg'
+    )
+endforeach
+
+# MIME type icon
+foreach i : icon_sizes
+    install_data(
+        join_paths ('icons', 'text-x-cells-' + i + '.svg'),
+        install_dir: join_paths (get_option('datadir'), 'icons', 'hicolor', i + 'x' + i, 'mimetypes'),
+        rename: meson.project_name() + '-text-x-cells.svg'
+    )
+    install_data(
+        join_paths ('icons', 'text-x-cells-' + i + '.svg'),
+        install_dir: join_paths (get_option('datadir'), 'icons', 'hicolor', i + 'x' + i + '@2', 'mimetypes'),
+        rename: meson.project_name() + '-text-x-cells.svg'
     )
 endforeach

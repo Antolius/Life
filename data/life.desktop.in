@@ -9,5 +9,6 @@ Categories=Game;Education;Science;Math
 Keywords=Conway;Game;Life;Cellular;Automaton;Automata;
 
 Icon=hr.from.josipantolis.life
-Exec=hr.from.josipantolis.life
+Exec=hr.from.josipantolis.life %U
+MimeType=x-scheme-handler/x-cells;text/x-cells;
 Terminal=false

@@ -25,7 +25,7 @@ public class Life.Application : Gtk.Application {
     public Application () {
         Object (
             application_id: Constants.PROJECT_NAME,
-            flags: ApplicationFlags.FLAGS_NONE
+            flags: ApplicationFlags.HANDLES_OPEN
         );
     }
 
@@ -34,29 +34,44 @@ public class Life.Application : Gtk.Application {
     }
 
     protected override void activate () {
-        Gtk.IconTheme.get_default ()
-            .add_resource_path ("/hr/from/josipantolis/life");
-
         unowned var existing_windows = get_windows ();
         if (existing_windows.length () > 0) {
+            warning ("Activate called, presenting existing window");
             var window = existing_windows.first ().data as MainWindow;
             window.present ();
         } else {
-            var factory = new HashLife.QuadFactory ();
-            var tree = new HashLife.QuadTree (8, factory);
-            var simulation = new HashLife.Simulation (tree, factory);
-            var parallel_stepper = new HashLife.ParallelStepper (simulation);
-            var file_manager = new FileManager (tree, tree);
-            var state = new State (tree, tree, parallel_stepper, file_manager);
-
-            var window = new MainWindow (state, this);
+            warning ("Activate called, creating a new window");
+            var window = create_new_window (null);
             window.show ();
         }
+    }
+
+    protected override void open (File[] files, string hint) {
+        foreach (var file in files) {
+            warning ("Opening file %s", file.get_path ());
+            State state;
+            var window = create_new_window (out state);
+            window.show ();
+            state.open.begin (file.get_path ());
+        }
+    }
+
+    private MainWindow create_new_window (out State? state) {
+        var factory = new HashLife.QuadFactory ();
+        var tree = new HashLife.QuadTree (8, factory);
+        var simulation = new HashLife.Simulation (tree, factory);
+        var parallel_stepper = new HashLife.ParallelStepper (simulation);
+        var file_manager = new FileManager (tree, tree);
+        state = new State (tree, tree, parallel_stepper, file_manager);
+
+        return new MainWindow (state, this);
     }
 
     public override void startup () {
         base.startup ();
         Hdy.init ();
+        Gtk.IconTheme.get_default ()
+            .add_resource_path ("/hr/from/josipantolis/life");
         foce_elementary_style ();
         link_dark_mode_settings ();
     }
