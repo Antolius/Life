@@ -93,6 +93,13 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             btn.show_all ();
         });
 
+        state.notify["saving-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         return btn;
     }
 
@@ -133,6 +140,14 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             state.is_playing = false;
             state.step_by_one ();
         });
+
+        state.notify["saving-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         return btn;
     }
 

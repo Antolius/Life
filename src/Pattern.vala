@@ -46,7 +46,7 @@ public class Life.Pattern : Shape {
         string? line = null;
 
         while (true) {
-            line = yield ds.read_line_async ();
+            line = yield ds.read_line_async (Priority.LOW);
             if (line == null) {
                 break;
             }

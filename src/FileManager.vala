@@ -119,14 +119,14 @@ public class Life.FileManager : Object {
 
     private async Pattern? read (File source_file) {
         try {
-            var stream = yield source_file.read_async ();
+            var stream = yield source_file.read_async (Priority.LOW);
             var pattern = yield Pattern.from_plaintext (
                 stream,
                 file_name_without_extension (source_file)
             );
 
             editable.clear_all ();
-            pattern.write_into_centered (editable, false);
+            yield pattern.write_into_centered (editable, false);
 
             return pattern;
         } catch (Error err) {
@@ -147,7 +147,8 @@ public class Life.FileManager : Object {
             var stream = yield destination_file.replace_readwrite_async (
                 null,
                 false,
-                FileCreateFlags.REPLACE_DESTINATION
+                FileCreateFlags.REPLACE_DESTINATION,
+                Priority.LOW
             );
             yield pattern.write_as_plaintext (stream.output_stream);
             return pattern;
@@ -177,7 +178,7 @@ public class Life.FileManager : Object {
     private async void try_to_clean_up_autosave () {
         var autosave_file = internal_autosave_file ();
         try {
-            yield autosave_file.delete_async ();
+            yield autosave_file.delete_async (Priority.LOW);
         } catch (Error err) {
             debug (
                 "Failed to delete old autosave file %s, %s",

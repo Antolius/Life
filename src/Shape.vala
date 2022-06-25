@@ -77,17 +77,17 @@ public class Life.Shape : Object, Drawable {
         draw_entire ((p) => draw_action (p, width_points, height_points));
     }
 
-    public void write_into_centered (
+    public async void write_into_centered (
         Editable editable,
-        bool override_with_dead_cells = true
+        bool override_with_dead_cells
     ) {
-        write_into (editable, new Point (0, 0), override_with_dead_cells);
+        yield write_into (editable, new Point (0, 0), override_with_dead_cells);
     }
 
-    public void write_into (
+    public async void write_into (
         Editable editable,
         Point center,
-        bool override_with_dead_cells = true
+        bool override_with_dead_cells
     ) {
         editable.resize_to_encompass (width_points, height_points);
         for (int j = 0; j < height_points; j++) {
@@ -100,6 +100,8 @@ public class Life.Shape : Object, Drawable {
                     editable.set_alive (new Point (point_x, point_y), is_alive);
                 }
             }
+            Idle.add (write_into.callback);
+            yield;
         }
     }
 
@@ -159,30 +161,30 @@ public class Life.Shape : Object, Drawable {
         return {};
     }
 
-    public bool trim_outer_dead_cells () {
-        var has_empty_outline = _height_points > 2 && _width_points > 2;
+    // public bool trim_outer_dead_cells () {
+    //     var has_empty_outline = _height_points > 2 && _width_points > 2;
 
-        for (var i = 0; i < height_points && has_empty_outline; i++) {
-            has_empty_outline = has_empty_outline
-                && !data[i][0] && !data[i][(int) width_points - 1];
-        }
-        for (var j = 0; j < height_points && has_empty_outline; j++) {
-            has_empty_outline = has_empty_outline
-                && !data[0][j] && !data[(int) height_points - 1][j];
-        }
+    //     for (var i = 0; i < height_points && has_empty_outline; i++) {
+    //         has_empty_outline = has_empty_outline
+    //             && !data[i][0] && !data[i][(int) width_points - 1];
+    //     }
+    //     for (var j = 0; j < height_points && has_empty_outline; j++) {
+    //         has_empty_outline = has_empty_outline
+    //             && !data[0][j] && !data[(int) height_points - 1][j];
+    //     }
 
-        if (!has_empty_outline) {
-            return false;
-        }
+    //     if (!has_empty_outline) {
+    //         return false;
+    //     }
 
-        data = data.slice (1, data.size - 1);
-        for (var i = 0; i < data.size; i++) {
-            data[i] = data[i].slice (1, data[i].size - 1);
-        }
-        _width_points-=2;
-        _height_points-=2;
-        return true;
-    }
+    //     data = data.slice (1, data.size - 1);
+    //     for (var i = 0; i < data.size; i++) {
+    //         data[i] = data[i].slice (1, data[i].size - 1);
+    //     }
+    //     _width_points-=2;
+    //     _height_points-=2;
+    //     return true;
+    // }
 
     public string to_string () {
         var res = "";

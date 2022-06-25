@@ -38,11 +38,11 @@ public class Life.Widgets.FileControls : Gtk.Bin {
         );
 
         var file_operation_indicator = new Gtk.Spinner () {
-            tooltip_text = _("Saving…")
+            tooltip_text = _("Saving to a file…")
         };
         state.notify["saving-in-progress"].connect (() => {
             if (state.saving_in_progress) {
-                file_operation_indicator.tooltip_text = _("Saving…");
+                file_operation_indicator.tooltip_text = _("Saving to a file…");
                 file_operation_indicator.show_all ();
                 file_operation_indicator.start ();
             } else {
@@ -52,7 +52,7 @@ public class Life.Widgets.FileControls : Gtk.Bin {
         });
         state.notify["opening-in-progress"].connect (() => {
             if (state.opening_in_progress) {
-                file_operation_indicator.tooltip_text = _("Opening…");
+                file_operation_indicator.tooltip_text = _("Opening a file…");
                 file_operation_indicator.show_all ();
                 file_operation_indicator.start ();
             } else {
@@ -80,13 +80,22 @@ public class Life.Widgets.FileControls : Gtk.Bin {
         menu_box.pack_start (save_as_button);
         menu_box.show_all ();
 
+        state.notify["saving-in-progress"].connect (() => {
+            var sensitive = !state.saving_in_progress && !state.opening_in_progress;
+            open_button.sensitive = sensitive;
+            save_button.sensitive = sensitive;
+            save_as_button.sensitive = sensitive;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            var sensitive = !state.saving_in_progress && !state.opening_in_progress;
+            open_button.sensitive = sensitive;
+            save_button.sensitive = sensitive;
+            save_as_button.sensitive = sensitive;
+        });
+
         menu_popover = new Gtk.Popover (null) {
             child = menu_box
         };
-        menu_popover.closed.connect (() => {
-            caret.icon_name = "pan-up-symbolic";
-            caret.show_all ();
-        });
 
         var title_button = new Gtk.MenuButton () {
             child = header_bar_box,
@@ -94,7 +103,11 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             popover = menu_popover
         };
         title_button.clicked.connect (() => {
-            caret.icon_name = "pan-down-symbolic";
+            caret.clear ();
+            caret.set_from_icon_name (
+                title_button.active ? "pan-up-symbolic" : "pan-down-symbolic",
+                Gtk.IconSize.MENU
+            );
             caret.show_all ();
         });
 

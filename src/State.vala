@@ -123,9 +123,7 @@ public class Life.State : Object, Scaleable {
 
     private void trigger_autosave () {
         if (autosave) {
-            saving_in_progress = true;
             file_manager.autosave_with_debounce ();
-            saving_in_progress = false;
         }
     }
 
@@ -144,6 +142,8 @@ public class Life.State : Object, Scaleable {
 
     public async bool open (string path) {
         opening_in_progress = true;
+        Idle.add (open.callback);
+        yield;
         is_playing = false;
         var pattern = yield file_manager.open (path);
         opening_in_progress = false;
@@ -159,6 +159,8 @@ public class Life.State : Object, Scaleable {
 
     public async bool save (string? new_path = null) {
         saving_in_progress = true;
+        Idle.add (save.callback);
+        yield;
         var pattern = yield file_manager.save (new_path);
         saving_in_progress = false;
         if (pattern != null) {

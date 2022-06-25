@@ -189,9 +189,20 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
                 state.clear ();
             }
 
-            pattern.write_into_centered (state.editable);
-            state.simulation_updated ();
+            pattern.write_into_centered.begin (state.editable, true, (obj, res) => {
+                pattern.write_into_centered.end (res);
+
+                state.simulation_updated ();
+            });
         });
+
+        state.notify["saving-in-progress"].connect (() => {
+            load_btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            load_btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         actions.pack_end (load_btn);
 
         board_grid.attach (actions, 0, 1);

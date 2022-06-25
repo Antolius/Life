@@ -151,6 +151,13 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             valign = Gtk.Align.CENTER
         };
 
+        state.notify["saving-in-progress"].connect (() => {
+            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         box.add (pointer_btn);
         box.add (pencil_btn);
         box.add (eraser_btn);
@@ -166,6 +173,14 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             margin_start = 16
         };
         btn.clicked.connect (state.clear);
+
+        state.notify["saving-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         return btn;
     }
 
@@ -212,13 +227,14 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         );
         menu_grid.attach (autosave_switch, 0, 2, 3);
 
-        var stats_toggle = new Gtk.ModelButton () {
-            text = _("Toggle Stats")
-        };
-        stats_toggle.clicked.connect (() => {
-            state.showing_stats = !state.showing_stats;
-        });
-        menu_grid.attach (stats_toggle, 0, 3, 3);
+        var stats_switch = new Granite.SwitchModelButton (_("Statistics"));
+        state.bind_property (
+            "showing_stats",
+            stats_switch,
+            "active",
+            BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE
+        );
+        menu_grid.attach (stats_switch, 0, 3, 3);
 
         menu_grid.show_all ();
         return new Gtk.MenuButton () {
