@@ -122,13 +122,13 @@ public class Life.Widgets.StatsOverlay : Gtk.Revealer, Stats.MetricVisitor {
         };
         stats_grid.attach (name, 0, rows_count);
 
-        var format = "Median %.2f μs\n"
-            + "75th percentile %.2f μs\n"
-            + "99th percentile %.2f μs";
+        var format = "Median %.2f ms\n"
+            + "75th percentile %.2f ms\n"
+            + "99th percentile %.2f ms";
         var txt = format.printf (
-            timer.median,
-            timer.percentile_75,
-            timer.percentile_99
+            timer.median / 1000,
+            timer.percentile_75 / 1000,
+            timer.percentile_99 / 1000
         );
         var val = new Gtk.Label (txt) {
             halign = Gtk.Align.START,

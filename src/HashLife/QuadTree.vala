@@ -22,7 +22,14 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public const uint32 MAX_LEVEL = 60;
 
-    public unowned Quad root { get; set; }
+    private unowned Quad _root;
+    public unowned Quad root {
+        get { return _root; }
+        set {
+            level_gauge.assign ((double) value.level);
+            _root = value;
+        }
+    }
     public QuadFactory factory { get; construct; }
     public int64 width_points { get { return root.width; } }
     public int64 height_points { get { return root.width; } }
@@ -31,6 +38,11 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     private Stats.Timer draw_timer = new Stats.Timer () {
         name = _("Draw timer"),
         description = _("Time spent in QuatTree's draw method.")
+    };
+
+    private Stats.Gauge level_gauge = new Stats.Gauge () {
+        name = _("Quad tree level"),
+        description = _("Level of the quad tree, indicative of its size.")
     };
 
     public QuadTree (int level = 1, QuadFactory factory = new QuadFactory ()) {
@@ -51,11 +63,15 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     // (-2, -2) | (-1, -2) || (0, -2) | (1, -2)
 
     public bool is_empty () {
-        return _is_empty (root);
+        lock (root) {
+            return _is_empty (root);
+        }
     }
 
     public bool is_alive (Point p) {
-        return _is_alive (root, bottom_left (), p);
+        lock (root) {
+            return _is_alive (root, bottom_left (), p);
+        }
     }
 
     private bool _is_alive (Quad q, Point bottom_left, Point p) {
@@ -81,11 +97,30 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         }
     }
 
-    public void set_alive (Point p, bool alive) {
-        root = _set_alive (root, bottom_left (), p, alive);
+    public void resize_to_encompass (
+        int64 max_width,
+        int64 max_height
+    )
+        ensures (root.width >= max_width)
+        ensures (root.width >= max_height) {
+        lock (root) {
+            var max = int64.max (max_width, max_height);
+            while (root.width <= max) {
+                grow ();
+            }
+        }
     }
 
-    private Quad _set_alive (Quad q, Point bottom_left, Point p, bool alive) {
+    public void set_alive (Point p, bool alive)
+        requires (root.width >= p.x.abs () / 2)
+        requires (root.width >= p.y.abs () / 2) {
+        lock (root) {
+            root = _set_alive (root, bottom_left (), p, alive);
+        }
+    }
+
+    private Quad _set_alive (Quad q, Point bottom_left, Point p, bool alive)
+        ensures (result.level == q.level) {
         if (!q.rect (bottom_left).contains (p)) {
             return q;
         }
@@ -104,21 +139,48 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public void clear_all () {
-        root = factory.create_empty_quad (level);
+        lock (root) {
+            root = factory.create_empty_quad (level);
+        }
     }
 
     public bool contains (Point p) {
-        return root.rect (bottom_left ()).contains (p);
+        lock (root) {
+            return root.rect (bottom_left ()).contains (p);
+        }
     }
 
     public void draw_entire (DrawAction draw_action) {
         draw (root.rect (bottom_left ()), draw_action);
     }
 
+    public void draw_optimal (OptimizedDrawAction draw_action) {
+        lock (root) {
+            var trimmed_root = root;
+            while (_has_empty_edges (trimmed_root) && trimmed_root.level > 2) {
+                trimmed_root = center (trimmed_root);
+            }
+
+            var bottom_left = new Point (
+                -trimmed_root.width / 2,
+                -trimmed_root.width / 2
+            );
+            var drawing_area = trimmed_root.rect (bottom_left);
+            draw (
+                drawing_area,
+                (p) => {
+                    draw_action (p, trimmed_root.width, trimmed_root.width);
+                }
+            );
+        }
+    }
+
     public void draw (Rectangle drawing_area, DrawAction draw_action) {
-        var stop_timer = draw_timer.start_timer ();
-        _draw (root, bottom_left (), drawing_area, draw_action);
-        stop_timer ();
+        lock (root) {
+            var stop_timer = draw_timer.start_timer ();
+            _draw (root, bottom_left (), drawing_area, draw_action);
+            stop_timer ();
+        }
     }
 
     public void _draw (
@@ -127,57 +189,76 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         Rectangle drawing_area,
         DrawAction draw_action
     ) {
-        if (_is_empty (q)) {
-            return;
-        }
+        lock (root) {
+            if (_is_empty (q)) {
+                return;
+            }
 
-        if (!q.rect (bottom_left).overlaps (drawing_area)) {
-            return;
-        }
+            if (!q.rect (bottom_left).overlaps (drawing_area)) {
+                return;
+            }
 
-        if (q.level == 0 && q == QuadFactory.alive) {
-            draw_action (bottom_left);
-            return;
-        }
+            if (q.level == 0 && q == QuadFactory.alive) {
+                draw_action (bottom_left);
+                return;
+            }
 
-        var w = q.width / 2;
-        _draw (q.nw, bottom_left.y_add (w), drawing_area, draw_action);
-        _draw (q.ne, bottom_left.add (w), drawing_area, draw_action);
-        _draw (q.se, bottom_left.x_add (w), drawing_area, draw_action);
-        _draw (q.sw, bottom_left, drawing_area, draw_action);
+            var w = q.width / 2;
+            _draw (q.nw, bottom_left.y_add (w), drawing_area, draw_action);
+            _draw (q.ne, bottom_left.add (w), drawing_area, draw_action);
+            _draw (q.se, bottom_left.x_add (w), drawing_area, draw_action);
+            _draw (q.sw, bottom_left, drawing_area, draw_action);
+        }
     }
 
     public bool _is_empty (Quad q) {
-        return q == factory.create_empty_quad (q.level);
+        lock (root) {
+            return q == factory.create_empty_quad (q.level);
+        }
     }
 
     public Point bottom_left () {
         return new Point (-width_points / 2, -height_points / 2);
     }
 
-    public Quad center (Quad q) {
-        assert (q.level >= 2);
-        return factory.create_quad (q.nw.se, q.ne.sw, q.se.nw, q.sw.ne);
+    public Quad center (Quad q)
+        requires (q.level >= 2)
+        ensures (result.level == q.level - 1) {
+        lock (root) {
+            return factory.create_quad (q.nw.se, q.ne.sw, q.se.nw, q.sw.ne);
+        }
     }
 
-    public Quad north (Quad q) {
-        assert (q.level >= 2);
-        return factory.create_quad (q.nw.ne, q.ne.nw, q.ne.sw, q.nw.se);
+    public Quad north (Quad q)
+        requires (q.level >= 2)
+        ensures (result.level == q.level - 1) {
+        lock (root) {
+            return factory.create_quad (q.nw.ne, q.ne.nw, q.ne.sw, q.nw.se);
+        }
     }
 
-    public Quad east (Quad q) {
-        assert (q.level >= 2);
-        return factory.create_quad (q.ne.sw, q.ne.se, q.se.ne, q.se.nw);
+    public Quad east (Quad q)
+        requires (q.level >= 2)
+        ensures (result.level == q.level - 1) {
+        lock (root) {
+            return factory.create_quad (q.ne.sw, q.ne.se, q.se.ne, q.se.nw);
+        }
     }
 
-    public Quad south (Quad q) {
-        assert (q.level >= 2);
-        return factory.create_quad (q.sw.ne, q.se.nw, q.se.sw, q.sw.se);
+    public Quad south (Quad q)
+        requires (q.level >= 2)
+        ensures (result.level == q.level - 1) {
+        lock (root) {
+            return factory.create_quad (q.sw.ne, q.se.nw, q.se.sw, q.sw.se);
+        }
     }
 
-    public Quad west (Quad q) {
-        assert (q.level >= 2);
-        return factory.create_quad (q.nw.sw, q.nw.se, q.sw.ne, q.sw.nw);
+    public Quad west (Quad q)
+        requires (q.level >= 2)
+        ensures (result.level == q.level - 1) {
+        lock (root) {
+            return factory.create_quad (q.nw.sw, q.nw.se, q.sw.ne, q.sw.nw);
+        }
     }
 
     public bool has_empty_edges () {
@@ -185,7 +266,9 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public bool center_has_empty_edges () {
-        return _has_empty_edges (center (root));
+        lock (root) {
+            return _has_empty_edges (center (root));
+        }
     }
 
     private bool _has_empty_edges (Quad q) {
@@ -196,23 +279,22 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
             && _is_empty (q.sw.nw) && _is_empty (q.sw.se) && _is_empty (q.sw.sw);
     }
 
-    public void grow () {
-        if (level >= MAX_LEVEL) {
-            return;
+    public void grow ()
+        requires (level < MAX_LEVEL) {
+        lock (root) {
+            var border = factory.create_empty_quad (level - 1);
+            root = factory.create_quad (
+                factory.create_quad (border, border, root.nw, border),
+                factory.create_quad (border, border, border, root.ne),
+                factory.create_quad (root.se, border, border, border),
+                factory.create_quad (border, root.sw, border, border)
+            );
         }
-
-        var border = factory.create_empty_quad (level - 1);
-        root = factory.create_quad (
-            factory.create_quad (border, border, root.nw, border),
-            factory.create_quad (border, border, border, root.ne),
-            factory.create_quad (root.se, border, border, border),
-            factory.create_quad (border, root.sw, border, border)
-        );
     }
 
     public Stats.Metric[] stats () {
-        return {
-            draw_timer
-        };
+        lock (root) {
+            return { draw_timer, level_gauge };
+        }
     }
 }

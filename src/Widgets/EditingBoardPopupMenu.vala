@@ -306,7 +306,7 @@ public class Life.Widgets.EditingBoardPopupMenu : Gtk.Menu {
         bool override_with_dead_cells = true
     ) {
         var editable = state.editable;
-        shape.write_into (editable, center_point, override_with_dead_cells);
+        shape.write_into.begin (editable, center_point, override_with_dead_cells);
     }
 }
 

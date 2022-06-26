@@ -19,17 +19,41 @@
 */
 
 public class Life.CutoutShape : Shape {
+
+    public CutoutShape.entire (Drawable drawable) {
+        bool is_zeroed_out = false;
+
+        drawable.draw_optimal ((point_in_dravable, max_width, max_height) => {
+            if (!is_zeroed_out) {
+                _width_points = max_width;
+                _height_points = max_height;
+                zero_out_cells ();
+                is_zeroed_out = true;
+            }
+
+            var relative_point_in_cutout = new Point (
+                point_in_dravable.x + (width_points / 2),
+                point_in_dravable.y + (height_points / 2)
+            );
+
+            var i = relative_point_in_cutout.x;
+            var j = height_points - relative_point_in_cutout.y - 1;
+
+            data[(int) j][(int) i] = true;
+        });
+
+        if (!is_zeroed_out) {
+            _width_points = 1;
+            _height_points = 1;
+            zero_out_cells ();
+            zero_out_cells ();
+        }
+    }
+
     public CutoutShape (Rectangle boundary, Drawable larger_drawable) {
         _width_points = boundary.width;
         _height_points = boundary.height;
-
-        for (var j = 0; j < height_points; j++) {
-            var row = new Gee.LinkedList<bool> ();
-            for (var i = 0; i < width_points; i++) {
-                row.add (false);
-            }
-            data.add (row);
-        }
+        zero_out_cells ();
 
         larger_drawable.draw (boundary, (point_in_larger_drawable) => {
             var relative_point_in_cutout = new Point (
@@ -42,5 +66,15 @@ public class Life.CutoutShape : Shape {
 
             data[(int) j][(int) i] = true;
         });
+    }
+
+    private void zero_out_cells () {
+        for (var j = 0; j < height_points; j++) {
+            var row = new Gee.LinkedList<bool> ();
+            for (var i = 0; i < width_points; i++) {
+                row.add (false);
+            }
+            data.add (row);
+        }
     }
 }

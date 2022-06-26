@@ -50,20 +50,45 @@ public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
     }
 
     private async void load_library () {
-        var no_flags = ResourceLookupFlags.NONE;
-        var patterns_path = "/" + Constants.resource_base () + "/patterns";
-        var files = resources_enumerate_children (patterns_path, no_flags);
+        try {
+            var no_flags = ResourceLookupFlags.NONE;
+            var patterns_path = "/" + Constants.resource_base () + "/patterns";
+            var files = resources_enumerate_children (patterns_path, no_flags);
 
-        foreach (var file_name in files) {
-            var path = patterns_path + "/" + file_name;
-            var input = resources_open_stream (path, no_flags);
-            var pattern = yield Pattern.from_plaintext (input);
-            patterns_store.append (pattern);
+            foreach (var file_name in files) {
+                var path = patterns_path + "/" + file_name;
+                var input = resources_open_stream (path, no_flags);
+                var pattern = yield Pattern.from_plaintext (input);
+                patterns_store.append (pattern);
+            }
+        } catch (Error err) {
+            warning (
+                "Failed to load patterns library from resource file, %s",
+                print_err (err)
+            );
+            Idle.add (load_library.callback);
+            yield;
+            state.info (new Life.InfoModel (
+                _("Failed to load the patterns library"),
+                Gtk.MessageType.ERROR,
+                _("Retry loading"),
+                () => load_library.begin ()
+            ));
         }
     }
 
     private Gtk.ListBoxRow create_row (Object element) {
         var pattern = (Pattern) element;
         return new PatternLibraryRow (pattern, state);
+    }
+
+    private string print_err (Error err) {
+        var format = "Error Message: \"%s\", Error code: %d, Error domain: %";
+        format += uint32.FORMAT;
+        return (format).printf (
+            err.message,
+            err.code,
+            err.domain
+        );
     }
 }

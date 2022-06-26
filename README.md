@@ -31,9 +31,9 @@ Life is currently in pre-release stage of development. This means that while thi
 - [x] User can draw and erase live cells to create patterns in the simulation.
 - [x] User can edit cells by copying / pasting, rotating and flipping a selection.
 - [x] User can explore an included Patterns Library to discover building blocks of larger Game of Life patterns.
-- [ ] User can save / open cell patterns into / from files.
-- [ ] App remembers and restores current pattern of cells between restarts.
-- [ ] Operations of running the simulation, writing to files and interacting with the UI don't block each other.
+- [x] User can save / open cell patterns into / from files.
+- [x] App remembers and restores current pattern of cells between restarts.
+- [x] Operations of running the simulation, writing to files and interacting with the UI don't block each other.
 - [ ] User without previous knowledge of Game of Life can learn basics from a built-in tutorial.
 
 I'm also considering adding some features after the initial release:

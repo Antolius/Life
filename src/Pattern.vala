@@ -20,19 +20,33 @@
 
 public class Life.Pattern : Shape {
 
-    public string name { get; set; default = "unnamed pattern"; }
+    public const string DEFAULT_NAME = "Untitled";
+
+    public string name { get; set; }
     public string? author { get; set; }
     public string? description { get; set; }
     public string? link { get; set; }
 
-    public static async Pattern from_plaintext (InputStream stream) {
+    public static Pattern from_shape (string name, Shape shape) {
+        var pattern = new Pattern ();
+        pattern.name = name;
+        pattern._width_points = shape._width_points;
+        pattern._height_points = shape._height_points;
+        pattern.data = shape.data;
+        return pattern;
+    }
+
+    public static async Pattern from_plaintext (
+        InputStream stream,
+        string filename = DEFAULT_NAME
+    ) throws IOError {
         var pattern = new Pattern ();
 
         var ds = new DataInputStream (stream);
         string? line = null;
 
         while (true) {
-            line = yield ds.read_line_async ();
+            line = yield ds.read_line_async (Priority.LOW);
             if (line == null) {
                 break;
             }
@@ -62,6 +76,10 @@ public class Life.Pattern : Shape {
             }
         }
 
+        if (pattern.name == null) {
+            pattern.name = filename;
+        }
+
         // Normalize row lengths
         foreach (var row in pattern.data) {
             for (int i = row.size; i < pattern.width_points; i++) {
@@ -70,5 +88,35 @@ public class Life.Pattern : Shape {
         }
 
         return pattern;
+    }
+
+    public async void write_as_plaintext (OutputStream stream) throws IOError {
+        var ds = new DataOutputStream (stream);
+
+        if (name != DEFAULT_NAME) {
+            ds.put_string ("!Name: %s\n".printf (name));
+        }
+        if (author != null) {
+            ds.put_string ("!Author: %s\n".printf (author));
+        }
+        if (description != null) {
+            ds.put_string ("!Description: %s\n".printf (description));
+        }
+        if (link != null) {
+            ds.put_string ("!Link: %s\n".printf (link));
+        }
+        Idle.add (write_as_plaintext.callback);
+        yield;
+
+        foreach (var row in data) {
+            var builder = new StringBuilder ();
+            foreach (var cell in row) {
+                builder.append_c (cell ? 'O' : '.');
+            }
+            builder.append_c ('\n');
+            ds.put_string (builder.str);
+            Idle.add (write_as_plaintext.callback);
+            yield;
+        }
     }
 }

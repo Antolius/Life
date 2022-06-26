@@ -27,7 +27,6 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             state: state,
             has_subtitle: false,
             show_close_button: true,
-            title: Constants.SIMPLE_NAME,
             hexpand: true,
             halign: Gtk.Align.FILL
         );
@@ -40,6 +39,9 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         pack_start (tools);
         var clear = create_clear_button ();
         pack_start (clear);
+
+        custom_title = new FileControls (state);
+
         var menu = create_menu ();
         pack_end (menu);
     }
@@ -49,11 +51,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "accessories-dictionary",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            tooltip_text = _("Show Patterns library")
+            tooltip_text = _("Show Patterns library"),
+            margin_end = 16
         };
-        btn.clicked.connect (() => {
-            state.library_position = 360;
-        });
+        btn.clicked.connect (animate_library_pane_opening);
 
         var revealer = new Gtk.Revealer () {
             transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
@@ -73,6 +74,15 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         return revealer;
     }
+
+    private async void animate_library_pane_opening () {
+        while (state.library_position < 360) {
+            state.library_position += 120;
+            Idle.add (animate_library_pane_opening.callback);
+            yield;
+        }
+    }
+
 
     private Gtk.ButtonBox create_tool_buttons () {
         var pointer_btn = new Gtk.ToggleButton () {
@@ -138,10 +148,15 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         var box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
             layout_style = Gtk.ButtonBoxStyle.EXPAND,
             expand = false,
-            valign = Gtk.Align.CENTER,
-            margin_start = 16,
-            margin_end = 16
+            valign = Gtk.Align.CENTER
         };
+
+        state.notify["saving-in-progress"].connect (() => {
+            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
 
         box.add (pointer_btn);
         box.add (pencil_btn);
@@ -154,9 +169,18 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "edit-clear",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            tooltip_text = _("Clear all")
+            tooltip_text = _("Clear all"),
+            margin_start = 16
         };
         btn.clicked.connect (state.clear);
+
+        state.notify["saving-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+        state.notify["opening-in-progress"].connect (() => {
+            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
+        });
+
         return btn;
     }
 
@@ -170,7 +194,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var scale_label = new Gtk.Label (_("Scale")) {
             justify = Gtk.Justification.RIGHT,
-            valign = Gtk.Align.START,
+            valign = Gtk.Align.CENTER,
             margin = 8,
         };
         menu_grid.attach (scale_label, 0, 0, 1, 1);
@@ -194,13 +218,23 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 1, 3);
 
-        var stats_toggle = new Gtk.ModelButton () {
-            text = _("Toggle Stats")
-        };
-        stats_toggle.clicked.connect (() => {
-            state.showing_stats = !state.showing_stats;
-        });
-        menu_grid.attach (stats_toggle, 0, 2, 3);
+        var autosave_switch = new Granite.SwitchModelButton (_("Autosave"));
+        state.bind_property (
+            "autosave",
+            autosave_switch,
+            "active",
+            BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE
+        );
+        menu_grid.attach (autosave_switch, 0, 2, 3);
+
+        var stats_switch = new Granite.SwitchModelButton (_("Statistics"));
+        state.bind_property (
+            "showing_stats",
+            stats_switch,
+            "active",
+            BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE
+        );
+        menu_grid.attach (stats_switch, 0, 3, 3);
 
         menu_grid.show_all ();
         return new Gtk.MenuButton () {

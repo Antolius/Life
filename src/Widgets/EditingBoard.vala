@@ -35,9 +35,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         base (state, state.drawable);
         this.state = state;
 
-        state.simulation_updated.connect_after (() => {
-            select_area.clear ();
-        });
+        connect_to_state ();
     }
 
     construct {
@@ -58,17 +56,36 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private void set_up_drag_target () {
-        Gtk.drag_dest_set (
-            this,
-            Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.MOTION,
-            TARGET_ENTRIES,
-            Gdk.DragAction.COPY
-        );
-
         drag_motion.connect (on_drag_motion);
         drag_leave.connect (on_drag_leave);
         drag_drop.connect (on_drag_drop);
         drag_data_received.connect (on_drag_data_received);
+    }
+
+    private void connect_to_state () {
+        state.simulation_updated.connect_after (() => {
+            select_area.clear ();
+        });
+        state.notify["saving-in-progress"].connect (
+            adapt_drag_target_to_file_ops
+        );
+        state.notify["opening-in-progress"].connect (
+            adapt_drag_target_to_file_ops
+        );
+        adapt_drag_target_to_file_ops ();
+    }
+
+    private void adapt_drag_target_to_file_ops () {
+        if (state.saving_in_progress || state.opening_in_progress) {
+            Gtk.drag_dest_unset (this);
+        } else {
+            Gtk.drag_dest_set (
+                this,
+                Gtk.DestDefaults.HIGHLIGHT | Gtk.DestDefaults.MOTION,
+                TARGET_ENTRIES,
+                Gdk.DragAction.COPY
+            );
+        }
     }
 
 
@@ -143,6 +160,10 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     }
 
     private bool on_button_press (Gdk.EventButton event) {
+        if (state.saving_in_progress || state.opening_in_progress) {
+            return false;
+        }
+
         if (event.button == Gdk.BUTTON_PRIMARY) {
             return on_primary_button_press (event);
         } else if (event.button == Gdk.BUTTON_SECONDARY) {
@@ -258,12 +279,13 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
     ) {
         var pattern = ((Pattern[]) data.get_data ())[0];
         var center = cairo_to_drawable (new Point (x, y));
-        pattern.write_into (state.editable, center, false);
-        state.simulation_updated ();
+        pattern.write_into.begin (state.editable, center, false, (obj, res) => {
+            pattern.write_into.end (res);
 
-        on_pointer_move_xy (x, y);
-
-        Gtk.drag_finish (ctx, true, false, time);
+            state.simulation_updated ();
+            on_pointer_move_xy (x, y);
+            Gtk.drag_finish (ctx, true, false, time);
+        });
     }
 
     private void trigger_redraw () {
