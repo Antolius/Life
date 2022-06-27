@@ -39,6 +39,7 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
         });
         attach (infobar, 0, 0);
 
+        var board_with_controlls = new Gtk.Grid ();
         var board = new Widgets.EditingBoard (state);
         state.simulation_updated.connect_after (() => {
             board.queue_resize ();
@@ -52,10 +53,34 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
         var stats = new Widgets.StatsOverlay (state);
         board_overlay.add_overlay (stats);
         board_overlay.set_overlay_pass_through (stats, true);
-        attach (board_overlay, 0, 1);
+        board_with_controlls.attach (board_overlay, 0, 0);
 
         var playback_bar = new Widgets.PlaybackBar (state);
-        attach (playback_bar, 0, 2);
+        board_with_controlls.attach (playback_bar, 0, 1);
+
+        board_with_controlls.show_all ();
+
+        var welcome = new Welcome (state);
+        welcome.show_all ();
+
+        var content = new Gtk.Stack () {
+            homogeneous = true
+        };
+        content.add (board_with_controlls);
+        content.add (welcome);
+        if (state.showing_welcome) {
+            content.set_visible_child (welcome);
+        } else {
+            content.set_visible_child (board_with_controlls);
+        }
+        state.notify["showing-welcome"].connect (() => {
+            if (state.showing_welcome) {
+                content.set_visible_child (welcome);
+            } else {
+                content.set_visible_child (board_with_controlls);
+            }
+        });
+        attach (content, 0, 1);
     }
 
     private void update_infobar (Gtk.InfoBar infobar, InfoModel model) {

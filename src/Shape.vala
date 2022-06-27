@@ -26,8 +26,20 @@ public class Life.Shape : Object, Drawable {
     protected int64 _height_points = 0;
     public override int64 height_points { get { return _height_points; } }
 
-    protected Gee.List<Gee.List<bool>> data =
+    public Gee.List<Gee.List<bool>> data =
         new Gee.LinkedList<Gee.LinkedList<bool>> ();
+
+    public Shape.from_data (ushort[,] data) {
+        for (var i = 0; i < data.length[0]; i++) {
+            var list_row = new Gee.LinkedList<bool> ();
+            for (var j = 0; j < data.length[1]; j++) {
+                list_row.add (data[i, j] != 0);
+            }
+            this.data.add (list_row);
+        }
+        _height_points = data.length[0];
+        _width_points = data.length[1];
+    }
 
     // !Stream
     // .O
@@ -160,31 +172,6 @@ public class Life.Shape : Object, Drawable {
     public Stats.Metric[] stats () {
         return {};
     }
-
-    // public bool trim_outer_dead_cells () {
-    //     var has_empty_outline = _height_points > 2 && _width_points > 2;
-
-    //     for (var i = 0; i < height_points && has_empty_outline; i++) {
-    //         has_empty_outline = has_empty_outline
-    //             && !data[i][0] && !data[i][(int) width_points - 1];
-    //     }
-    //     for (var j = 0; j < height_points && has_empty_outline; j++) {
-    //         has_empty_outline = has_empty_outline
-    //             && !data[0][j] && !data[(int) height_points - 1][j];
-    //     }
-
-    //     if (!has_empty_outline) {
-    //         return false;
-    //     }
-
-    //     data = data.slice (1, data.size - 1);
-    //     for (var i = 0; i < data.size; i++) {
-    //         data[i] = data[i].slice (1, data[i].size - 1);
-    //     }
-    //     _width_points-=2;
-    //     _height_points-=2;
-    //     return true;
-    // }
 
     public string to_string () {
         var res = "";

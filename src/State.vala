@@ -44,6 +44,7 @@ public class Life.State : Object, Scaleable {
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
+    public bool showing_welcome { get; set; default = true; }
     public int library_position { get; set; }
     public string title { get; set; default = Pattern.DEFAULT_NAME; }
     public bool autosave { get; set; default = true; }
@@ -53,10 +54,13 @@ public class Life.State : Object, Scaleable {
     // Derived state
     public File? file { get { return file_manager.open_file; } }
     public int64 generation { get { return stepper.generation; } }
+    public bool autosave_exists {
+        get { return file_manager.autosave_exists (); }
+    }
 
     // Signals for state changes
     public virtual signal void simulation_updated () {}
-    public signal void info (InfoModel model) {}
+    public signal void info (InfoModel model);
 
     private uint? timer_id;
     private bool is_stepping = false;
@@ -93,7 +97,6 @@ public class Life.State : Object, Scaleable {
 
         stepper.step_completed.connect (on_step_completed);
         simulation_updated.connect (trigger_autosave);
-        open_autosave ();
     }
 
     public void step_by_one () {
@@ -127,17 +130,21 @@ public class Life.State : Object, Scaleable {
         }
     }
 
-    private void open_autosave () {
+    public async bool open_autosave () {
         opening_in_progress = true;
-        file_manager.open_internal_autosave.begin ((obj, res) => {
-            var pattern = file_manager.open_internal_autosave.end (res);
-            opening_in_progress = false;
-            if (pattern != null) {
-                title = pattern.name;
-                stepper.generation = 0;
-                simulation_updated ();
-            }
-        });
+        Idle.add (open_autosave.callback);
+        yield;
+        is_playing = false;
+        var pattern = yield file_manager.open_internal_autosave ();
+        opening_in_progress = false;
+        if (pattern != null) {
+            title = pattern.name;
+            stepper.generation = 0;
+            simulation_updated ();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public async bool open (string path) {

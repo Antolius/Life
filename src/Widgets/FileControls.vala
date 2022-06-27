@@ -29,7 +29,7 @@ public class Life.Widgets.FileControls : Gtk.Bin {
     }
 
     construct {
-        var title = new Gtk.Label (null);
+        var title = new Granite.HeaderLabel ("");
         state.bind_property ("title", title, "label", BindingFlags.SYNC_CREATE);
 
         var caret = new Gtk.Image.from_icon_name (

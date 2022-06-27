@@ -236,6 +236,18 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         );
         menu_grid.attach (stats_switch, 0, 3, 3);
 
+        menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 4, 3);
+
+        var help_btn = new Gtk.ModelButton () {
+            text = _("Show Help")
+        };
+        help_btn.clicked.connect (() => {
+            var dialog = new OnboardingDialog ();
+            dialog.run ();
+            dialog.destroy ();
+        });
+        menu_grid.attach (help_btn, 0, 5, 3);
+
         menu_grid.show_all ();
         return new Gtk.MenuButton () {
             image = new Gtk.Image.from_icon_name (

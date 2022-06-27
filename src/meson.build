@@ -48,11 +48,14 @@ common_sources = files (
     'Widgets/FileControls.vala',
     'Widgets/HeaderBar.vala',
     'Widgets/LibraryPane.vala',
+    'Widgets/OnboardingDialog.vala',
     'Widgets/PatternLibraryRow.vala',
     'Widgets/PlaybackBar.vala',
     'Widgets/ScrolledBoard.vala',
     'Widgets/SimulationPane.vala',
-    'Widgets/StatsOverlay.vala'
+    'Widgets/StatsOverlay.vala',
+    'Widgets/TutorialBoard.vala',
+    'Widgets/Welcome.vala'
 )
 
 common_sources += build_constants
