@@ -6,10 +6,8 @@
   <name>Life</name>
   <summary>Conway's Game of Life</summary>
   <description>
-    <p>Whether you are seriously into a study of cellular automata or are just
-    looking for some casual fun this simulator of Conway's Game of Life is here
-    for you. Life might be a zero-player game, but it's entertaining to play
-    with.</p>
+    <p>Explore a wonderful world of cellular automata. Craft patterns, watch them grow and evolve.</p>
+    <p>Life makes it easy to run Conway's Game of Life simulations. You can craft your own patterns and explore their evolution, or browse the library of common patterns included with the app. And if you are new to this hobby, there's an onboarding tutorial to help you familiarize yourself with the rules.</p>
   </description>
 
   <metadata_license>CC-BY-4.0</metadata_license>
@@ -25,12 +23,16 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/default.png</image>
-      <caption>A game of life showcasing default (light) style</caption>
+      <caption>An in-progress Game of Life simulation showcasing the default (light) style</caption>
     </screenshot>
-      <screenshot>
-        <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/dark.png</image>
-        <caption>A game of life showcasing dark style</caption>
-      </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/dark.png</image>
+      <caption>An in-progress Game of Life simulation showcasing the dark style</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/onboarding.png</image>
+      <caption>A step in the tutorial teaching you the rules of the Game of Life</caption>
+    </screenshot>
   </screenshots>
 
   <content_rating type="oars-1.1" />

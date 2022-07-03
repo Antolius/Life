@@ -4,7 +4,7 @@ Type=Application
 
 Name=Life
 GenericName=Conway's Game of Life
-Comment=Simulate life in this zero-player game
+Comment=Craft patterns, watch them grow and evolve
 Categories=Game;Education;Science;Math
 Keywords=Conway;Game;Life;Cellular;Automaton;Automata;
 
