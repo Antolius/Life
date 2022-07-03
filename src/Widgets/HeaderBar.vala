@@ -91,7 +91,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.POINTER,
             tooltip_text = _("Select cells"),
             image = new Gtk.Image.from_icon_name (
-                "pointer",
+                "pointer-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
@@ -107,7 +107,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.PENCIL,
             tooltip_text = _("Draw live cells"),
             image = new Gtk.Image.from_icon_name (
-                "edit",
+                "edit-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
@@ -123,7 +123,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.ERASER,
             tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
-                "edit-erase",
+                "edit-erase-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
