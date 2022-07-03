@@ -98,8 +98,8 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
             ctx.rectangle (
                 top_left.x - 1,
                 top_left.y - 1,
-                scaleable.scale,
-                scaleable.scale
+                scaleable.board_scale,
+                scaleable.board_scale
             );
             ctx.set_line_width (2);
             ctx.stroke ();
@@ -112,8 +112,8 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
                 ctx.rectangle (
                     top_left.x - 1,
                     top_left.y - 1,
-                    scaleable.scale * select.rect.width + 1,
-                    scaleable.scale * select.rect.height + 1
+                    scaleable.board_scale * select.rect.width + 1,
+                    scaleable.board_scale * select.rect.height + 1
                 );
             }
 
@@ -146,8 +146,10 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
                     }
                 } else if (state.active_tool == State.Tool.PENCIL) {
                     state.editable.set_alive (new_cursor_position, true);
+                    state.simulation_updated ();
                 } else if (state.active_tool == State.Tool.ERASER) {
                     state.editable.set_alive (new_cursor_position, false);
+                    state.simulation_updated ();
                 }
             }
 
@@ -186,17 +188,18 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
 
             var point = cairo_to_drawable (new Point (cairo_x, cairo_y));
             starting_select_area = new SelectionArea (point);
+            trigger_redraw ();
         } else if (state.active_tool == State.Tool.PENCIL) {
             state.editable.set_alive (cursor_position, true);
+            state.simulation_updated ();
             select_area.clear ();
             starting_select_area = null;
         } else if (state.active_tool == State.Tool.ERASER) {
             state.editable.set_alive (cursor_position, false);
+            state.simulation_updated ();
             select_area.clear ();
             starting_select_area = null;
         }
-
-        trigger_redraw ();
 
         return false;
     }
@@ -239,10 +242,10 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         var window = get_window ();
         if (window != null) {
             var rect = Gdk.Rectangle () {
-                x = x - 2 * scaleable.scale,
-                y = y - 2 * scaleable.scale,
-                width = 4 * scaleable.scale,
-                height = 4 * scaleable.scale
+                x = x - 2 * scaleable.board_scale,
+                y = y - 2 * scaleable.board_scale,
+                width = 4 * scaleable.board_scale,
+                height = 4 * scaleable.board_scale
             };
 
             window.invalidate_rect (rect, false);

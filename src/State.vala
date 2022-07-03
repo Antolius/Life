@@ -37,15 +37,16 @@ public class Life.State : Object, Scaleable {
     public Editable editable { get; construct; }
     public Stepper stepper { private get; construct; }
     public FileManager file_manager { private get; construct; }
+    public GSettingsManager gsettings_manager { private get; construct; }
 
     // State of the app
-    public override int scale { get; set; default = DEFAULT_SCALE; }
-    public int speed { get; set; default = DEFAULT_SPEED; }
+    public override int board_scale { get; set; default = DEFAULT_SCALE; }
+    public int simulation_speed { get; set; default = DEFAULT_SPEED; }
     public bool is_playing { get; set; default = false; }
     public Tool active_tool { get; set; default = Tool.PENCIL; }
     public bool showing_stats { get; set; default = false; }
     public bool showing_welcome { get; set; default = true; }
-    public int library_position { get; set; }
+    public int library_position { get; set; default = 0; }
     public string title { get; set; default = Pattern.DEFAULT_NAME; }
     public bool autosave { get; set; default = true; }
     public bool saving_in_progress { get; set; default = false; }
@@ -69,7 +70,8 @@ public class Life.State : Object, Scaleable {
         Drawable drawable,
         Editable editable,
         Stepper stepper,
-        FileManager file_manager
+        FileManager file_manager,
+        GSettingsManager gsettings_manager
     ) {
         Object (
             clipboard: Gtk.Clipboard.get (
@@ -78,11 +80,17 @@ public class Life.State : Object, Scaleable {
             drawable: drawable,
             editable: editable,
             stepper: stepper,
-            file_manager: file_manager
+            file_manager: file_manager,
+            gsettings_manager: gsettings_manager
         );
     }
 
     construct {
+         library_position = gsettings_manager.track_integer (this, "library-position");
+         board_scale = gsettings_manager.track_integer (this, "board-scale");
+         autosave = gsettings_manager.track_bool (this, "autosave");
+         showing_stats = gsettings_manager.track_bool (this, "showing-stats");
+
         notify["is-playing"].connect (() => {
             if (is_playing) {
                 start_ticking ();
@@ -91,12 +99,14 @@ public class Life.State : Object, Scaleable {
             }
         });
 
-        notify["speed"].connect (() => {
+        notify["simulation-speed"].connect (() => {
             restart_ticking ();
         });
 
+        notify["autosave"].connect (trigger_autosave_if_enabled);
+
         stepper.step_completed.connect (on_step_completed);
-        simulation_updated.connect (trigger_autosave);
+        simulation_updated.connect (trigger_autosave_if_enabled);
     }
 
     public void step_by_one () {
@@ -124,7 +134,7 @@ public class Life.State : Object, Scaleable {
         return stats;
     }
 
-    private void trigger_autosave () {
+    private void trigger_autosave_if_enabled () {
         if (autosave) {
             file_manager.autosave_with_debounce ();
         }
@@ -188,7 +198,7 @@ public class Life.State : Object, Scaleable {
             return;
         }
 
-        timer_id = Timeout.add (1000 / speed, () => {
+        timer_id = Timeout.add (1000 / simulation_speed, () => {
             if (!is_stepping) {
                 step_by_one ();
             }

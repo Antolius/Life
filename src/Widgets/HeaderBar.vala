@@ -76,13 +76,15 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     private async void animate_library_pane_opening () {
-        while (state.library_position < 360) {
-            state.library_position += 120;
-            Idle.add (animate_library_pane_opening.callback);
-            yield;
-        }
-    }
+        Timeout.add (2, () => {
+            if (state.library_position >= 360) {
+                return false;
+            }
 
+            state.library_position += 8;
+            return true;
+        });
+    }
 
     private Gtk.ButtonBox create_tool_buttons () {
         var pointer_btn = new Gtk.ToggleButton () {
@@ -210,9 +212,9 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         scale.add_mark (20, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (30, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (40, Gtk.PositionType.BOTTOM, null);
-        scale.set_value (state.scale);
+        scale.set_value (state.board_scale);
         scale.value_changed.connect (() => {
-            state.scale = (int) scale.get_value ();
+            state.board_scale = (int) scale.get_value ();
         });
         menu_grid.attach (scale, 1, 0, 2, 1);
 

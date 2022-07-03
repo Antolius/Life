@@ -107,14 +107,9 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         var header_bar = new Widgets.HeaderBar (state);
         grid.attach (header_bar, 0, 0);
 
-        int pane_position;
-        Application.settings.get ("pane-position", "i", out pane_position);
         var paned = new Gtk.Paned (Gtk.Orientation.HORIZONTAL) {
-            position = pane_position
+            position = state.library_position
         };
-        paned.notify["position"].connect (() => {
-            Application.settings.set ("pane-position", "i", paned.position);
-        });
         paned.bind_property (
             "position",
             state,

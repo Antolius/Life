@@ -21,7 +21,7 @@
 public class Life.Widgets.OnboardingDialog : Granite.Dialog {
 
     private static Scaleable scale = new ConstantScale () {
-        scale = State.DEFAULT_SCALE * 4
+        board_scale = State.DEFAULT_SCALE * 4
     };
 
     private static ushort[,] glider_gen_1_data = {

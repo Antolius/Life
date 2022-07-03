@@ -62,7 +62,14 @@ public class Life.Application : Gtk.Application {
         var simulation = new HashLife.Simulation (tree, factory);
         var parallel_stepper = new HashLife.ParallelStepper (simulation);
         var file_manager = new FileManager (tree, tree);
-        state = new State (tree, tree, parallel_stepper, file_manager);
+        var gsettings_manager = new GSettingsManager (settings);
+        state = new State (
+            tree,
+            tree,
+            parallel_stepper,
+            file_manager,
+            gsettings_manager
+        );
 
         return new MainWindow (state, this);
     }

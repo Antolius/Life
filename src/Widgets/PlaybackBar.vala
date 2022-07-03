@@ -51,10 +51,10 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         };
         btn.clicked.connect (() => {
             if (can_slow_down ()) {
-                state.speed -= SPEED_STEP;
+                state.simulation_speed -= SPEED_STEP;
             }
         });
-        state.notify["speed"].connect (() => {
+        state.notify["simulation-speed"].connect (() => {
             btn.sensitive = can_slow_down ();
         });
         state.notify["is-playing"].connect (() => {
@@ -64,7 +64,8 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private bool can_slow_down () {
-        return state.is_playing && state.speed - SPEED_STEP > State.MIN_SPEED;
+        var not_slowest = state.simulation_speed - SPEED_STEP > State.MIN_SPEED;
+        return state.is_playing && not_slowest;
     }
 
     private Gtk.Button create_play_button () {
@@ -113,10 +114,10 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         };
         btn.clicked.connect (() => {
             if (can_speed_up ()) {
-                state.speed += SPEED_STEP;
+                state.simulation_speed += SPEED_STEP;
             }
         });
-        state.notify["speed"].connect (() => {
+        state.notify["simulation-speed"].connect (() => {
             btn.sensitive = can_speed_up ();
         });
         state.notify["is-playing"].connect (() => {
@@ -126,7 +127,8 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private bool can_speed_up () {
-        return state.is_playing && state.speed + SPEED_STEP < State.MAX_SPEED;
+        var not_fastest = state.simulation_speed + SPEED_STEP < State.MAX_SPEED;
+        return state.is_playing && not_fastest;
     }
 
     private Gtk.Button create_step_forward_button () {

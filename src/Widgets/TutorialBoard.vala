@@ -48,8 +48,8 @@ public class Life.Widgets.TutorialBoard : DrawingBoard {
 
         for (var i = 0; i < text_overlay.length[0]; i++) {
             for (var j = 0; j < text_overlay.length[1]; j++) {
-                var x = (j + 0.45) * scaleable.scale;
-                var y = (i + 0.6) * scaleable.scale;
+                var x = (j + 0.45) * scaleable.board_scale;
+                var y = (i + 0.6) * scaleable.board_scale;
                 ctx.move_to (x, y);
 
                 if (pattern.data[i][j]) {

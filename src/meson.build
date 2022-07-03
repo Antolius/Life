@@ -16,6 +16,7 @@ common_sources = files (
     'Drawable.vala',
     'Editable.vala',
     'FileManager.vala',
+    'GSettingsManager.vala',
     'MainWindow.vala',
     'Pattern.vala',
     'Point.vala',
