@@ -8,7 +8,9 @@
 
 |![Default style screenshot](data/screenshots/default.png)|![Dark style screenshot](data/screenshots/dark.png)          |
 |---------------------------------------------------------|-----------------------------------------------------------------|
-| A game of life showcasing default (light) style  | A game of life showcasing dark style |
+| A game of life showcasing the default (light) style | A game of life showcasing the dark style |
+
+For more screenshots check out the [screenshots directory](data/screenshots).
 
 ## What's up with that name?
 
@@ -34,7 +36,7 @@ Life is currently in pre-release stage of development. This means that while thi
 - [x] User can save / open cell patterns into / from files.
 - [x] App remembers and restores current pattern of cells between restarts.
 - [x] Operations of running the simulation, writing to files and interacting with the UI don't block each other.
-- [ ] User without previous knowledge of Game of Life can learn basics from a built-in tutorial.
+- [x] User without previous knowledge of Game of Life can learn basics from a built-in tutorial.
 
 I'm also considering adding some features after the initial release:
 

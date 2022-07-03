@@ -16,10 +16,25 @@
       <summary>Most recent window size</summary>
       <description>Most recent window size (width, height)</description>
     </key>
-    <key name="pane-position" type="i">
-      <default>360</default>
+    <key name="library-position" type="i">
+      <default>0</default>
       <summary>Size of the library pane</summary>
       <description>Most recent size of the library pane (size)</description>
+    </key>
+    <key name="board-scale" type="i">
+      <default>10</default>
+      <summary>Scale of cells on the board</summary>
+      <description>Most recent size in pixels of cells on the Game of Life board</description>
+    </key>
+    <key name="autosave" type="b">
+      <default>true</default>
+      <summary>Autosave patterns</summary>
+      <description>Whether changes to the cell pattern should be saved automatically</description>
+    </key>
+    <key name="showing-stats" type="b">
+      <default>false</default>
+      <summary>Show rendering and simulation statistics</summary>
+      <description>Whether statistics on the board rendering and Game of Life simulation should be overlayed over the board</description>
     </key>
   </schema>
 </schemalist>

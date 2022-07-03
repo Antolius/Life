@@ -23,9 +23,9 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
     public Scaleable scaleable { get; construct; }
     public Drawable drawable { get; construct; }
     public ColorPalette color_palette { get; construct; }
-    public int width { get { return (int) drawable.width_points * scaleable.scale; } }
-    public int height { get { return (int) drawable.height_points * scaleable.scale; } }
-    public double reverse_scale { get { return 1 / ((double) scaleable.scale); } }
+    public int width { get { return (int) drawable.width_points * scaleable.board_scale; } }
+    public int height { get { return (int) drawable.height_points * scaleable.board_scale; } }
+    public double reverse_scale { get { return 1 / ((double) scaleable.board_scale); } }
     public Point? cursor_position { get; set; }
 
     public DrawingBoard (Scaleable scaleable, Drawable drawable) {
@@ -61,7 +61,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
     private void connect_signals () {
         draw.connect (on_draw);
 
-        scaleable.notify["scale"].connect (() => {
+        scaleable.notify["board-scale"].connect (() => {
             queue_resize ();
             queue_draw ();
         });
@@ -88,13 +88,13 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         ctx.set_line_width (2);
 
         for (var i = 0; i <= drawable.width_points; i++) {
-            ctx.move_to (i * scaleable.scale, 0);
-            ctx.line_to (i * scaleable.scale, height);
+            ctx.move_to (i * scaleable.board_scale, 0);
+            ctx.line_to (i * scaleable.board_scale, height);
         }
 
         for (var j = 0; j <= drawable.height_points; j++) {
-            ctx.move_to (0, j * scaleable.scale);
-            ctx.line_to (width, j * scaleable.scale);
+            ctx.move_to (0, j * scaleable.board_scale);
+            ctx.line_to (width, j * scaleable.board_scale);
         }
 
         ctx.stroke ();
@@ -106,7 +106,12 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
 
         drawable.draw (visible_drawable_rec (ctx), point => {
             var top_left = drawable_to_cairo (point);
-            ctx.rectangle (top_left.x, top_left.y, scaleable.scale - 2, scaleable.scale - 2);
+            ctx.rectangle (
+                top_left.x,
+                top_left.y,
+                scaleable.board_scale - 2,
+                scaleable.board_scale - 2
+            );
         });
 
         ctx.fill ();
@@ -119,7 +124,7 @@ public class Life.Widgets.DrawingBoard : Gtk.DrawingArea {
         return drawable_point.x_add (drawable.width_points / 2)
             .y_add (-drawable.height_points / 2 + 1)
             .flip_h ()
-            .scale (scaleable.scale);
+            .scale (scaleable.board_scale);
     }
 
     protected Point cairo_to_drawable (Point cairo_point) {

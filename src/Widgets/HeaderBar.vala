@@ -76,13 +76,15 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
     }
 
     private async void animate_library_pane_opening () {
-        while (state.library_position < 360) {
-            state.library_position += 120;
-            Idle.add (animate_library_pane_opening.callback);
-            yield;
-        }
-    }
+        Timeout.add (2, () => {
+            if (state.library_position >= 360) {
+                return false;
+            }
 
+            state.library_position += 8;
+            return true;
+        });
+    }
 
     private Gtk.ButtonBox create_tool_buttons () {
         var pointer_btn = new Gtk.ToggleButton () {
@@ -210,9 +212,9 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         scale.add_mark (20, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (30, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (40, Gtk.PositionType.BOTTOM, null);
-        scale.set_value (state.scale);
+        scale.set_value (state.board_scale);
         scale.value_changed.connect (() => {
-            state.scale = (int) scale.get_value ();
+            state.board_scale = (int) scale.get_value ();
         });
         menu_grid.attach (scale, 1, 0, 2, 1);
 
@@ -235,6 +237,18 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             BindingFlags.BIDIRECTIONAL | BindingFlags.SYNC_CREATE
         );
         menu_grid.attach (stats_switch, 0, 3, 3);
+
+        menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 4, 3);
+
+        var help_btn = new Gtk.ModelButton () {
+            text = _("Show Help")
+        };
+        help_btn.clicked.connect (() => {
+            var dialog = new OnboardingDialog ();
+            dialog.run ();
+            dialog.destroy ();
+        });
+        menu_grid.attach (help_btn, 0, 5, 3);
 
         menu_grid.show_all ();
         return new Gtk.MenuButton () {

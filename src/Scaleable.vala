@@ -19,9 +19,9 @@
 */
 
 public interface Life.Scaleable : Object {
-    public abstract int scale { get; set; }
+    public abstract int board_scale { get; set; }
 }
 
 public class Life.ConstantScale : Object, Scaleable {
-    public override int scale { get; set; default = State.DEFAULT_SCALE; }
+    public override int board_scale { get; set; default = State.DEFAULT_SCALE; }
 }
