@@ -18,27 +18,35 @@
 *
 */
 
-public class Life.HashLife.Pair<T, S> : Object {
+public class Life.HashLife.Pair : Object {
 
-    public unowned T first { get; construct; }
-    public unowned S second { get; construct; }
+    public Quad first { get; construct; }
+    public int second { get; construct; }
+    public uint hash { get {
+        uint res = 7;
+        res = res * 31 + first.hash;
+        res = res * 31 + (uint) second;
+        return res;
+    } }
 
-    public Pair (T first, S second) {
+    public Pair (Quad first, int second) {
         Object (
             first: first,
             second: second
         );
     }
 
-    public uint hash () {
-        uint res = 5;
-        res = res * 31 + direct_hash (first);
-        res = res * 31 + direct_hash (second);
-        return res;
-    }
+    public bool equals (Pair other) {
+        if (this == other) {
+            return true;
+        }
 
-    public bool equals (Pair<T, S> other) {
-        return first == other.first
+        if (other == null) {
+            return false;
+        }
+
+        return (first == null && other .first == null
+            || first.equals (other.first))
             && second == other.second;
     }
 }

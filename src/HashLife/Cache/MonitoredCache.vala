@@ -67,14 +67,13 @@ public class Life.HashLife.Cache.MonitoredCache<Key, Value> : LoadingCache<Key, 
             loaded (key, val);
         });
 
-        base_cache.evicted.connect ((key, val) => {
+        base_cache.evicted.connect (() => {
             evict_counter.inc ();
-            evicted (key, val);
+            evicted ();
         });
 
         base_cache.notify ["size"].connect (() => {
             elements_counter.assign ((double) base_cache.size);
         });
     }
-
 }

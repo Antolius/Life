@@ -160,7 +160,7 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
         freq_head->remove_node (node_to_remove);
         key_to_node.unset (node_to_remove->key);
         size--;
-        evicted (node_to_remove->key, node_to_remove->val);
+        evicted ();
 
         if (freq_head->is_empty) {
             // Because we never remove all elements:

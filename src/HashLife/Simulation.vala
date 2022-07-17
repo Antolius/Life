@@ -26,7 +26,7 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public QuadTree tree { get; construct; }
     public QuadFactory factory { get; construct; }
 
-    private Cache.MonitoredCache<Pair<Quad, int>, Quad> steps_cache;
+    private Cache.MonitoredCache<Pair, Quad> steps_cache;
     private Stats.Timer step_timer = new Stats.Timer () {
         name = _("Step timer"),
         description = _("Time spent in Simulation's step method.")
@@ -40,13 +40,17 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     construct {
-        steps_cache = new Cache.MonitoredCache<Pair<Quad, int>, Quad> (
+        steps_cache = new Cache.MonitoredCache<Pair, Quad> (
             "Steps cacne",
-            new Cache.LfuCache<Pair<Quad, int>, Quad> (
-                1000000,
+            new Cache.LfuCache<Pair, Quad> (
+                // 1000, // < 20 MiB
+                // 10000, // < 30 MiB
+                100000, // < 100 MiB
+                // 1000000, // < 800 MiB
                 _step_quad_with_speed,
-                p => p.hash (),
-                (p1, p2) => p1.equals (p2)
+                p => p.hash,
+                (p1, p2) => p1 == null && p2 == null || p1.equals (p2),
+                (q1, q2) => q1 == null && q2 == null || q1.equals (q2)
             )
         );
     }
@@ -72,11 +76,11 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
-        var key = new Pair<Quad, int> (quad, speed);
+        var key = new Pair (quad, speed);
         return steps_cache.access (key);
     }
 
-    private Quad _step_quad_with_speed (Pair<Quad, int> quad_and_speed)
+    private Quad _step_quad_with_speed (Pair quad_and_speed)
         requires (quad_and_speed.first.level >= 2)
         requires (quad_and_speed.second >= 0)
         requires (quad_and_speed.second <= quad_and_speed.first.level - 2) {
