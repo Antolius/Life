@@ -81,19 +81,6 @@ public class Life.Widgets.FileControls : Gtk.Bin {
         menu_box.pack_start (save_as_button);
         menu_box.show_all ();
 
-        state.notify["saving-in-progress"].connect (() => {
-            var sensitive = !state.saving_in_progress && !state.opening_in_progress;
-            open_button.sensitive = sensitive;
-            save_button.sensitive = sensitive;
-            save_as_button.sensitive = sensitive;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            var sensitive = !state.saving_in_progress && !state.opening_in_progress;
-            open_button.sensitive = sensitive;
-            save_button.sensitive = sensitive;
-            save_as_button.sensitive = sensitive;
-        });
-
         menu_popover = new Gtk.Popover (null) {
             child = menu_box
         };
@@ -122,10 +109,17 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             "document-open",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
+            sensitive = state.editing_enabled,
             tooltip_text = _("Open a file")
         };
 
         btn.clicked.connect (on_open_button_clicked);
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
         return btn;
     }
 
@@ -174,10 +168,17 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             "document-save",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
+            sensitive = state.editing_enabled,
             tooltip_text = _("Save this file")
         };
 
         btn.clicked.connect (on_save_button_clicked);
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
         return btn;
     }
 
@@ -206,10 +207,17 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             "document-save-as",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
+            sensitive = state.editing_enabled,
             tooltip_text = _("Save this file with a different name")
         };
 
         btn.clicked.connect (on_save_as_button_clicked);
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
         return btn;
     }
 

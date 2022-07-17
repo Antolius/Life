@@ -149,16 +149,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
             layout_style = Gtk.ButtonBoxStyle.EXPAND,
-            expand = false,
-            valign = Gtk.Align.CENTER
+            sensitive = state.editing_enabled,
+            valign = Gtk.Align.CENTER,
+            expand = false
         };
 
-        state.notify["saving-in-progress"].connect (() => {
-            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            box,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         box.add (pointer_btn);
         box.add (pencil_btn);
@@ -171,17 +172,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "edit-clear",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
+            sensitive = state.editing_enabled,
             tooltip_text = _("Clear all"),
             margin_start = 16
         };
         btn.clicked.connect (state.clear);
-
-        state.notify["saving-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         return btn;
     }

@@ -66,17 +66,14 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         state.simulation_updated.connect_after (() => {
             select_area.clear ();
         });
-        state.notify["saving-in-progress"].connect (
-            adapt_drag_target_to_file_ops
-        );
-        state.notify["opening-in-progress"].connect (
+        state.notify["editing-enabled"].connect (
             adapt_drag_target_to_file_ops
         );
         adapt_drag_target_to_file_ops ();
     }
 
     private void adapt_drag_target_to_file_ops () {
-        if (state.saving_in_progress || state.opening_in_progress) {
+        if (!state.editing_enabled) {
             Gtk.drag_dest_unset (this);
         } else {
             Gtk.drag_dest_set (
