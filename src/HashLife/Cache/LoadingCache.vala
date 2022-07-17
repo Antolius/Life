@@ -22,7 +22,7 @@
 public abstract class Life.HashLife.Cache.LoadingCache<K, V> : Object {
 
     public signal void loaded (K key, V? val);
-    public signal void evicted (K key, V val);
+    public signal void evicted ();
 
     public int size { get; set; default = 0; }
 
