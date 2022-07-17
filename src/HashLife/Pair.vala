@@ -20,8 +20,8 @@
 
 public class Life.HashLife.Pair : Object {
 
-    public unowned Quad first { get; construct; }
-    public unowned int second { get; construct; }
+    public Quad first { get; construct; }
+    public int second { get; construct; }
     public uint hash { get {
         uint res = 7;
         res = res * 31 + first.hash;

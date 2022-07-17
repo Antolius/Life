@@ -20,10 +20,10 @@
 
 public class Life.HashLife.Quaduplet : Object {
 
-    public unowned Quad first { get; construct; }
-    public unowned Quad second { get; construct; }
-    public unowned Quad third { get; construct; }
-    public unowned Quad fourth { get; construct; }
+    public Quad first { get; construct; }
+    public Quad second { get; construct; }
+    public Quad third { get; construct; }
+    public Quad fourth { get; construct; }
     public uint hash { get {
         uint res = 7;
         res = res * 31 + first.hash;

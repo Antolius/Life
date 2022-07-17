@@ -41,7 +41,10 @@ public class Life.HashLife.QuadFactory : Object {
         quads_cache = new Cache.MonitoredCache<Quaduplet, Quad> (
             "Quads cacne",
             new Cache.LfuCache<Quaduplet, Quad> (
-                1000000,
+                // 1000, // < 20 MiB,
+                // 10000, // < 30 MiB,
+                100000, // < 100 MiB
+                // 1000000, // < 800 MiB
                 _create_quad,
                 q => q.hash,
                 (q1, q2) => q1 == null && q2 == null || q1.equals (q2),

@@ -22,8 +22,8 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public const uint32 MAX_LEVEL = 60;
 
-    private unowned Quad _root;
-    public unowned Quad root {
+    private Quad _root;
+    public Quad root {
         get { return _root; }
         set {
             level_gauge.assign ((double) value.level);
