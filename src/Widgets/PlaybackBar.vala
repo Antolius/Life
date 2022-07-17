@@ -82,6 +82,7 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         );
 
         var btn = new Gtk.Button () {
+            sensitive = state.editing_enabled,
             image = state.is_playing ? pause_icon : play_icon,
             tooltip_text = state.is_playing ? pause_tooltip : play_tooltip
         };
@@ -94,12 +95,12 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             btn.show_all ();
         });
 
-        state.notify["saving-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         return btn;
     }
@@ -136,19 +137,20 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             "media-skip-forward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            tooltip_text = _("Advance simulation by one generation")
+            tooltip_text = _("Advance simulation by one generation"),
+            sensitive = state.editing_enabled
         };
         btn.clicked.connect (() => {
             state.is_playing = false;
             state.step_by_one ();
         });
 
-        state.notify["saving-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         return btn;
     }

@@ -183,6 +183,7 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
             tooltip_text = _("Load into simulation"),
+            sensitive = state.editing_enabled
         };
         load_btn.clicked.connect (() => {
             if (!state.editable.is_empty ()) {
@@ -195,13 +196,12 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
                 state.simulation_updated ();
             });
         });
-
-        state.notify["saving-in-progress"].connect (() => {
-            load_btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            load_btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            load_btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         actions.pack_end (load_btn);
 

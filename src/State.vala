@@ -58,6 +58,7 @@ public class Life.State : Object, Scaleable {
     public bool autosave_exists {
         get { return file_manager.autosave_exists (); }
     }
+    public bool editing_enabled { get; private set; default = false; }
 
     // Signals for state changes
     public virtual signal void simulation_updated () {}
@@ -105,6 +106,10 @@ public class Life.State : Object, Scaleable {
 
         notify["autosave"].connect (trigger_autosave_if_enabled);
 
+        notify["showing-welcome"].connect (recalculate_editing_enabled);
+        notify["saving-in-progress"].connect (recalculate_editing_enabled);
+        notify["opening-in-progress"].connect (recalculate_editing_enabled);
+
         stepper.step_completed.connect (on_step_completed);
         simulation_updated.connect (trigger_autosave_if_enabled);
     }
@@ -132,6 +137,10 @@ public class Life.State : Object, Scaleable {
             stats += stat;
         }
         return stats;
+    }
+
+    private void recalculate_editing_enabled () {
+        editing_enabled = !saving_in_progress && !opening_in_progress;
     }
 
     private void trigger_autosave_if_enabled () {

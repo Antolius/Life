@@ -91,7 +91,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.POINTER,
             tooltip_text = _("Select cells"),
             image = new Gtk.Image.from_icon_name (
-                "pointer",
+                "pointer-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
@@ -107,7 +107,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.PENCIL,
             tooltip_text = _("Draw live cells"),
             image = new Gtk.Image.from_icon_name (
-                "edit",
+                "edit-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
@@ -123,7 +123,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             active = state.active_tool == State.Tool.ERASER,
             tooltip_text = _("Erase live cells"),
             image = new Gtk.Image.from_icon_name (
-                "edit-erase",
+                "edit-erase-symbolic",
                 Gtk.IconSize.BUTTON
             )
         };
@@ -149,16 +149,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var box = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
             layout_style = Gtk.ButtonBoxStyle.EXPAND,
-            expand = false,
-            valign = Gtk.Align.CENTER
+            sensitive = state.editing_enabled,
+            valign = Gtk.Align.CENTER,
+            expand = false
         };
 
-        state.notify["saving-in-progress"].connect (() => {
-            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            box.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            box,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         box.add (pointer_btn);
         box.add (pencil_btn);
@@ -171,17 +172,17 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "edit-clear",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
+            sensitive = state.editing_enabled,
             tooltip_text = _("Clear all"),
             margin_start = 16
         };
         btn.clicked.connect (state.clear);
-
-        state.notify["saving-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
-        state.notify["opening-in-progress"].connect (() => {
-            btn.sensitive = !state.saving_in_progress && !state.opening_in_progress;
-        });
+        state.bind_property (
+            "editing-enabled",
+            btn,
+            "sensitive",
+            BindingFlags.DEFAULT
+        );
 
         return btn;
     }
