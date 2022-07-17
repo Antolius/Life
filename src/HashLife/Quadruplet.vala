@@ -18,14 +18,22 @@
 *
 */
 
-public class Life.HashLife.Quaduplet<T> : Object {
+public class Life.HashLife.Quaduplet : Object {
 
-    public unowned T first { get; construct; }
-    public unowned T second { get; construct; }
-    public unowned T third { get; construct; }
-    public unowned T fourth { get; construct; }
+    public unowned Quad first { get; construct; }
+    public unowned Quad second { get; construct; }
+    public unowned Quad third { get; construct; }
+    public unowned Quad fourth { get; construct; }
+    public uint hash { get {
+        uint res = 7;
+        res = res * 31 + first.hash;
+        res = res * 31 + second.hash;
+        res = res * 31 + third.hash;
+        res = res * 31 + fourth.hash;
+        return res;
+    } }
 
-    public Quaduplet (T first, T second, T third, T fourth) {
+    public Quaduplet (Quad first, Quad second, Quad third, Quad fourth) {
         Object (
             first: first,
             second: second,
@@ -34,19 +42,18 @@ public class Life.HashLife.Quaduplet<T> : Object {
         );
     }
 
-    public uint hash () {
-        uint res = 5;
-        res = res * 31 + direct_hash (first);
-        res = res * 31 + direct_hash (second);
-        res = res * 31 + direct_hash (third);
-        res = res * 31 + direct_hash (fourth);
-        return res;
-    }
+    public bool equals (Quaduplet other) {
+        if (this == other) {
+            return true;
+        }
 
-    public bool equals (Quaduplet<T> other) {
-        return first == other.first
-            && second == other.second
-            && third == other.third
-            && fourth == other.fourth;
+        if (other == null) {
+            return false;
+        }
+
+        return (first == null && other.first == null || first.equals (other.first))
+            && (second == null && other.second == null || second.equals (other.second))
+            && (third == null && other.third == null || third.equals (other.third))
+            && (fourth == null && other.fourth == null || fourth.equals (other.fourth));
     }
 }

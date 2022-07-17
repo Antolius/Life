@@ -20,28 +20,32 @@
 
 public class Life.HashLife.QuadFactory : Object {
 
-    public static Quad dead = new Quad.zero_level ();
-    public static Quad alive = new Quad.zero_level ();
+    public static Quad dead = new Quad.zero_level (0);
+    public static Quad alive = new Quad.zero_level (1);
 
     public Cache.MonitoredCache<uint32, Quad> empty_quads_cache { get; set; }
-    public Cache.MonitoredCache<Quaduplet<Quad>, Quad> quads_cache { get; set; }
+    public Cache.MonitoredCache<Quaduplet, Quad> quads_cache { get; set; }
 
     construct {
         empty_quads_cache = new Cache.MonitoredCache<uint32, Quad> (
             "Empty quads cacne",
             new Cache.LfuCache<uint32, Quad> (
-                100000,
-                _create_empty_quad
+                100,
+                _create_empty_quad,
+                i => (uint) i,
+                (i1, i2) => i1 == i2,
+                (q1, q2) => q1 == null && q2 == null || q1.equals (q2)
             )
         );
 
-        quads_cache = new Cache.MonitoredCache<Quaduplet<Quad>, Quad> (
+        quads_cache = new Cache.MonitoredCache<Quaduplet, Quad> (
             "Quads cacne",
-            new Cache.LfuCache<Quaduplet<Quad>, Quad> (
+            new Cache.LfuCache<Quaduplet, Quad> (
                 1000000,
                 _create_quad,
-                q => q.hash (),
-                (q1, q2) => q1.equals (q2)
+                q => q.hash,
+                (q1, q2) => q1 == null && q2 == null || q1.equals (q2),
+                (q1, q2) => q1 == null && q2 == null || q1.equals (q2)
             )
         );
     }
@@ -51,11 +55,11 @@ public class Life.HashLife.QuadFactory : Object {
         requires (ne.level == se.level)
         requires (se.level == sw.level)
         ensures (result.level == sw.level + 1) {
-        var key = new Quaduplet<Quad> (nw, ne, se, sw);
+        var key = new Quaduplet (nw, ne, se, sw);
         return quads_cache.access (key);
     }
 
-    private Quad _create_quad (Quaduplet<Quad> q) {
+    private Quad _create_quad (Quaduplet q) {
         return new Quad (q.first, q.second, q.third, q.fourth);
     }
 
