@@ -37,34 +37,35 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             Gtk.IconSize.MENU
         );
 
+        var header_bar_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8);
+        header_bar_box.pack_start (title);
+        header_bar_box.pack_start (caret);
+
         var file_operation_indicator = new Gtk.Spinner () {
             tooltip_text = _("Saving to a file…")
         };
         state.notify["saving-in-progress"].connect (() => {
             if (state.saving_in_progress) {
                 file_operation_indicator.tooltip_text = _("Saving to a file…");
+                header_bar_box.pack_end (file_operation_indicator);
                 file_operation_indicator.show_all ();
                 file_operation_indicator.start ();
             } else {
                 file_operation_indicator.stop ();
-                file_operation_indicator.hide ();
+                header_bar_box.remove (file_operation_indicator);
             }
         });
         state.notify["opening-in-progress"].connect (() => {
             if (state.opening_in_progress) {
                 file_operation_indicator.tooltip_text = _("Opening a file…");
+                header_bar_box.pack_end (file_operation_indicator);
                 file_operation_indicator.show_all ();
                 file_operation_indicator.start ();
             } else {
                 file_operation_indicator.stop ();
-                file_operation_indicator.hide ();
+                header_bar_box.remove (file_operation_indicator);
             }
         });
-
-        var header_bar_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8);
-        header_bar_box.pack_start (title);
-        header_bar_box.pack_start (caret);
-        header_bar_box.pack_start (file_operation_indicator);
 
         var menu_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8) {
             margin_left = 16,
