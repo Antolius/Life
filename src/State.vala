@@ -28,6 +28,7 @@ public class Life.State : Object, Scaleable {
 
     public const int MIN_SPEED = 1;      //  1 generation per second
     public const int MAX_SPEED = 20;     // 20 generations per second
+    public const int SPEED_STEP = 4;    //  4 generations per second
     public const int DEFAULT_SPEED = 10; // 10 generations per second
     public const int DEFAULT_SCALE = 10; // 10px per board point
 
@@ -59,6 +60,8 @@ public class Life.State : Object, Scaleable {
         get { return file_manager.autosave_exists (); }
     }
     public bool editing_enabled { get; private set; default = false; }
+    public bool can_slow_down {get; private set; default = false; }
+    public bool can_speed_up { get; private set; default = false; }
 
     // Signals for state changes
     public virtual signal void simulation_updated () {}
@@ -98,10 +101,12 @@ public class Life.State : Object, Scaleable {
             } else {
                 stop_ticking ();
             }
+            recalculate_can_change_speed ();
         });
 
         notify["simulation-speed"].connect (() => {
             restart_ticking ();
+            recalculate_can_change_speed ();
         });
 
         notify["autosave"].connect (trigger_autosave_if_enabled);
@@ -141,6 +146,11 @@ public class Life.State : Object, Scaleable {
 
     private void recalculate_editing_enabled () {
         editing_enabled = !saving_in_progress && !opening_in_progress;
+    }
+
+    private void recalculate_can_change_speed () {
+        can_speed_up = is_playing && (simulation_speed + SPEED_STEP < MAX_SPEED);
+        can_slow_down = is_playing && (simulation_speed - SPEED_STEP > MIN_SPEED);
     }
 
     private void trigger_autosave_if_enabled () {
