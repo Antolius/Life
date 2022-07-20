@@ -37,6 +37,9 @@ public class Life.Widgets.SimulationPane : Gtk.Grid {
         state.info.connect (model => {
             update_infobar (infobar, model);
         });
+        state.clear_info.connect (() => {
+            infobar.revealed = false;
+        });
         attach (infobar, 0, 0);
 
         var board_with_controlls = new Gtk.Grid ();

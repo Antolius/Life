@@ -80,65 +80,14 @@ public class Life.Widgets.Welcome : Granite.Widgets.Welcome {
     }
 
     private void open_autosave () {
-        state.clear ();
-        state.showing_welcome = false;
-        state.open_autosave.begin ((obj, res) => {
-            var ok = state.open_autosave.end (res);
-            if (!ok) {
-                state.info (new InfoModel (
-                    _("Failed to open autosave file"),
-                    Gtk.MessageType.ERROR,
-                    _("Try opening another file"),
-                    () => open_file ()
-                ));
-            }
-        });
+        var group = get_action_group (WIN_GROUP);
+        assert (group != null);
+        group.activate_action (ACTION_OPEN_AUTOSAVE, null);
     }
 
     private void open_file () {
-        var dialog = new Gtk.FileChooserNative (
-            null,
-            null,
-            Gtk.FileChooserAction.OPEN,
-            null,
-            null
-        ) {
-            filter = cells_filter ()
-        };
-
-        var res = dialog.run ();
-        if (res == Gtk.ResponseType.ACCEPT) {
-            var path = dialog.get_filename ();
-            if (path == null) {
-                state.info (new InfoModel (
-                    _("No readable file was selected"),
-                    Gtk.MessageType.WARNING,
-                    _("Try opening another file"),
-                    () => open_file ()
-                ));
-                return;
-            }
-
-            state.clear ();
-            state.showing_welcome = false;
-            state.open.begin (path, (obj, res) => {
-                var ok = state.open.end (res);
-                if (!ok) {
-                    state.info (new InfoModel (
-                        _("Failed to open file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try opening another file"),
-                        () => open_file ()
-                    ));
-                }
-            });
-        }
-    }
-
-    private Gtk.FileFilter cells_filter () {
-        var cells_filter = new Gtk.FileFilter ();
-        cells_filter.set_filter_name (_("Cells files"));
-        cells_filter.add_pattern ("*.cells");
-        return cells_filter;
+        var group = get_action_group (WIN_GROUP);
+        assert (group != null);
+        group.activate_action (ACTION_OPEN_FILE, null);
     }
 }

@@ -21,7 +21,6 @@
 public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
 
     public State state { get; construct; }
-    private const int SPEED_STEP = 4;
 
     public PlaybackBar (State state) {
         Object (state: state);
@@ -46,61 +45,46 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             "media-seek-backward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            tooltip_text = _("Slow simulation down"),
-            sensitive = can_slow_down ()
+            action_name = WIN_ACTION_SLOW_DOWN,
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_SLOW_DOWN),
+                _("Slow simulation down")
+            )
         };
-        btn.clicked.connect (() => {
-            if (can_slow_down ()) {
-                state.simulation_speed -= SPEED_STEP;
-            }
-        });
-        state.notify["simulation-speed"].connect (() => {
-            btn.sensitive = can_slow_down ();
-        });
-        state.notify["is-playing"].connect (() => {
-            btn.sensitive = can_slow_down ();
-        });
+
         return btn;
     }
 
-    private bool can_slow_down () {
-        var not_slowest = state.simulation_speed - SPEED_STEP > State.MIN_SPEED;
-        return state.is_playing && not_slowest;
-    }
-
     private Gtk.Button create_play_button () {
-        var play_tooltip = _("Run simulation");
+        var play_tooltip = Granite.markup_accel_tooltip (
+            get_accels_for_action (WIN_ACTION_PLAY_PAUSE),
+            _("Run simulation")
+        );
         var play_icon = new Gtk.Image.from_icon_name (
             "media-playback-start",
             Gtk.IconSize.LARGE_TOOLBAR
         );
 
-        var pause_tooltip = _("Pause simulation");
+        var pause_tooltip = Granite.markup_accel_tooltip (
+            get_accels_for_action (WIN_ACTION_PLAY_PAUSE),
+            _("Pause simulation")
+        );
         var pause_icon = new Gtk.Image.from_icon_name (
             "media-playback-pause",
             Gtk.IconSize.LARGE_TOOLBAR
         );
 
         var btn = new Gtk.Button () {
-            sensitive = state.editing_enabled,
+            action_name = WIN_ACTION_PLAY_PAUSE,
             image = state.is_playing ? pause_icon : play_icon,
-            tooltip_text = state.is_playing ? pause_tooltip : play_tooltip
+            tooltip_markup = state.is_playing ? pause_tooltip : play_tooltip
         };
-        btn.clicked.connect (() => {
-            state.is_playing = !state.is_playing;
-        });
+
         state.notify["is-playing"].connect (() => {
             btn.image = state.is_playing ? pause_icon : play_icon;
-            btn.tooltip_text = state.is_playing ? pause_tooltip : play_tooltip;
+            btn.tooltip_markup = state.is_playing ? pause_tooltip : play_tooltip;
             btn.show_all ();
         });
-
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
-        );
 
         return btn;
     }
@@ -110,26 +94,14 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             "media-seek-forward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            tooltip_text = _("Speed simulation up"),
-            sensitive = can_speed_up ()
+            action_name = WIN_ACTION_SPEED_UP,
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_SPEED_UP),
+                _("Speed simulation up")
+            )
         };
-        btn.clicked.connect (() => {
-            if (can_speed_up ()) {
-                state.simulation_speed += SPEED_STEP;
-            }
-        });
-        state.notify["simulation-speed"].connect (() => {
-            btn.sensitive = can_speed_up ();
-        });
-        state.notify["is-playing"].connect (() => {
-            btn.sensitive = can_speed_up ();
-        });
-        return btn;
-    }
 
-    private bool can_speed_up () {
-        var not_fastest = state.simulation_speed + SPEED_STEP < State.MAX_SPEED;
-        return state.is_playing && not_fastest;
+        return btn;
     }
 
     private Gtk.Button create_step_forward_button () {
@@ -137,20 +109,12 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
             "media-skip-forward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            tooltip_text = _("Advance simulation by one generation"),
-            sensitive = state.editing_enabled
+            action_name = WIN_ACTION_STEP_FORWARD,
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_STEP_FORWARD),
+                _("Advance simulation by one generation")
+            )
         };
-        btn.clicked.connect (() => {
-            state.is_playing = false;
-            state.step_by_one ();
-        });
-
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
-        );
 
         return btn;
     }

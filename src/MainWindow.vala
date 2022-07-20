@@ -51,6 +51,7 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     construct {
         apply_saved_window_state ();
+        register_actions ();
         create_layout ();
         show_all ();
     }
@@ -99,6 +100,19 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         });
 
         return base.configure_event (event);
+    }
+
+    private void register_actions () {
+        var app = Application.get_default ();
+        var actions = window_actions (state);
+        var accelerators = window_action_accelerators ();
+        foreach (var action in actions) {
+            add_action (action);
+            var accels = accelerators[action.name].to_array ();
+            if (accels != null) {
+                app.set_accels_for_action (WIN_PREFIX + action.name, accels);
+            }
+        }
     }
 
     private void create_layout () {

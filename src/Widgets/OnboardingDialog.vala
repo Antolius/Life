@@ -93,7 +93,7 @@ public class Life.Widgets.OnboardingDialog : Granite.Dialog {
             vexpand = true
         };
 
-        var title = new Granite.HeaderLabel (_("Conway's Game of Life")) {
+        var title = new Granite.HeaderLabel (_("Conway's Game of Life Primer")) {
             halign = Gtk.Align.CENTER
         };
         content.attach (title, 0, 0);
@@ -130,7 +130,7 @@ First, note that each cell borders 8 other cells. They are called neighbors.""";
     }
 
     private Gtk.Widget build_counts_slide () {
-        var txt = """To determine if a cell will be alive or dead in the next generation its live neighbors are counted. This count ranges from 0 (when cell has no live neighbors) to 8 (when all its neighbors are alive).""";
+        var txt = """To determine if a cell will be alive or dead in the next generation its live neighbors are counted. This count ranges from 0 (when cell has no live neighbors) to 8 (when all its neighbors are alive)."""; // vala-lint=line-length
         return build_slide (txt, glider_gen_1_data, glider_neighbour_counts);
     }
 
@@ -248,7 +248,9 @@ Try finding some interesting patterns by yourself, or explore the included Patte
 
         var buttons_row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
             valign = Gtk.Align.END,
-            homogeneous = true
+            homogeneous = true,
+            margin_left = 16,
+            margin_right = 16
         };
         buttons_row.get_style_context ().add_class ("dialog-action-area");
         buttons_row.pack_start (prev_btn);

@@ -29,6 +29,10 @@ public class Life.Application : Gtk.Application {
         );
     }
 
+    public static new Application get_default () {
+        return (Application) GLib.Application.get_default ();
+    }
+
     static construct {
         settings = new Settings (Constants.PROJECT_NAME);
     }
@@ -36,11 +40,9 @@ public class Life.Application : Gtk.Application {
     protected override void activate () {
         unowned var existing_windows = get_windows ();
         if (existing_windows.length () > 0) {
-            warning ("Activate called, presenting existing window");
             var window = existing_windows.first ().data as MainWindow;
             window.present ();
         } else {
-            warning ("Activate called, creating a new window");
             var window = create_new_window (null);
             window.show ();
         }
@@ -48,7 +50,6 @@ public class Life.Application : Gtk.Application {
 
     protected override void open (File[] files, string hint) {
         foreach (var file in files) {
-            warning ("Opening file %s", file.get_path ());
             State state;
             var window = create_new_window (out state);
             window.show ();
@@ -63,6 +64,12 @@ public class Life.Application : Gtk.Application {
         var parallel_stepper = new HashLife.ParallelStepper (simulation);
         var file_manager = new FileManager (tree, tree);
         var gsettings_manager = new GSettingsManager (settings);
+
+        shutdown.connect (() => {
+            parallel_stepper.shutdown_gracefully ();
+            gsettings_manager.shutdown_gracefully ();
+        });
+
         state = new State (
             tree,
             tree,
