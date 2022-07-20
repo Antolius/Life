@@ -66,9 +66,27 @@ public class Life.State : Object, Scaleable {
 
     // Signals for state changes
     public virtual signal void simulation_updated () {}
-    public signal void info (InfoModel model);
+    public signal void info (InfoModel model) {
+        if (info_timer_id != null) {
+            Source.remove (info_timer_id);
+            info_timer_id = null;
+        }
 
-    private uint? timer_id;
+        info_timer_id = Timeout.add (5000, () => {
+            info_timer_id = null;
+            clear_info ();
+            return Source.REMOVE;
+        });
+    }
+    public signal void clear_info () {
+        if (info_timer_id != null) {
+            Source.remove (info_timer_id);
+            info_timer_id = null;
+        }
+    }
+
+    private uint? tick_timer_id;
+    private uint? info_timer_id;
     private bool is_stepping = false;
 
     public State (
@@ -242,11 +260,11 @@ public class Life.State : Object, Scaleable {
     }
 
     private void start_ticking () {
-        if (timer_id != null) {
+        if (tick_timer_id != null) {
             return;
         }
 
-        timer_id = Timeout.add (1000 / simulation_speed, () => {
+        tick_timer_id = Timeout.add (1000 / simulation_speed, () => {
             if (!is_stepping) {
                 step_by_one ();
             }
@@ -256,9 +274,9 @@ public class Life.State : Object, Scaleable {
     }
 
     private void stop_ticking () {
-        if (timer_id != null) {
-            Source.remove (timer_id);
-            timer_id = null;
+        if (tick_timer_id != null) {
+            Source.remove (tick_timer_id);
+            tick_timer_id = null;
         }
     }
 

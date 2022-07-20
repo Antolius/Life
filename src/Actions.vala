@@ -38,6 +38,10 @@ namespace Life {
     public const string ACTION_ERASER_TOOL = "action-eraser-tool";
     public const string ACTION_CLEAR_ALL = "action-clear-all";
     public const string ACTION_SHOW_HELP = "action-show-help";
+    public const string ACTION_OPEN_FILE = "action-open-file";
+    public const string ACTION_SAVE_FILE = "action-save-file";
+    public const string ACTION_SAVE_AS_FILE = "action-save-as-file";
+    public const string ACTION_OPEN_AUTOSAVE = "action-open-autosave";
 
     // Full action names (with group prefix)
     public const string WIN_ACTION_PLAY_PAUSE = WIN_PREFIX + ACTION_PLAY_PAUSE;
@@ -50,6 +54,10 @@ namespace Life {
     public const string WIN_ACTION_ERASER_TOOL = WIN_PREFIX + ACTION_ERASER_TOOL;
     public const string WIN_ACTION_CLEAR_ALL = WIN_PREFIX + ACTION_CLEAR_ALL;
     public const string WIN_ACTION_SHOW_HELP = WIN_PREFIX + ACTION_SHOW_HELP;
+    public const string WIN_ACTION_OPEN_FILE = WIN_PREFIX + ACTION_OPEN_FILE;
+    public const string WIN_ACTION_SAVE_FILE = WIN_PREFIX + ACTION_SAVE_FILE;
+    public const string WIN_ACTION_SAVE_AS_FILE = WIN_PREFIX + ACTION_SAVE_AS_FILE;
+    public const string WIN_ACTION_OPEN_AUTOSAVE = WIN_PREFIX + ACTION_OPEN_AUTOSAVE;
 
     public string[] get_accels_for_action (string action_name) {
         var app = Application.get_default ();
@@ -68,6 +76,9 @@ namespace Life {
         accels[ACTION_ERASER_TOOL] = "<Control>3";
         accels[ACTION_CLEAR_ALL] = "<Control><Shift>k";
         accels[ACTION_SHOW_HELP] = "F1";
+        accels[ACTION_OPEN_FILE] = "<Control>o";
+        accels[ACTION_SAVE_FILE] = "<Control>s";
+        accels[ACTION_SAVE_AS_FILE] = "<Control><Shift>s";
         return accels;
     }
 
@@ -137,11 +148,7 @@ namespace Life {
             "library-animation-in-progress",
             toggle_library_action,
             "enabled",
-            BindingFlags.SYNC_CREATE,
-            (bind, source, ref target) => {
-                target.set_boolean (!source.get_boolean ());
-                return true;
-            }
+            BindingFlags.SYNC_CREATE | BindingFlags.INVERT_BOOLEAN
         );
         actions.add (toggle_library_action);
 
@@ -192,7 +199,7 @@ namespace Life {
         );
         actions.add (clear_all_action);
 
-        // Help
+        // Help actions
         var show_help_action = new SimpleAction (ACTION_SHOW_HELP, null);
         show_help_action.activate.connect (() => {
             var dialog = new Widgets.OnboardingDialog ();
@@ -201,6 +208,175 @@ namespace Life {
         });
         actions.add (show_help_action);
 
+        // File actions
+        var open_file_action = new SimpleAction (ACTION_OPEN_FILE, null);
+        open_file_action.set_enabled (true); // Activated from Welcome screen
+        open_file_action.activate.connect (() => on_open (state));
+        state.bind_property (
+            "editing-enabled",
+            open_file_action,
+            "enabled",
+            BindingFlags.DEFAULT
+        );
+        actions.add (open_file_action);
+
+        var save_file_action = new SimpleAction (ACTION_SAVE_FILE, null);
+        save_file_action.activate.connect (() => on_save (state));
+        state.bind_property (
+            "editing-enabled",
+            save_file_action,
+            "enabled",
+            BindingFlags.SYNC_CREATE
+        );
+        actions.add (save_file_action);
+
+        var save_as_file_action = new SimpleAction (ACTION_SAVE_AS_FILE, null);
+        save_as_file_action.activate.connect (() => on_save_as (state));
+        state.bind_property (
+            "editing-enabled",
+            save_as_file_action,
+            "enabled",
+            BindingFlags.SYNC_CREATE
+        );
+        actions.add (save_as_file_action);
+
+        var open_autosave_action = new SimpleAction (ACTION_OPEN_AUTOSAVE, null);
+        open_autosave_action.set_enabled (true); // Activated from Welcome screen
+        open_autosave_action.activate.connect (() => on_open_autosave (state));
+        state.bind_property (
+            "editing-enabled",
+            open_autosave_action,
+            "enabled",
+            BindingFlags.DEFAULT
+        );
+        actions.add (open_autosave_action);
+
         return actions;
+    }
+
+    private void on_open (State state) {
+        var dialog = new Gtk.FileChooserNative (
+            null,
+            null,
+            Gtk.FileChooserAction.OPEN,
+            null,
+            null
+        ) {
+            filter = cells_filter ()
+        };
+
+        var res = dialog.run ();
+        if (res == Gtk.ResponseType.ACCEPT) {
+            var path = dialog.get_filename ();
+            if (path == null) {
+                state.info (new InfoModel (
+                    _("Cannot open the selected file"),
+                    Gtk.MessageType.WARNING,
+                    _("Try Opening a Different File"),
+                    () => on_open (state)
+                ));
+                return;
+            }
+
+            state.showing_welcome = false;
+            state.open.begin (path, (obj, res) => {
+                var ok = state.open.end (res);
+                if (!ok) {
+                    state.info (new InfoModel (
+                        _("Reading a pattern from the selected file has failed"),
+                        Gtk.MessageType.ERROR,
+                        _("Try Opening a Different File"),
+                        () => on_open (state)
+                    ));
+                } else {
+                  state.clear_info ();
+                }
+            });
+        }
+    }
+
+    private void on_save (State state) {
+        if (state.file != null) {
+            state.save.begin (null, (obj, res) => {
+                var ok = state.save.end (res);
+                if (!ok) {
+                    state.info (new InfoModel (
+                        _("Writing into the current file has failed"),
+                        Gtk.MessageType.ERROR,
+                        _("Try Saving Under a New Name"),
+                        () => on_save_as (state)
+                    ));
+                } else {
+                  state.clear_info ();
+                }
+            });
+        } else {
+            on_save_as (state);
+        }
+    }
+
+    private void on_save_as (State state) {
+        var dialog = new Gtk.FileChooserNative (
+            null,
+            null,
+            Gtk.FileChooserAction.SAVE,
+            null,
+            null
+        ) {
+            filter = cells_filter ()
+        };
+        dialog.set_do_overwrite_confirmation (true);
+
+        var res = dialog.run ();
+        if (res == Gtk.ResponseType.ACCEPT) {
+            var path = dialog.get_filename ();
+            if (path == null) {
+                state.info (new InfoModel (
+                    _("Cannot save into the selected file"),
+                    Gtk.MessageType.WARNING,
+                    _("Try Saving Under a New Name"),
+                    () => on_save_as (state)
+                ));
+                return;
+            }
+
+            state.save.begin (path, (obj, res) => {
+                var ok = state.save.end (res);
+                if (!ok) {
+                    state.info (new Life.InfoModel (
+                        _("Writing into the selected file has failed"),
+                        Gtk.MessageType.ERROR,
+                        _("Try Saving Under a New Name"),
+                        () => on_save_as (state)
+                    ));
+                } else {
+                  state.clear_info ();
+                }
+            });
+        }
+    }
+
+    private void on_open_autosave (State state) {
+        state.showing_welcome = false;
+        state.open_autosave.begin ((obj, res) => {
+            var ok = state.open_autosave.end (res);
+            if (!ok) {
+                state.info (new InfoModel (
+                    _("Reading a pattern from the autosave file has failed"),
+                    Gtk.MessageType.ERROR,
+                    _("Try Opening a Different File"),
+                    () => on_open (state)
+                ));
+            } else {
+              state.clear_info ();
+            }
+        });
+    }
+
+    private Gtk.FileFilter cells_filter () {
+        var cells_filter = new Gtk.FileFilter ();
+        cells_filter.set_filter_name (_("Cells files"));
+        cells_filter.add_pattern ("*.cells");
+        return cells_filter;
     }
 }

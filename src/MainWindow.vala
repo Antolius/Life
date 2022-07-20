@@ -109,7 +109,9 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         foreach (var action in actions) {
             add_action (action);
             var accels = accelerators[action.name].to_array ();
-            app.set_accels_for_action (WIN_PREFIX + action.name, accels);
+            if (accels != null) {
+                app.set_accels_for_action (WIN_PREFIX + action.name, accels);
+            }
         }
     }
 

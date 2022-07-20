@@ -67,22 +67,18 @@ public class Life.Widgets.FileControls : Gtk.Bin {
             }
         });
 
-        var menu_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8) {
-            margin_left = 16,
-            margin_right = 16,
-            margin_top = 8,
-            margin_bottom = 8
+        var menu_grid = new Gtk.Grid () {
+            margin_top = 3,
+            margin_bottom = 3,
+            orientation = Gtk.Orientation.VERTICAL
         };
-        var open_button = create_open_button ();
-        menu_box.pack_start (open_button);
-        var save_button = create_save_button ();
-        menu_box.pack_start (save_button);
-        var save_as_button = create_save_as_button ();
-        menu_box.pack_start (save_as_button);
-        menu_box.show_all ();
+        menu_grid.add (create_open_button ());
+        menu_grid.add (create_save_button ());
+        menu_grid.add (create_save_as_button ());
+        menu_grid.show_all ();
 
         menu_popover = new Gtk.Popover (null) {
-            child = menu_box
+            child = menu_grid
         };
 
         var title_button = new Gtk.MenuButton () {
@@ -100,177 +96,56 @@ public class Life.Widgets.FileControls : Gtk.Bin {
         });
 
         child = title_button;
-
-
     }
 
-    private Gtk.Button create_open_button () {
-        var btn = new Gtk.Button.from_icon_name (
+    private Gtk.ModelButton create_open_button () {
+        return create_file_op_button (
             "document-open",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            sensitive = state.editing_enabled,
-            tooltip_text = _("Open a file")
-        };
-
-        btn.clicked.connect (on_open_button_clicked);
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
+            _("Open a File"),
+            WIN_ACTION_OPEN_FILE
         );
-        return btn;
-    }
-
-    private void on_open_button_clicked () {
-        menu_popover.popdown ();
-
-        var dialog = new Gtk.FileChooserNative (
-            null,
-            null,
-            Gtk.FileChooserAction.OPEN,
-            null,
-            null
-        ) {
-            filter = cells_filter ()
-        };
-
-        var res = dialog.run ();
-        if (res == Gtk.ResponseType.ACCEPT) {
-            var path = dialog.get_filename ();
-            if (path == null) {
-                state.info (new InfoModel (
-                    _("No readable file was selected"),
-                    Gtk.MessageType.WARNING,
-                    _("Try opening another file"),
-                    () => on_open_button_clicked ()
-                ));
-                return;
-            }
-
-            state.open.begin (path, (obj, res) => {
-                var ok = state.open.end (res);
-                if (!ok) {
-                    state.info (new InfoModel (
-                        _("Failed to open file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try opening another file"),
-                        () => on_open_button_clicked ()
-                    ));
-                }
-            });
-        }
     }
 
     private Gtk.Button create_save_button () {
-        var btn = new Gtk.Button.from_icon_name (
+        return create_file_op_button (
             "document-save",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            sensitive = state.editing_enabled,
-            tooltip_text = _("Save this file")
-        };
-
-        btn.clicked.connect (on_save_button_clicked);
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
+            _("Save this File"),
+            WIN_ACTION_SAVE_FILE
         );
-        return btn;
-    }
-
-    private void on_save_button_clicked () {
-        menu_popover.popdown ();
-
-        if (state.file != null) {
-            state.save.begin (null, (obj, res) => {
-                var ok = state.save.end (res);
-                if (!ok) {
-                    state.info (new InfoModel (
-                        _("Failed to save current file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try saving under a new name"),
-                        () => on_save_as_button_clicked ()
-                    ));
-                }
-            });
-        } else {
-            on_save_as_button_clicked ();
-        }
     }
 
     private Gtk.Button create_save_as_button () {
-        var btn = new Gtk.Button.from_icon_name (
+        return create_file_op_button (
             "document-save-as",
-            Gtk.IconSize.LARGE_TOOLBAR
-        ) {
-            sensitive = state.editing_enabled,
-            tooltip_text = _("Save this file with a different name")
-        };
-
-        btn.clicked.connect (on_save_as_button_clicked);
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
+            _("Save to a Different File"),
+            WIN_ACTION_SAVE_AS_FILE
         );
-        return btn;
     }
 
-    private void on_save_as_button_clicked () {
-        menu_popover.popdown ();
-
-        var dialog = new Gtk.FileChooserNative (
-            null,
-            null,
-            Gtk.FileChooserAction.SAVE,
-            null,
-            null
-        ) {
-            filter = cells_filter ()
+    private Gtk.ModelButton create_file_op_button (
+        string icon,
+        string label,
+        string action
+    ) {
+        var btn = new Gtk.ModelButton () {
+            action_name = action
         };
-        var filename = state.title + ".cells";
-        if (state.file != null) {
-            filename = "New " + filename;
-        }
-        dialog.set_current_name (filename);
-        dialog.set_do_overwrite_confirmation (true);
+        btn.get_child ().destroy ();
 
-        var res = dialog.run ();
-        if (res == Gtk.ResponseType.ACCEPT) {
-            var path = dialog.get_filename ();
-            if (path == null) {
-                state.info (new InfoModel (
-                    _("No writeable file was selected"),
-                    Gtk.MessageType.WARNING,
-                    _("Try saving under a new name"),
-                    () => on_save_as_button_clicked ()
-                ));
-                return;
-            }
+        var content = new Gtk.Grid () {
+            column_spacing = 8,
+            valign = Gtk.Align.BASELINE,
+            orientation = Gtk.Orientation.HORIZONTAL
+        };
+        content.add (new Gtk.Image () {
+            gicon = new ThemedIcon (icon),
+            icon_size = Gtk.IconSize.LARGE_TOOLBAR
+        });
+        content.add (new Granite.AccelLabel.from_action_name (
+            label, action
+        ));
+        btn.add (content);
 
-            state.save.begin (path, (obj, res) => {
-                var ok = state.save.end (res);
-                if (!ok) {
-                    state.info (new Life.InfoModel (
-                        _("Failed to save file"),
-                        Gtk.MessageType.ERROR,
-                        _("Try saving under a new name"),
-                        () => on_save_as_button_clicked ()
-                    ));
-                }
-            });
-        }
-    }
-
-    private Gtk.FileFilter cells_filter () {
-        var cells_filter = new Gtk.FileFilter ();
-        cells_filter.set_filter_name (_("Cells files"));
-        cells_filter.add_pattern ("*.cells");
-        return cells_filter;
+        return btn;
     }
 }
