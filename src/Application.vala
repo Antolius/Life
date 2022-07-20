@@ -29,7 +29,7 @@ public class Life.Application : Gtk.Application {
         );
     }
 
-    public static new Application get_default() {
+    public static new Application get_default () {
         return (Application) GLib.Application.get_default ();
     }
 

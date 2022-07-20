@@ -66,7 +66,7 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
     public Stats.Metric[] stats () {
         return _delegate.stats ();
     }
-    
+
     public void shutdown_gracefully () {
         ThreadPool.free ((owned) thread_pool, false, true);
     }

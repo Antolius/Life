@@ -243,7 +243,7 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             action_name = WIN_ACTION_SHOW_HELP
         };
         help_btn.get_child ().destroy ();
-        help_btn.add(new Granite.AccelLabel.from_action_name (
+        help_btn.add (new Granite.AccelLabel.from_action_name (
             _("Open Game of Life Primer"), WIN_ACTION_SHOW_HELP
         ));
         menu_grid.attach (help_btn, 0, 5, 3);

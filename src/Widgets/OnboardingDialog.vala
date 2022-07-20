@@ -130,7 +130,7 @@ First, note that each cell borders 8 other cells. They are called neighbors.""";
     }
 
     private Gtk.Widget build_counts_slide () {
-        var txt = """To determine if a cell will be alive or dead in the next generation its live neighbors are counted. This count ranges from 0 (when cell has no live neighbors) to 8 (when all its neighbors are alive).""";
+        var txt = """To determine if a cell will be alive or dead in the next generation its live neighbors are counted. This count ranges from 0 (when cell has no live neighbors) to 8 (when all its neighbors are alive)."""; // vala-lint=line-length
         return build_slide (txt, glider_gen_1_data, glider_neighbour_counts);
     }
 
