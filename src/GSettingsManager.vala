@@ -104,6 +104,10 @@ public class Life.GSettingsManager : Object {
             settings.set_string (kv.key, kv.str);
         }
     }
+
+    public void shutdown_gracefully () {
+        ThreadPool.free ((owned) worker, false, true);
+    }
 }
 
 private class Life.KeyVal : Object {

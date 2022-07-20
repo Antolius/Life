@@ -205,6 +205,7 @@ namespace Life {
             var dialog = new Widgets.OnboardingDialog ();
             dialog.run ();
             dialog.destroy ();
+            state.showing_welcome = false;
         });
         actions.add (show_help_action);
 

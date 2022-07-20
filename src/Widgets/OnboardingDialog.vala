@@ -93,7 +93,7 @@ public class Life.Widgets.OnboardingDialog : Granite.Dialog {
             vexpand = true
         };
 
-        var title = new Granite.HeaderLabel (_("Conway's Game of Life")) {
+        var title = new Granite.HeaderLabel (_("Conway's Game of Life Primer")) {
             halign = Gtk.Align.CENTER
         };
         content.attach (title, 0, 0);
@@ -248,7 +248,9 @@ Try finding some interesting patterns by yourself, or explore the included Patte
 
         var buttons_row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
             valign = Gtk.Align.END,
-            homogeneous = true
+            homogeneous = true,
+            margin_left = 16,
+            margin_right = 16
         };
         buttons_row.get_style_context ().add_class ("dialog-action-area");
         buttons_row.pack_start (prev_btn);

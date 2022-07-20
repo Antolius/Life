@@ -66,6 +66,10 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
     public Stats.Metric[] stats () {
         return _delegate.stats ();
     }
+    
+    public void shutdown_gracefully () {
+        ThreadPool.free ((owned) thread_pool, false, true);
+    }
 
     private async void emit_step_completed_on_main_loop () {
         Idle.add (emit_step_completed_on_main_loop.callback);
