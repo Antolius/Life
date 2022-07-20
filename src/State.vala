@@ -52,6 +52,7 @@ public class Life.State : Object, Scaleable {
     public bool autosave { get; set; default = true; }
     public bool saving_in_progress { get; set; default = false; }
     public bool opening_in_progress { get; set; default = false; }
+    public bool library_animation_in_progress { get; set; default = false; }
 
     // Derived state
     public File? file { get { return file_manager.open_file; } }
@@ -205,6 +206,34 @@ public class Life.State : Object, Scaleable {
         } else {
             return false;
         }
+    }
+
+    public void animate_library_pane_opening () {
+        library_animation_in_progress = true;
+        Timeout.add (2, () => {
+            if (library_position >= 352) {
+                library_position = 360;
+                return false;
+            }
+
+            library_position += 8;
+            library_animation_in_progress = false;
+            return true;
+        });
+    }
+
+    public void animate_library_pane_closing () {
+        library_animation_in_progress = true;
+        Timeout.add (2, () => {
+            if (library_position <= 8) {
+                library_position = 0;
+                return false;
+            }
+
+            library_position -= 8;
+            library_animation_in_progress = false;
+            return true;
+        });
     }
 
     private void restart_ticking () {

@@ -46,50 +46,46 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         pack_end (menu);
     }
 
-    private Gtk.Revealer create_library_expander_button () {
+    private Gtk.Button create_library_expander_button () {
+        var show_tooltip = Granite.markup_accel_tooltip (
+            get_accels_for_action (WIN_ACTION_TOGGLE_LIBRARY),
+            _("Show Patterns Library")
+        );
+        var hide_tooltip = Granite.markup_accel_tooltip (
+            get_accels_for_action (WIN_ACTION_TOGGLE_LIBRARY),
+            _("Hide Patterns Library")
+        );
+        var initial_tooltip = (state.library_position > 0)
+            ? hide_tooltip : show_tooltip;
         var btn = new Gtk.Button.from_icon_name (
             "accessories-dictionary",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            tooltip_text = _("Show Patterns library"),
+            action_name = WIN_ACTION_TOGGLE_LIBRARY,
+            tooltip_markup = initial_tooltip,
             margin_end = 16
         };
-        btn.clicked.connect (animate_library_pane_opening);
 
-        var revealer = new Gtk.Revealer () {
-            transition_type = Gtk.RevealerTransitionType.SLIDE_LEFT,
-            child = btn
-        };
-        state.bind_property (
-            "library-position",
-            revealer,
-            "reveal-child",
-            BindingFlags.SYNC_CREATE | BindingFlags.DEFAULT,
-            (binding, srcval, ref targetval) => {
-                var position = (int) srcval;
-                targetval.set_boolean (position == 0);
-                return true;
+        state.notify["library-position"].connect (() => {
+            var library_is_hidden = state.library_position == 0;
+            var showing_hidden_tooltip = btn.tooltip_markup == hide_tooltip;
+            if (library_is_hidden && showing_hidden_tooltip) {
+                btn.tooltip_markup = show_tooltip;
+            } else if (!library_is_hidden && !showing_hidden_tooltip) {
+                btn.tooltip_markup = hide_tooltip;
             }
-        );
-
-        return revealer;
-    }
-
-    private async void animate_library_pane_opening () {
-        Timeout.add (2, () => {
-            if (state.library_position >= 360) {
-                return false;
-            }
-
-            state.library_position += 8;
-            return true;
         });
+
+        return btn;
     }
 
     private Gtk.ButtonBox create_tool_buttons () {
         var pointer_btn = new Gtk.ToggleButton () {
             active = state.active_tool == State.Tool.POINTER,
-            tooltip_text = _("Select cells"),
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_POINTER_TOOL),
+                _("Select cells")
+            ),
             image = new Gtk.Image.from_icon_name (
                 "pointer-symbolic",
                 Gtk.IconSize.BUTTON
@@ -105,7 +101,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var pencil_btn = new Gtk.ToggleButton () {
             active = state.active_tool == State.Tool.PENCIL,
-            tooltip_text = _("Draw live cells"),
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_PENCIL_TOOL),
+                _("Draw live cells")
+            ),
             image = new Gtk.Image.from_icon_name (
                 "edit-symbolic",
                 Gtk.IconSize.BUTTON
@@ -121,7 +120,10 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
 
         var eraser_btn = new Gtk.ToggleButton () {
             active = state.active_tool == State.Tool.ERASER,
-            tooltip_text = _("Erase live cells"),
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_ERASER_TOOL),
+                _("Erase live cells")
+            ),
             image = new Gtk.Image.from_icon_name (
                 "edit-erase-symbolic",
                 Gtk.IconSize.BUTTON
@@ -172,17 +174,13 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
             "edit-clear",
             Gtk.IconSize.LARGE_TOOLBAR
         ) {
-            sensitive = state.editing_enabled,
-            tooltip_text = _("Clear all"),
+            action_name = WIN_ACTION_CLEAR_ALL,
+            tooltip_markup = Granite.markup_accel_tooltip (
+                get_accels_for_action (WIN_ACTION_CLEAR_ALL),
+                _("Clear all")
+            ),
             margin_start = 16
         };
-        btn.clicked.connect (state.clear);
-        state.bind_property (
-            "editing-enabled",
-            btn,
-            "sensitive",
-            BindingFlags.DEFAULT
-        );
 
         return btn;
     }
@@ -242,13 +240,12 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         menu_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL), 0, 4, 3);
 
         var help_btn = new Gtk.ModelButton () {
-            text = _("Show Help")
+            action_name = WIN_ACTION_SHOW_HELP
         };
-        help_btn.clicked.connect (() => {
-            var dialog = new OnboardingDialog ();
-            dialog.run ();
-            dialog.destroy ();
-        });
+        help_btn.get_child ().destroy ();
+        help_btn.add(new Granite.AccelLabel.from_action_name (
+            _("Show the rules"), WIN_ACTION_SHOW_HELP
+        ));
         menu_grid.attach (help_btn, 0, 5, 3);
 
         menu_grid.show_all ();
