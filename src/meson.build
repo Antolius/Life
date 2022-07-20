@@ -10,6 +10,7 @@ build_constants = configure_file (
 )
 
 common_sources = files (
+    'Actions.vala',
     'Application.vala',
     'ColorPalette.vala',
     'CutoutShape.vala',

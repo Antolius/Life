@@ -20,18 +20,7 @@
 
 public class Life.MainWindow : Hdy.ApplicationWindow {
 
-    public const string ACTION_GROUP_PREFIX = "win";
-    public const string ACTION_PREFIX = ACTION_GROUP_PREFIX + ".";
-
-    public const string ACTION_PLAY_PAUSE = "action-play-pause";
-    public const string ACTION_STEP_FORWARD = "action-step-forward";
-    public const string ACTION_SLOW_DOWN = "action-slow-down";
-    public const string ACTION_SPEED_UP = "action-speed-up";
-
     public State state { get; construct; }
-
-    private Gee.MultiMap<Action, string> action_accelerators =
-        new Gee.HashMultiMap<Action, string> ();
 
     private Gtk.Grid grid;
     private uint configure_id;
@@ -62,7 +51,6 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
 
     construct {
         apply_saved_window_state ();
-        create_actions ();
         register_actions ();
         create_layout ();
         show_all ();
@@ -114,54 +102,14 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         return base.configure_event (event);
     }
 
-    private void create_actions () {
-        var play_pause_action = new SimpleAction (ACTION_PLAY_PAUSE, null);
-        play_pause_action.activate.connect (on_play_pause);
-        state.bind_property (
-            "editing-enabled",
-            play_pause_action,
-            "enabled",
-            BindingFlags.SYNC_CREATE
-        );
-        action_accelerators[play_pause_action] = "<Control>space";
-
-        var step_forward_action = new SimpleAction (ACTION_STEP_FORWARD, null);
-        step_forward_action.activate.connect (on_step_forward);
-        state.bind_property (
-            "editing-enabled",
-            step_forward_action,
-            "enabled",
-            BindingFlags.SYNC_CREATE
-        );
-        action_accelerators[step_forward_action] = "<Control>e";
-
-        var slow_down_action = new SimpleAction (ACTION_SLOW_DOWN, null);
-        slow_down_action.activate.connect (on_slow_down);
-        state.bind_property (
-            "can-slow-down",
-            slow_down_action,
-            "enabled",
-            BindingFlags.SYNC_CREATE
-        );
-        action_accelerators[slow_down_action] = "<Control>bracketleft";
-
-        var speed_up_action = new SimpleAction (ACTION_SPEED_UP, null);
-        speed_up_action.activate.connect (on_speed_up);
-        state.bind_property (
-            "can-speed-up",
-            speed_up_action,
-            "enabled",
-            BindingFlags.SYNC_CREATE
-        );
-        action_accelerators[speed_up_action] = "<Control>bracketright";
-    }
-
     private void register_actions () {
-        var app = (Gtk.Application) GLib.Application.get_default ();
-        foreach (var action in action_accelerators.get_keys ()) {
+        var app = Application.get_default ();
+        var actions = window_actions (state);
+        var accelerators = window_action_accelerators ();
+        foreach (var action in actions) {
             add_action (action);
-            var accels = action_accelerators[action].to_array ();
-            app.set_accels_for_action (ACTION_PREFIX + action.name, accels);
+            var accels = accelerators[action.name].to_array ();
+            app.set_accels_for_action (WIN_PREFIX + action.name, accels);
         }
     }
 
@@ -188,22 +136,5 @@ public class Life.MainWindow : Hdy.ApplicationWindow {
         grid.attach (paned, 0, 1);
 
         child = grid;
-    }
-
-    private void on_play_pause () {
-        state.is_playing = !state.is_playing;
-    }
-
-    private void on_step_forward () {
-        state.is_playing = false;
-        state.step_by_one ();
-    }
-
-    private void on_slow_down () {
-      state.simulation_speed -= State.SPEED_STEP;
-    }
-
-    private void on_speed_up () {
-      state.simulation_speed += State.SPEED_STEP;
     }
 }

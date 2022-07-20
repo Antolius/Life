@@ -41,14 +41,13 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private Gtk.Button create_slow_down_button () {
-        var action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_SLOW_DOWN;
         var btn = new Gtk.Button.from_icon_name (
             "media-seek-backward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            action_name = action_name,
+            action_name = WIN_ACTION_SLOW_DOWN,
             tooltip_markup = Granite.markup_accel_tooltip (
-                get_accels_for_action (action_name),
+                get_accels_for_action (WIN_ACTION_SLOW_DOWN),
                 _("Slow simulation down")
             )
         };
@@ -57,9 +56,8 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private Gtk.Button create_play_button () {
-        var action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_PLAY_PAUSE;
         var play_tooltip = Granite.markup_accel_tooltip (
-            get_accels_for_action (action_name),
+            get_accels_for_action (WIN_ACTION_PLAY_PAUSE),
             _("Run simulation")
         );
         var play_icon = new Gtk.Image.from_icon_name (
@@ -68,7 +66,7 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         );
 
         var pause_tooltip = Granite.markup_accel_tooltip (
-            get_accels_for_action (action_name),
+            get_accels_for_action (WIN_ACTION_PLAY_PAUSE),
             _("Pause simulation")
         );
         var pause_icon = new Gtk.Image.from_icon_name (
@@ -77,7 +75,7 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
         );
 
         var btn = new Gtk.Button () {
-            action_name = action_name,
+            action_name = WIN_ACTION_PLAY_PAUSE,
             image = state.is_playing ? pause_icon : play_icon,
             tooltip_markup = state.is_playing ? pause_tooltip : play_tooltip
         };
@@ -92,14 +90,13 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private Gtk.Button create_speed_up_button () {
-        var action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_SPEED_UP;
         var btn = new Gtk.Button.from_icon_name (
             "media-seek-forward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            action_name = action_name,
+            action_name = WIN_ACTION_SPEED_UP,
             tooltip_markup = Granite.markup_accel_tooltip (
-                get_accels_for_action (action_name),
+                get_accels_for_action (WIN_ACTION_SPEED_UP),
                 _("Speed simulation up")
             )
         };
@@ -108,14 +105,13 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
     }
 
     private Gtk.Button create_step_forward_button () {
-        var action_name = MainWindow.ACTION_PREFIX + MainWindow.ACTION_STEP_FORWARD;
         var btn = new Gtk.Button.from_icon_name (
             "media-skip-forward",
             Gtk.IconSize.SMALL_TOOLBAR
         ) {
-            action_name = action_name,
+            action_name = WIN_ACTION_STEP_FORWARD,
             tooltip_markup = Granite.markup_accel_tooltip (
-                get_accels_for_action (action_name),
+                get_accels_for_action (WIN_ACTION_STEP_FORWARD),
                 _("Advance simulation by one generation")
             )
         };
@@ -133,10 +129,5 @@ public class Life.Widgets.PlaybackBar : Gtk.ActionBar {
 
     private string generation_txt () {
         return _("Generation %" + int64.FORMAT).printf (state.generation);
-    }
-
-    private string[] get_accels_for_action (string action_name) {
-        var app = (Application) GLib.Application.get_default ();
-        return app.get_accels_for_action (action_name);
     }
 }

@@ -29,6 +29,10 @@ public class Life.Application : Gtk.Application {
         );
     }
 
+    public static new Application get_default() {
+        return (Application) GLib.Application.get_default ();
+    }
+
     static construct {
         settings = new Settings (Constants.PROJECT_NAME);
     }
