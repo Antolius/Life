@@ -65,8 +65,8 @@ public class Life.State : Object, Scaleable {
     public bool can_speed_up { get; private set; default = false; }
 
     // Signals for state changes
-    public virtual signal void simulation_updated () {}
-    public signal void info (InfoModel model) {
+    public signal void simulation_updated ();
+    public virtual signal void info (InfoModel model) {
         if (info_timer_id != null) {
             Source.remove (info_timer_id);
             info_timer_id = null;
@@ -78,7 +78,7 @@ public class Life.State : Object, Scaleable {
             return Source.REMOVE;
         });
     }
-    public signal void clear_info () {
+    public virtual signal void clear_info () {
         if (info_timer_id != null) {
             Source.remove (info_timer_id);
             info_timer_id = null;
