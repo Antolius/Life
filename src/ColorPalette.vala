@@ -23,6 +23,8 @@ public class Life.ColorPalette : Object {
     private Gtk.StyleContext? background_style = null;
     private Gtk.StyleContext? cell_style = null;
 
+    public signal void changed ();
+
     private Gdk.RGBA? _background_color = null;
     public Gdk.RGBA? background_color { get {
         if (_background_color == null) {
@@ -75,7 +77,10 @@ public class Life.ColorPalette : Object {
 
         background_style = new Gtk.StyleContext ();
         background_style.set_path (window_widget_path);
-        background_style.changed.connect (update_changed_colors);
+        background_style.changed.connect (() => {
+            update_changed_colors ();
+            changed ();
+        });
 
         var button_widget_path = new Gtk.WidgetPath ();
         button_widget_path.append_type (typeof (Gtk.Button));
@@ -83,7 +88,10 @@ public class Life.ColorPalette : Object {
 
         cell_style = new Gtk.StyleContext ();
         cell_style.set_path (button_widget_path);
-        cell_style.changed.connect (update_changed_colors);
+        cell_style.changed.connect (() => {
+            update_changed_colors ();
+            changed ();
+        });
     }
 
     private void update_changed_colors () {
@@ -109,30 +117,43 @@ public class Life.ColorPalette : Object {
     }
 
     private Gdk.RGBA extract_background_color () {
-        return (Gdk.RGBA) background_style.get_property (
+        cell_style.save ();
+        var rgba = (Gdk.RGBA) cell_style.get_property (
             Gtk.STYLE_PROPERTY_BACKGROUND_COLOR,
-            Gtk.StateFlags.ACTIVE
+            Gtk.StateFlags.NORMAL
         );
+        rgba.alpha /= 2;
+        cell_style.restore ();
+        return rgba;
     }
 
     private Gdk.RGBA extract_dead_cell_color () {
-        return (Gdk.RGBA) cell_style.get_property (
-            Gtk.STYLE_PROPERTY_BACKGROUND_COLOR,
-            Gtk.StateFlags.INSENSITIVE
-        );
+         cell_style.save ();
+         var rgba = (Gdk.RGBA) cell_style.get_property (
+             Gtk.STYLE_PROPERTY_BACKGROUND_COLOR,
+             Gtk.StateFlags.INSENSITIVE
+         );
+         cell_style.restore ();
+         return rgba;
     }
 
     private Gdk.RGBA extract_live_cell_color () {
-        return (Gdk.RGBA) cell_style.get_property (
-            Gtk.STYLE_PROPERTY_COLOR,
-            Gtk.StateFlags.INSENSITIVE
-        );
+         cell_style.save ();
+         var rgba = (Gdk.RGBA) cell_style.get_property (
+             Gtk.STYLE_PROPERTY_COLOR,
+             Gtk.StateFlags.INSENSITIVE
+         );
+         cell_style.restore ();
+         return rgba;
     }
 
     private Gdk.RGBA extract_accent_color () {
-        return (Gdk.RGBA) cell_style.get_property (
-            Gtk.STYLE_PROPERTY_COLOR,
-            Gtk.StateFlags.LINK
-        );
+         cell_style.save ();
+         var rgba = (Gdk.RGBA) cell_style.get_property (
+             Gtk.STYLE_PROPERTY_COLOR,
+             Gtk.StateFlags.LINK
+         );
+         cell_style.restore ();
+         return rgba;
     }
 }
