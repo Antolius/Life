@@ -6,7 +6,7 @@ Name=Life
 GenericName=Conway's Game of Life
 Comment=Craft patterns, watch them grow and evolve
 Categories=Game;Education;Science;Math
-Keywords=Conway;Game;Life;Cellular;Automaton;Automata;
+Keywords=Conway;Life;Cellular;Automaton;Automata;
 
 Icon=hr.from.josipantolis.life
 Exec=hr.from.josipantolis.life %U
