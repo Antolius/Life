@@ -55,10 +55,20 @@ public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
             var patterns_path = "/" + Constants.resource_base () + "/patterns";
             var files = resources_enumerate_children (patterns_path, no_flags);
 
+            var patterns = new Gee.ArrayList<Pattern> ();
             foreach (var file_name in files) {
                 var path = patterns_path + "/" + file_name;
                 var input = resources_open_stream (path, no_flags);
                 var pattern = yield Pattern.from_plaintext (input);
+                patterns.add (pattern);
+            }
+            patterns.sort ((p1, p2) => {
+                var a1 = p1.width_points * p1.height_points;
+                var a2 = p2.width_points * p2.height_points;
+                return (int) (a1 - a2);
+            });
+
+            foreach (var pattern in patterns) {
                 patterns_store.append (pattern);
             }
         } catch (Error err) {
