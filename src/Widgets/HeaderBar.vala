@@ -189,28 +189,28 @@ public class Life.Widgets.HeaderBar : Hdy.HeaderBar {
         var menu_grid = new Gtk.Grid () {
             margin_bottom = 4,
             row_homogeneous = false,
-            orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
 
         var scale_label = new Gtk.Label (_("Scale")) {
-            justify = Gtk.Justification.RIGHT,
+            justify = Gtk.Justification.LEFT,
             valign = Gtk.Align.CENTER,
+            halign = Gtk.Align.START,
             margin = 8,
+            margin_start = 12
         };
         menu_grid.attach (scale_label, 0, 0, 1, 1);
-        var scale = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 5, 40, 5) {
+        var scale = new Gtk.Scale.with_range (Gtk.Orientation.HORIZONTAL, 5, 30, 5) {
             digits = 0,
             draw_value = true,
             value_pos = Gtk.PositionType.BOTTOM,
-            hexpand = true,
-            margin = 8,
+            valign = Gtk.Align.CENTER,
+            margin = 8
         };
         scale.add_mark (5, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (10, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (20, Gtk.PositionType.BOTTOM, null);
         scale.add_mark (30, Gtk.PositionType.BOTTOM, null);
-        scale.add_mark (40, Gtk.PositionType.BOTTOM, null);
         scale.set_value (state.board_scale);
         scale.value_changed.connect (() => {
             state.board_scale = (int) scale.get_value ();
