@@ -74,6 +74,7 @@ public class Life.ColorPalette : Object {
         window_widget_path.append_type (typeof (Gtk.Window));
         window_widget_path.iter_set_object_name (1, "window");
         window_widget_path.iter_add_class (1, "background");
+        window_widget_path.iter_set_state (1, Gtk.StateFlags.DIR_LTR);
 
         background_style = new Gtk.StyleContext ();
         background_style.set_path (window_widget_path);
@@ -117,13 +118,10 @@ public class Life.ColorPalette : Object {
     }
 
     private Gdk.RGBA extract_background_color () {
-        cell_style.save ();
-        var rgba = (Gdk.RGBA) cell_style.get_property (
+        var rgba = (Gdk.RGBA) background_style.get_property (
             Gtk.STYLE_PROPERTY_BACKGROUND_COLOR,
-            Gtk.StateFlags.NORMAL
+            Gtk.StateFlags.DIR_LTR
         );
-        rgba.alpha /= 2;
-        cell_style.restore ();
         return rgba;
     }
 
