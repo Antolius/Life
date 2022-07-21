@@ -48,6 +48,7 @@ public class Life.Widgets.EditingBoard : DrawingBoard {
         button_press_event.connect (on_button_press);
         button_release_event.connect (on_button_release);
         leave_notify_event.connect (on_pointer_leave);
+        color_palette.changed.connect (trigger_redraw);
 
         add_events (Gdk.EventMask.POINTER_MOTION_MASK);
         add_events (Gdk.EventMask.BUTTON_PRESS_MASK);

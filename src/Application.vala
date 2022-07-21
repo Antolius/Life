@@ -52,6 +52,7 @@ public class Life.Application : Gtk.Application {
         foreach (var file in files) {
             State state;
             var window = create_new_window (out state);
+            state.showing_welcome = false;
             window.show ();
             state.open.begin (file.get_path ());
         }
