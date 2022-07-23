@@ -150,35 +150,52 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public void draw_entire (DrawAction draw_action) {
-        draw (root.rect (bottom_left ()), draw_action);
+        Lock.rw.reader_lock ();
+        try {
+            var stop_timer = draw_timer.start_timer ();
+            _draw (root, bottom_left (), root.rect (bottom_left ()), draw_action);
+            stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 
     public void draw_optimal (OptimizedDrawAction draw_action) {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             var trimmed_root = root;
             while (_has_empty_edges (trimmed_root) && trimmed_root.level > 2) {
                 trimmed_root = center (trimmed_root);
             }
 
-            var bottom_left = new Point (
+            var bl = new Point (
                 -trimmed_root.width / 2,
                 -trimmed_root.width / 2
             );
-            var drawing_area = trimmed_root.rect (bottom_left);
-            draw (
+            var drawing_area = trimmed_root.rect (bl);
+            var stop_timer = draw_timer.start_timer ();
+            _draw (
+                root,
+                bottom_left (),
                 drawing_area,
                 (p) => {
                     draw_action (p, trimmed_root.width, trimmed_root.width);
                 }
             );
+            stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 
     public void draw (Rectangle drawing_area, DrawAction draw_action) {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             var stop_timer = draw_timer.start_timer ();
             _draw (root, bottom_left (), drawing_area, draw_action);
             stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 
