@@ -65,13 +65,16 @@ public class Life.HashLife.Simulation : Object, Stepper {
     public void step_with_speed (int speed)
         requires (speed <= MAX_SPEED)
         requires (speed >= 0) {
-        lock (tree) {
+        Lock.rw.writer_lock ();
+        try {
             grow_tree_if_necessery (speed);
             tree.root = step_quad_with_speed (tree.root, speed);
             tree.grow ();
 
             generation += ((int64) 1) << speed;
             step_completed ();
+        } finally {
+            Lock.rw.writer_unlock ();
         }
     }
 
