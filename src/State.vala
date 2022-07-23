@@ -175,7 +175,7 @@ public class Life.State : Object, Scaleable {
     }
 
     private void trigger_autosave_if_enabled () {
-        if (autosave) {
+        if (autosave && !is_stepping) {
             file_manager.autosave_with_debounce ();
         }
     }
@@ -280,6 +280,7 @@ public class Life.State : Object, Scaleable {
         if (tick_timer_id != null) {
             Source.remove (tick_timer_id);
             tick_timer_id = null;
+            trigger_autosave_if_enabled ();
         }
     }
 
