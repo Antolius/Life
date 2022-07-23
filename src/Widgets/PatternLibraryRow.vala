@@ -40,11 +40,12 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
 
     construct {
         var content = new Gtk.Grid () {
-            row_spacing = 4
+            row_spacing = 8
         };
 
         var name = new Gtk.Label (pattern.name) {
-            xalign = 0f
+            xalign = 0f,
+            selectable = true
         };
         name.get_style_context ().add_class (Granite.STYLE_CLASS_H4_LABEL);
         content.attach (name, 0, 0);
@@ -56,7 +57,8 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
         if (pattern.author != null) {
             var txt = _("Discovered by %s").printf (pattern.author);
             var author = new Gtk.Label (txt) {
-                xalign = 0f
+                xalign = 0f,
+                selectable = true
             };
             content.attach_next_to (author, last, bottom, 1, 1);
             last = author;
@@ -66,6 +68,7 @@ public class Life.Widgets.PatternLibraryRow : Gtk.ListBoxRow {
         if (pattern.description != null) {
             var desc = new Gtk.Label (pattern.description) {
                 xalign = 0f,
+                selectable = true,
                 wrap = true,
                 wrap_mode = Pango.WrapMode.WORD,
                 max_width_chars = 140
