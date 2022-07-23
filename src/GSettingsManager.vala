@@ -22,6 +22,7 @@ public class Life.GSettingsManager : Object {
 
     public Settings settings { get; construct; }
     private ThreadPool<KeyVal>? worker;
+    private Gee.Map<string, uint?> debounce_ids = new Gee.HashMap<string, uint?> ();
 
     public GSettingsManager (Settings settings) {
         Object (settings: settings);
@@ -41,7 +42,7 @@ public class Life.GSettingsManager : Object {
         source.notify[key].connect ((s, p) => {
             bool new_val;
             s.get (key, out new_val);
-            enqueue (new KeyVal.from_boolean (key, new_val));
+            enqueue_with_debounce (new KeyVal.from_boolean (key, new_val));
         });
 
         return current_val;
@@ -54,7 +55,7 @@ public class Life.GSettingsManager : Object {
         source.notify[key].connect ((s, p) => {
             int new_val;
             s.get (key, out new_val);
-            enqueue (new KeyVal.from_integer (key, new_val));
+            enqueue_with_debounce (new KeyVal.from_integer (key, new_val));
         });
 
         return current_val;
@@ -67,10 +68,24 @@ public class Life.GSettingsManager : Object {
         source.notify[key].connect ((s, p) => {
             string new_val;
             s.get (key, out new_val);
-            enqueue (new KeyVal.from_string (key, new_val));
+            enqueue_with_debounce (new KeyVal.from_string (key, new_val));
         });
 
         return current_val;
+    }
+
+    private void enqueue_with_debounce (KeyVal kv) {
+        lock (debounce_ids) {
+            if (debounce_ids.has_key (kv.key)) {
+                Source.remove (debounce_ids[kv.key]);
+            }
+
+            debounce_ids[kv.key] = Timeout.add (500, () => {
+                debounce_ids.unset (kv.key);
+                enqueue (kv);
+                return Source.REMOVE;
+            });
+        }
     }
 
     private void enqueue (KeyVal kv) {

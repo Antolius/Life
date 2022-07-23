@@ -92,8 +92,7 @@ public class Life.FileManager : Object {
             Source.remove (autosave_debounce_timer_id);
         }
 
-        var five_seconds = 1000;
-        autosave_debounce_timer_id = Timeout.add (five_seconds, () => {
+        autosave_debounce_timer_id = Timeout.add (1000, () => {
             autosave_debounce_timer_id = null;
             if (!autosave_in_progress) {
                 autosave_in_progress = true;
