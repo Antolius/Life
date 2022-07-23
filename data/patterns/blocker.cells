@@ -1,0 +1,10 @@
+!Name: Blocker
+!Author: Robert Wainwright
+!Description: A period 8 oscillator. It reappears halfway through its cycle rotated 180 degrees. Blockers can also be infinitely connected by "sharing" blocks, as long as adjacent reactions are no more than one phase apart.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Blocker
+......O.O
+.....O
+OO..O....O
+OO.O..O.OO
+....OO

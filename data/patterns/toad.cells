@@ -1,0 +1,7 @@
+!Name: Toad
+!Author: Simon Norton
+!Description: The second most common oscillator (after the blinker). It is one of very few known oscillators that is a polyomino in one of its phases. Toads often appear in large, complex patterns because of their ability to eat things. Additionally, toads are useful as building blocks for constructing large oscillators with an even period.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Toad
+.OOO
+OOO

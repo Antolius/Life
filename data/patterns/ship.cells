@@ -1,0 +1,8 @@
+!Name: Ship
+!Author: JHC group
+!Description: Ship is a 6-cell still life. Adding one cell to the corner of the ship will turn it into a fleet. Removing one of the corner cells results in a boat, while removing both results in a tub. Like the tub and the boat, it is infinitely extensible. Ship can act as an eater, eating one half of a traffic light.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Ship
+OO
+O.O
+.OO

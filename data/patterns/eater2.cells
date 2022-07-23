@@ -1,0 +1,12 @@
+!Name: Eater 2
+!Author: David Buckingham
+!Description: Eater 2 mostly works like the eater 1 but with two slight differences that make it useful despite its size; it takes longer to recover from each colision and it acts like an eater in two directions. The first property means that, among other things, it can eat a glider in a position that would destroy an eater 1 due to the latter recovering too quickly before all of the sparks have cleared. This novel glider-eating action is occasionally of use in itself, and combined with the symmetry means that an eater 2 can eat gliders along four different paths.
+!Pattern type: Still life
+!Link: https://www.conwaylife.com/wiki/Eater_2
+...O.OO
+.OOO.OO
+O
+.OOO.OO
+...O.O
+...O.O
+....O

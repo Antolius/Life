@@ -1,6 +1,7 @@
 !Name: Gosper glider gun
 !Author: Bill Gosper
-!Description: The first known gun and the first known finite pattern with unbounded growth.
+!Description: The first known gun and the first known finite pattern with unbounded growth. It consists of two queen bee shuttles stabilized by two blocks. With 36 cells it was the smallest known gun until simkin glider gun was discovered. There are two other ways in which queen bees can interact to form gliders, and a third queen bee can be used to reflect a glider and make a "pseudo-Gosper gun".
+!Pattern type: Gun
 !Link: https://www.conwaylife.com/wiki/Gosper_glider_gun
 ........................O
 ......................O.O

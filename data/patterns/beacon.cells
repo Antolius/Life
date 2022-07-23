@@ -1,0 +1,10 @@
+!Name: Beacon
+!Author: John Conway
+!Description: The beacon is a common period-2 oscillator composed of two diagonally touching blocks.
+!Pattern type: Oscillator
+!Family: Beacon
+!Link: https://conwaylife.com/wiki/Beacon
+OO
+O
+...O
+..OO

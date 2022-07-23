@@ -1,6 +1,7 @@
 !Name: Glider
 !Author: Richard K. Guy
-!Description: The smallest, most common, and first discovered spaceship.
+!Description: The smallest, most common, and first discovered spaceship. It travels diagonally across the grid at the speed of c/4 (it moves by one diagonal space in 4 generations). Gliders are important because they are easily produced (by glider guns and rakes - for an example see the Gosper glider gun), can be collided with each other to form more complicated patterns, and can be used to transmit information over long distances.
+!Pattern type: Spaceship
 !Link: https://www.conwaylife.com/wiki/Glider
 .O
 ..O

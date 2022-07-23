@@ -1,0 +1,18 @@
+!Name: Honey farm
+!Author: JHC group
+!Description: Honey farm is a common formation of four beehives and is one of the familiar fours. It can be made from one beehive by placing a cell in the corner of it, at the tip of it, or inside it. It also evolves from 7 cells placed in a row.
+!Pattern type: Constellation
+!Link: https://conwaylife.com/wiki/Honey_farm
+......O
+.....O.O
+.....O.O
+......O
+
+.OO.......OO
+O..O.....O..O
+.OO.......OO
+
+......O
+.....O.O
+.....O.O
+......O

@@ -1,6 +1,7 @@
 !Name: Block
 !Author: John Conway
-!Description: The most common still life.
+!Description: Block is an extremely well-known and common still life. In terms of its 4 cells it is tied with tub as the smallest still life, and in terms of its 2×2 bounding box it is the outright smallest. It is also the only known still life that is a polyomino, and the only finite strict still life where all living cells have three neighbors. Its small size, ability to act as an eatermake it extremely useful in the construction of larger patterns. The block is the most common object produced by 2-glider collisions.
+!Pattern type: Still life
 !Link: https://www.conwaylife.com/wiki/Block
 OO
 OO

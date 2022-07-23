@@ -1,6 +1,7 @@
 !Name: Acorn
 !Author: Charles Corderman
-!Description: A methuselah that stabilizes after 5206 generations.
+!Description: A methuselah that stabilizes after 5206 generations. Its maximum population, 1057, occurs in generation 4408. The stable pattern that results from the acorn has 633 cells. The name was coined by Robert Wainwright after seeing all the sub-patterns which result from it, alluding to the proverb "From little acorns mighty oaks do grow".
+!Pattern type: Methuselah
 !Link: https://www.conwaylife.com/wiki/Acorn
 .O
 ...O

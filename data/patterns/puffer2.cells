@@ -1,0 +1,10 @@
+!Name: Puffer 2
+!Author: Bill Gosper
+!Description: The second puffer to be found. It uses two lightweight spaceships to escort a B-heptomino. It is extremely dirty and its tail does not stabilize until generation 5533, after which it stays at period 140.
+!Pattern type: Puffer
+!Link: https://conwaylife.com/wiki/Puffer_2
+.OOO...........OOO
+O..O..........O..O
+...O....OOO......O
+...O....O..O.....O
+..O....O........O

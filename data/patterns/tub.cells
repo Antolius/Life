@@ -1,0 +1,8 @@
+!Name: Tub
+!Author: JHC group
+!Description: The tub is one of only two 4-cell still lifes. Adding an extra cell to one of the corners results in a boat, while adding two to opposite corners results in a ship. In rare occasions it can act as an eater, example of which is the Eureka shuttle.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Tub
+.O
+O.O
+.O

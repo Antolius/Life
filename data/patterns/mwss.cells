@@ -1,0 +1,11 @@
+!Name: Middleweight spaceship
+!Author: John Conway
+!Description: The middleweight spaceship (commonly abbreviated to MWSS) is the third most common spaceship after the glider and lightweight spaceship. It travels at the speed of c/2 orthogonally. It can support various non-standard components, such as pushalong 1.
+!Pattern type: Spaceship
+!Family: XWSS
+!Link: https://conwaylife.com/wiki/Middleweight_spaceship
+...O
+.O...O
+O
+O....O
+OOOOO

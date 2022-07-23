@@ -1,0 +1,8 @@
+!Name: Boat
+!Author: JHC group
+!Description: The boat is the only still life with 5 cells. It can be thought of as a tub with an extra cell in one of the corners, or a ship with one of the corner cells removed. Perhaps the most notable property is that the boat begins an infinite series of still lifes which consist of two parallel diagonal lines being stabilised. It is possible to have spaceships and other such patterns arbitrarily extend the boat.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Boat
+OO
+O.O
+.O

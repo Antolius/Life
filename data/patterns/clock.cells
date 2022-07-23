@@ -1,0 +1,10 @@
+!Name: Clock
+!Author: Simon Norton
+!Description: Clock is the fifth or sixth most common oscillator, being about as frequent as the pentadecathlon, but much less frequent than the blinker, toad, beacon or pulsar.
+!Pattern type: Oscillator
+!Family: Clock
+!Link: https://conwaylife.com/wiki/Clock
+..O
+O.O
+.O.O
+.O

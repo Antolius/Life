@@ -1,0 +1,14 @@
+!Name: Fleet
+!Description: Fleet is a fairly common constellation made up of two ship-ties and is one of the familiar fours. It can be created from a normal ship by simply adding one cell diagonal to the tip of one. Drawing a block between the two ship-ties will result in the block being eaten and the fleet being inverted. A 4 cell long diagonal line running parallel through the center will do the same in just 4 generations. 
+!Pattern type: Constellation
+!Link: https://conwaylife.com/wiki/Fleet
+....OO
+...O.O
+...OO
+.OO
+O.O.....OO
+OO.....O.O
+.......OO
+.....OO
+....O.O
+....OO

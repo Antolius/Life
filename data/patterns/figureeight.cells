@@ -1,0 +1,11 @@
+!Name: Figure eight
+!Author: Simon Norton
+!Description: With 12 cells in its initial phase, it is the smallest known period 8 oscillator. It is known that no period 8 oscillators exist with 10 or fewer cells. Producing a domino spark (a pattern of 2 live cells in a row that die in the next generation), it is useful for constructing larger oscillators with period that is a multiple of eight.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Figure_eight
+OO
+OO.O
+....O
+.O
+..O.OO
+....OO

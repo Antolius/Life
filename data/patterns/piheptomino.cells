@@ -1,0 +1,8 @@
+!Name: Pi-heptomino
+!Author: John Conway
+!Description: One of 108 heptominoes, it stabilizes at generation 173, leaving behind six blocks, five blinkers and two ponds. The name "pi" is also applied to some slight variations of this object that follow that same evolutionary sequence.
+!Pattern type: Methuselah
+!Link: https://conwaylife.com/wiki/Pi-heptomino
+OOO
+O.O
+O.O

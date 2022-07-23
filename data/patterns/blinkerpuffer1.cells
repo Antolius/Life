@@ -1,0 +1,23 @@
+!Name: Blinker puffer 1
+!Author: Robert Wainwright
+!Description: The first blinker puffer to be found. It consists of an unstable xWSS-like pattern being escorted by a middleweight spaceship and a heavyweight spaceship. The blinkers that it outputs can be burned cleanly by attaching a blinker fuse to the end of it.
+!Pattern type: Puffer
+!Link: https://conwaylife.com/wiki/Blinker_puffer_1
+...O
+.O...O
+O
+O....O
+OOOOO
+
+
+
+.OO
+OO.OOO
+.OOOO
+..OO
+
+.....OO
+...O....O
+..O
+..O.....O
+..OOOOOO

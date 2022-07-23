@@ -1,0 +1,9 @@
+!Name: Bunnies
+!Author: Robert Wainwright and Andrew Trevorrow
+!Description: A parent of rabbits. The stable pattern that results from bunnies has 1744 cells. Several methuselahs have been discovered later that converge to the bunnies sequence.
+!Pattern type: Methuselah
+!Link: https://conwaylife.com/wiki/Bunnies
+O.....O
+..O...O
+..O..O.O
+.O.O

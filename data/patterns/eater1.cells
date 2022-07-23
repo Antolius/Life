@@ -1,6 +1,7 @@
 !Name: Eater 1
 !Author: Bill Gosper
-!Description: The first discovered eater.
+!Description: Eater 1 (or fishhook or simply eater) is a 7-cell still life and the smallest asymmetric still life. It is comprised of the normally unstable pre-block with a normally unstable tail attached. A fishhook's ability to eat various objects was discovered by Bill Gosper late in 1971, which made it the first discovered glider eater. It only takes four generations to regain its initial form after being hit by a glider, making it the fastest-recovering as well as the smallest. In addition to gliders it can also eat many different patterns.
+!Pattern type: Still life
 !Link: https://www.conwaylife.com/wiki/Eater_1
 OO
 O.O

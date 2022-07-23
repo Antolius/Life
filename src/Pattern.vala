@@ -25,6 +25,8 @@ public class Life.Pattern : Shape {
     public string name { get; set; }
     public string? author { get; set; }
     public string? description { get; set; }
+    public string? pattern_type { get; set; }
+    public string? family { get; set; }
     public string? link { get; set; }
 
     public static Pattern from_shape (string name, Shape shape) {
@@ -53,13 +55,17 @@ public class Life.Pattern : Shape {
 
             if (line.has_prefix ("!")) {
                 if (line.has_prefix ("!Name: ")) {
-                    pattern.name = line.substring ("!Name: ".length);
+                    pattern.name = line.substring ("!Name: ".length)._strip ();
                 } else if (line.has_prefix ("!Author: ")) {
-                    pattern.author = line.substring ("!Author: ".length);
+                    pattern.author = line.substring ("!Author: ".length)._strip ();
                 } else if (line.has_prefix ("!Description: ")) {
-                    pattern.description = line.substring ("!Description: ".length);
+                    pattern.description = line.substring ("!Description: ".length)._strip ();
+                } else if (line.has_prefix ("!Pattern type: ")) {
+                    pattern.pattern_type = line.substring ("!Pattern type: ".length)._strip ();
+                } else if (line.has_prefix ("!Family: ")) {
+                    pattern.family = line.substring ("!Family: ".length)._strip ();
                 } else if (line.has_prefix ("!Link: ")) {
-                    pattern.link = line.substring ("!Link: ".length);
+                    pattern.link = line.substring ("!Link: ".length)._strip ();
                 }
             } else {
                 pattern._height_points++;

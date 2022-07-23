@@ -1,0 +1,17 @@
+!Name: Pushalong 1
+!Author: David Bell
+!Description: Pushalong 1 is a c/2 orthogonal spaceship. It is composed of a 16 cell pushalong sub-pattern attached on top and in front of a middleweight spaceship.
+!Pattern type: Spaceship
+!Link: https://conwaylife.com/wiki/Pushalong_1
+...O
+.O..O
+O...O
+O...O
+OO.O
+.....OO
+..O..OO
+....O
+.......OOO
+......OOOOO
+.....OO.OOO
+......OO
