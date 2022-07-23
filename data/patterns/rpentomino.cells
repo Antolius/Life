@@ -1,6 +1,7 @@
 !Name: R-pentomino
 !Author: John Conway
-!Description: The most active polyomino with less than six cells; all of the others stabilize in at most 10 generations, but the R-pentomino does not do so until generation 1103, by which time it has a population of 116.
+!Description: The most active polyomino with less than six cells; all of the others stabilize in at most 10 generations, but the R-pentomino does not do so until generation 1103, by which time it has a population of 116. The glider it releases in generation 69, noticed by Richard K. Guy, was the first glider ever observed. It is the most common methuselah to occur naturally; there are more common sequences, but they are not methuselahs.
+!Pattern type: Methuselah
 !Link: https://www.conwaylife.com/wiki/R-pentomino
 .OO
 OO

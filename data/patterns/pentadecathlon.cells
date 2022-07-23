@@ -1,0 +1,8 @@
+!Name: Pentadecathlon
+!Author: John Conway
+!Description: 10 cells placed in a row evolve into this object, which is the most natural oscillator of period greater than 3. In fact, it is the fifth or sixth most common oscillator overall, being about as frequent as the clock, but much less frequent than the blinker, toad, beacon or pulsar.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Pentadecathlon
+..O....O
+OO.OOOO.OO
+..O....O

@@ -31,6 +31,8 @@ public class Life.State : Object, Scaleable {
     public const int SPEED_STEP = 4;    //  4 generations per second
     public const int DEFAULT_SPEED = 10; // 10 generations per second
     public const int DEFAULT_SCALE = 10; // 10px per board point
+    public const int DEFAULT_LIBRARY_OPEN_POSITION = 420;
+    public const int LIBRARY_MOVING_SPEED = 8;
 
     // Managers to delegate functionality to
     public Gtk.Clipboard clipboard { get; construct; }
@@ -229,12 +231,13 @@ public class Life.State : Object, Scaleable {
     public void animate_library_pane_opening () {
         library_animation_in_progress = true;
         Timeout.add (2, () => {
-            if (library_position >= 352) {
-                library_position = 360;
+            var limit = DEFAULT_LIBRARY_OPEN_POSITION - LIBRARY_MOVING_SPEED;
+            if (library_position >= limit) {
+                library_position = DEFAULT_LIBRARY_OPEN_POSITION;
                 return false;
             }
 
-            library_position += 8;
+            library_position += LIBRARY_MOVING_SPEED;
             library_animation_in_progress = false;
             return true;
         });
@@ -243,12 +246,12 @@ public class Life.State : Object, Scaleable {
     public void animate_library_pane_closing () {
         library_animation_in_progress = true;
         Timeout.add (2, () => {
-            if (library_position <= 8) {
+            if (library_position <= LIBRARY_MOVING_SPEED) {
                 library_position = 0;
                 return false;
             }
 
-            library_position -= 8;
+            library_position -= LIBRARY_MOVING_SPEED;
             library_animation_in_progress = false;
             return true;
         });

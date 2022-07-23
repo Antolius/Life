@@ -1,0 +1,33 @@
+!Name: Block-laying switch engine
+!Author: Charles Corderman
+!Description: The block-laying switch engine is a puffer which consists of a switch engine reacting with blocks to create an infinite number of new blocks (eight new blocks every 288 generations).
+!Pattern type: Puffer
+!Link: https://conwaylife.com/wiki/Block-laying_switch_engine
+..................O
+.OOO........O.....O
+O...O......O.......O
+.OO.........OOOO..OO
+...OO.OO.........OOO
+.....OO...........O.O
+...................O.......OO
+...................O.......OO
+
+
+
+
+
+
+
+
+
+
+.......OO
+.......OO
+
+
+
+
+
+
+...............OO
+...............OO

@@ -1,0 +1,14 @@
+!Name: Bakery
+!Description: Bakery is a common formation of two half-bakeries. It is one of the familiar fours. The name was coined by James F. Harford, although it is unknown if he was the first to discover this constellation.
+!Pattern type: Constellation
+!Link: https://conwaylife.com/wiki/Bakery
+....OO
+...O..O
+...O.O
+.OO.O...O
+O..O...O.O
+O.O...O..O
+.O...O.OO
+....O.O
+...O..O
+....OO

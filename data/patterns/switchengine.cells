@@ -1,6 +1,7 @@
 !Name: Switch engine
 !Author: Charles Corderman
-!Description: A methuselah that is unstable by itself, but can be used to make c/12 diagonal puffers and spaceships.
+!Description: A switch engine produces a copy of itself after 48 generations, glide-reflected 4 cells northwest (starting in the form to the right), along with some active junk. If left unattended, the accumulating exhaust overtakes and destroys the engine after 24 cycles, but it can be stabilized to make c/12 diagonal puffers and spaceships.
+!Pattern type: Methuselah
 !Link: https://www.conwaylife.com/wiki/Switch_engine
 .O.O
 O

@@ -1,6 +1,8 @@
 !Name: Lightweight spaceship
 !Author: John Conway
-!Description: The smallest known orthogonally moving spaceship, and the second most common spaceship (after the glider).
+!Description: Lightweight spaceship (commonly abbreviated to LWSS) is the smallest known orthogonally moving spaceship, and the second most common spaceship (after the glider). It has a speed of c/2 (i.e. moves by one space every 2 generations) and has period 4.
+!Pattern type: Spaceship
+!Family: XWSS
 !Link: https://conwaylife.com/wiki/Lightweight_spaceship
 .O..O
 O

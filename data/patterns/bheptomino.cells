@@ -1,0 +1,8 @@
+!Name: B-heptomino
+!Author: John Conway
+!Description: The B-heptomino is a very common methuselah that evolves into three blocks, two gliders and a ship after 148 generations.
+!Pattern type: Methuselah
+!Link: https://conwaylife.com/wiki/B-heptomino
+O.OO
+OOO
+.O

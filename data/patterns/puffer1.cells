@@ -1,0 +1,12 @@
+!Name: Puffer 1
+!Author: Bill Gosper
+!Description: The first puffer to be discovered. The debris that it leaves behind are groups of four blinkers and a pair of cis-mirrored bookends. The debris can be cleaned up and converted into gliders to create a rake (a puffer whose debris consists entirely of spaceships) as in backrake 3.
+!Pattern type: Puffer
+!Link: https://conwaylife.com/wiki/Puffer_1
+.OOO......O.....O......OOO
+O..O.....OOO...OOO.....O..O
+...O....OO.O...O.OO....O
+...O...................O
+...O..O.............O..O
+...O..OO...........OO..O
+..O...OO...........OO...O

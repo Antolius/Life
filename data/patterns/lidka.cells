@@ -1,0 +1,20 @@
+!Name: Lidka
+!Author: Andrzej Okrasinski and David Bell
+!Description: A methuselah with lifespan 29055. The stable pattern that results from Lidka has 1623 cells. Lidka was originally found in its 15-cell form by Andrzej Okrasinski, which has a lifespan of 29053 generations. The 13-cell grandparent with lifespan 29055 was soon after found by David Bell.
+!Pattern type: Methuselah
+!Link: https://conwaylife.com/wiki/Lidka
+.O
+O.O
+.O
+
+
+
+
+
+
+
+........O
+......O.O
+.....OO.O
+
+....OOO

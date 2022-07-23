@@ -1,6 +1,7 @@
 !Name: Herschel
 !Author: John Conway
-!Description: A heptomino shaped like the lowercase letter h, which occurs at generation 20 of the B-heptomino.
+!Description: A heptomino shaped like the lowercase letter h, which occurs at generation 20 of the B-heptomino. It evolves into 24 cells forming two blocks, two gliders and a ship after 128 generations.
+!Pattern type: Methuselah
 !Link: https://www.conwaylife.com/wiki/Herschel
 O
 OOO

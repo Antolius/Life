@@ -1,0 +1,11 @@
+!Name: Heavyweight spaceship
+!Author: John Conway
+!Description: The heavyweight spaceship (commonly abbreviated to HWSS) is the fourth most common spaceship. It travels at a speed of c/2 orthogonally. It is one of only three known spaceships that is a polyomino in any of its phases. The side and tail sparks allow an HWSS to make changes to other objects without being affected itself - a "Heisenburp" effect.
+!Pattern type: Spaceship
+!Family: XWSS
+!Link: https://conwaylife.com/wiki/Heavyweight_spaceship
+...OO
+.O....O
+O
+O.....O
+OOOOOO

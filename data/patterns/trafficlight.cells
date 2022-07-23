@@ -1,0 +1,12 @@
+!Name: Traffic light
+!Athor: JHC group
+!Description: The traffic light is a common formation of four blinkers and is the most common member of the familiar fours, also being the only one made from oscillators. Drawing a single cell in the middle of the traffic light while it is in its "+" phase will eat the whole traffic light, leaving nothing behind. Drawing a cell a knight's move away in the same ("+") phase results in a clean fishhook instead.
+!Pattern type: Constellation
+!Link: https://conwaylife.com/wiki/Traffic_light
+..OOO
+
+O.....O
+O.....O
+O.....O
+
+..OOO

@@ -1,0 +1,18 @@
+!Name: Pulsar
+!Author: John Conway
+!Description: Despite its size, this is the fourth most common oscillator and by far the most common of period greater than 2. The rotor (cells that change state at some point during its evolution) of a pulsar consists of four mutually stabilizing quadrants; alternate arrangements exist for any odd multiple of 4 (for the version with 12 copies, see quasar). A closely related oscillator — the pulsar quadrant — includes just the external "horns" of the rotor and can be stabilized on its own.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Pulsar
+..OOO...OOO
+
+O....O.O....O
+O....O.O....O
+O....O.O....O
+..OOO...OOO
+
+..OOO...OOO
+O....O.O....O
+O....O.O....O
+O....O.O....O
+
+..OOO...OOO

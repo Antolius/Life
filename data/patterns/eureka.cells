@@ -1,0 +1,16 @@
+!Name: Eureka
+!Author: David Buckingham
+!Description: Eureka is a period-30 pre-pulsar shuttle oscillator in which two 15-generation pre-pulsar shuttle mechanisms each composed of two tubs interact with a pre-pulsar.
+!Pattern type: Oscillator
+!Link: https://conwaylife.com/wiki/Block-laying_switch_engine
+.O..............O
+O.O....O.......O.O
+.O...OO.OO......O
+.......O
+
+
+
+.......O
+.O...OO.OO......O
+O.O....O.......O.O
+.O..............O

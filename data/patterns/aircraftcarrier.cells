@@ -1,0 +1,8 @@
+!Name: Aircraft carrier
+!Author: John Conway
+!Description: Aircraft carrier (or simply carrier) is a 6-cell still life, and the smallest still life that has more than one island (i.e. isolated sub-pattern not). It consists of two pre-blocks.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Aircraft_carrier
+OO
+O..O
+..OO

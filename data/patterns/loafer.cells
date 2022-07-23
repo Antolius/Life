@@ -1,0 +1,14 @@
+!Name: Loafer
+!Author: Josh Ball
+!Description: Loafer is an orthogonally moving spaceship with a speed of c/7. Its name refers to its slow speed and the fact it's pushing a loaf sub-pattern ahead of itself.
+!Pattern type: Spaceship
+!Link: https://conwaylife.com/wiki/Loafer
+.OO..O.OO
+O..O..OO.
+.O.O.....
+..O......
+........O
+......OOO
+.....O...
+......O..
+.......OO

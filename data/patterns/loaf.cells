@@ -1,0 +1,9 @@
+!Name: Loaf
+!Author: JHC group
+!Description: The third most common still life, a loaf has a partial eater property. Certain collisions can destroy the upper rightmost two cells, after which the remainder of the pattern will evolve into a new loaf, flipped 180°.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Loaf
+.OO
+O..O
+.O.O
+..O

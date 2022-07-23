@@ -1,6 +1,7 @@
 !Name: Simkin glider gun
 !Author: Michael Simkin
-!Description: A true period 120 glider gun, found on April 28, 2015.
+!Description: Simkin glider gun consists of a Herschel running in a loop, producing infinite copies of the first natural glider. With 29 cells it is the smallest known gun.
+!Pattern type: Gun
 !Link: https://www.conwaylife.com/wiki/Simkin_glider_gun
 OO.....OO........................
 OO.....OO........................

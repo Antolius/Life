@@ -1,0 +1,8 @@
+!Name: Beehive
+!Author: John Conway
+!Description: Beehive is a 6-cell still life, one of the first objects found. Beehives are frequently born in a set of four called honey farm. It is possible to turn a single beehive into one by adding a corner, a cell to the "tip" of it or inside it. A beehive can be eaten with a block, a reaction that allows the construction of the queen bee shuttle and further patterns based on it.
+!Pattern type: Still life
+!Link: https://conwaylife.com/wiki/Beehive
+.OO
+O..O
+.OO

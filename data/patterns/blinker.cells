@@ -1,5 +1,7 @@
 !Name: Blinker
 !Author: John Conway
-!Description: The smallest and most common oscillator.
+!Description: The blinker is the smallest and most common oscillator. It is one of only a handful of known oscillators that is a polyomino (pattern of orthogonally connected cells), and it is the only known finite oscillator that is one cell thick. Blinkers are very commonly formed in a set of four called the traffic light. When phased correctly and positioned next to other evolving patterns blinkers can stabilize their behaviors without connecting to them.
+!Pattern type: Oscillator
+!Family: Clock
 !Link: https://www.conwaylife.com/wiki/Blinker
 OOO

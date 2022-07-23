@@ -15,16 +15,70 @@
     <file alias="16x16@2/actions/pointer-symbolic.svg" compressed="true" preprocess="xml-stripblanks">icons/pointer-symbolic.svg</file>
 
     <!--Patterns-->
-    <file compressed="true">patterns/acorn.cells</file>
+
+    <!--Oscillators-->
+    <file compressed="true">patterns/beacon.cells</file>
     <file compressed="true">patterns/blinker.cells</file>
-    <file compressed="true">patterns/block.cells</file>
-    <file compressed="true">patterns/eater1.cells</file>
-    <file compressed="true">patterns/glider.cells</file>
-    <file compressed="true">patterns/gosperglidergun.cells</file>
+    <file compressed="true">patterns/blocker.cells</file>
+    <file compressed="true">patterns/figureeight.cells</file>
+    <file compressed="true">patterns/pentadecathlon.cells</file>
+    <file compressed="true">patterns/pulsar.cells</file>
+    <file compressed="true">patterns/transqueenbeeshuttle.cells</file>
+    <file compressed="true">patterns/toad.cells</file>
+    <file compressed="true">patterns/tannersp46.cells</file>
+    <file compressed="true">patterns/3blocktwinbeesshuttle.cells</file>
+    <file compressed="true">patterns/clock.cells</file>
+    <file compressed="true">patterns/eureka.cells</file>
+
+    <!--Methuselahs-->
+    <file compressed="true">patterns/acorn.cells</file>
+    <file compressed="true">patterns/bheptomino.cells</file>
+    <file compressed="true">patterns/bunnies.cells</file>
     <file compressed="true">patterns/herschel.cells</file>
-    <file compressed="true">patterns/lwss.cells</file>
+    <file compressed="true">patterns/lidka.cells</file>
+    <file compressed="true">patterns/piheptomino.cells</file>
     <file compressed="true">patterns/rpentomino.cells</file>
-    <file compressed="true">patterns/simkinglidergun.cells</file>
     <file compressed="true">patterns/switchengine.cells</file>
+
+    <!--Spaceships-->
+    <file compressed="true">patterns/glider.cells</file>
+    <file compressed="true">patterns/lwss.cells</file>
+    <file compressed="true">patterns/mwss.cells</file>
+    <file compressed="true">patterns/hwss.cells</file>
+    <file compressed="true">patterns/loafer.cells</file>
+    <file compressed="true">patterns/copperhead.cells</file>
+    <file compressed="true">patterns/pushalong1.cells</file>
+    <file compressed="true">patterns/fireship.cells</file>
+
+    <!--Puffers-->
+    <file compressed="true">patterns/blinkerpuffer1.cells</file>
+    <file compressed="true">patterns/blocklayingswitchengine.cells</file>
+    <file compressed="true">patterns/puffer1.cells</file>
+    <file compressed="true">patterns/puffer2.cells</file>
+    <file compressed="true">patterns/pufferfish.cells</file>
+
+    <!--Still lifes-->
+    <file compressed="true">patterns/aircraftcarrier.cells</file>
+    <file compressed="true">patterns/beehive.cells</file>
+    <file compressed="true">patterns/block.cells</file>
+    <file compressed="true">patterns/boat.cells</file>
+    <file compressed="true">patterns/eater1.cells</file>
+    <file compressed="true">patterns/eater2.cells</file>
+    <file compressed="true">patterns/loaf.cells</file>
+    <file compressed="true">patterns/pond.cells</file>
+    <file compressed="true">patterns/ship.cells</file>
+    <file compressed="true">patterns/tub.cells</file>
+    <file compressed="true">patterns/lake2.cells</file>
+
+    <!--Constellations-->
+    <file compressed="true">patterns/trafficlight.cells</file>
+    <file compressed="true">patterns/honeyfarm.cells</file>
+    <file compressed="true">patterns/fleet.cells</file>
+    <file compressed="true">patterns/bakery.cells</file>
+
+    <!--Guns-->
+    <file compressed="true">patterns/gosperglidergun.cells</file>
+    <file compressed="true">patterns/simkinglidergun.cells</file>
+
   </gresource>
 </gresources>
