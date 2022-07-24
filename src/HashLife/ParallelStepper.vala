@@ -28,11 +28,16 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
         _delegate = delegate_stepper;
         _delegate.step_completed.connect (emit_step_completed_on_main_loop);
 
+        if (!Thread.supported ()) {
+            warning ("Thredding not supported, simulation updates might cause lag.");
+            return;
+        }
+
         try {
-            thread_pool = new ThreadPool<bool> (
+            thread_pool = new ThreadPool<bool>.with_owned_data (
                 (ignored) => _delegate.step (),
                 1,
-                true
+                false
             );
         } catch (ThreadError err) {
             warning ("Failed to initialize parallel stepper's thread pool, " +
