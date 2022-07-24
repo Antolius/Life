@@ -3,8 +3,10 @@
 
 [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) made for [elementary OS](https://elementary.io/).
 
+[![Get it on AppCenter](https://appcenter.elementary.io/badge.svg)](https://appcenter.elementary.io/hr.from.josipantolis.life)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](COPYING)
 [![Build](https://github.com/Antolius/Life/actions/workflows/ci.yml/badge.svg)](https://github.com/Antolius/Life/actions)
+[![GitHub release](https://img.shields.io/github/v/release/Antolius/Life)](https://github.com/Antolius/Life/releases)
 
 |![Default style screenshot](data/screenshots/default.png)|![Dark style screenshot](data/screenshots/dark.png)          |
 |---------------------------------------------------------|-----------------------------------------------------------------|
@@ -27,7 +29,7 @@ For more screenshots check out the [screenshots directory](data/screenshots).
 
 ## Status
 
-Life is currently in pre-release stage of development. This means that while things are shaping up there are still bugs, app crashes, and missing features. Here's a rough list of features which work already and those that I'd like to add / polish before the initial release:
+Life is in active development. It currently supports following set of features:
 
 - [x] App can run a Game of Life simulation at various speeds with automatically expanding simulation boundaries.
 - [x] User can draw and erase live cells to create patterns in the simulation.
@@ -36,7 +38,7 @@ Life is currently in pre-release stage of development. This means that while thi
 - [x] User can save / open cell patterns into / from files.
 - [x] App remembers and restores current pattern of cells between restarts.
 - [x] Operations of running the simulation, writing to files and interacting with the UI don't block each other.
-- [x] User without previous knowledge of Game of Life can learn basics from a built-in tutorial.
+- [x] User without previous knowledge of Game of Life can learn basics from a built-in primer.
 
 I'm also considering adding some features after the initial release:
 
@@ -46,7 +48,7 @@ I'm also considering adding some features after the initial release:
 - [ ] More advanced filter and search over the Patterns Library.
 - [ ] Adding more patterns into the Patterns Library.
 
-The app will be released in the [elementary OS AppCenter](https://appcenter.elementary.io/) as a flatpak. However, for now the only way to install it is by building it from the source code.
+Check out [GitHub issues](https://github.com/Antolius/Life/issues) for more details.
 
 ## How to build from source
 

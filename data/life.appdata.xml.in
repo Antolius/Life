@@ -6,12 +6,27 @@
   <name>Life</name>
   <summary>Conway's Game of Life</summary>
   <description>
-    <p>Explore a wonderful world of cellular automata. Craft patterns, watch them grow and evolve.</p>
-    <p>Life makes it easy to run Conway's Game of Life simulations. You can craft your own patterns and explore their evolution, or browse the library of common patterns included with the app. And if you are new to this hobby, there's an onboarding tutorial to help you familiarize yourself with the rules.</p>
+    <p>Explore a wonderful world of cellular automata. Discover patterns and watch them evolve.</p>
+    <p>Life makes it easy to run Conway's Game of Life simulations. You can craft your own patterns and explore their evolution, or browse the library of common patterns included within the app. If you are new to this hobby, the app includes a primer with everything you'll need to know.</p>
   </description>
 
   <metadata_license>CC-BY-4.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
+
+  <releases>
+    <release version="1.0.0" date="2022-07-24">
+      <description>
+        <p>Initial release, bringing you:</p>
+        <ul>
+          <li>A (near) endless field to run your Game of Life simulations on.</li>
+          <li>A primer to get you familiarized with Conway's Game of Life.</li>
+          <li>A library of patterns to explore and experiment with.</li>
+          <li>Helpful editing tools to make adjusting your creations easier.</li>
+          <li>Support for popular Plaintext file format for Game of Life patterns.</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
 
   <custom>
     <value key="x-appcenter-suggested-price">0</value>
@@ -22,16 +37,16 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/default.png</image>
+      <image>https://raw.githubusercontent.com/antolius/life/1.0.0/data/screenshots/default.png</image>
       <caption>An in-progress Game of Life simulation showcasing the default (light) style</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/dark.png</image>
+      <image>https://raw.githubusercontent.com/antolius/life/1.0.0/data/screenshots/dark.png</image>
       <caption>An in-progress Game of Life simulation showcasing the dark style</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/antolius/life/main/data/screenshots/onboarding.png</image>
-      <caption>A step in the tutorial teaching you the rules of the Game of Life</caption>
+      <image>https://raw.githubusercontent.com/antolius/life/1.0.0/data/screenshots/onboarding.png</image>
+      <caption>A step in the primer explaining Game of Life rules</caption>
     </screenshot>
   </screenshots>
 
