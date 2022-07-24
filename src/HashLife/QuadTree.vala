@@ -22,7 +22,6 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public const uint32 MAX_LEVEL = 60;
 
-    private bool _lock;
     private Quad _root;
     public Quad root {
         get { return _root; }
@@ -64,12 +63,20 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     // (-2, -2) | (-1, -2) || (0, -2) | (1, -2)
 
     public bool is_empty () {
-        return _is_empty (root);
+        Lock.rw.reader_lock ();
+        try {
+            return _is_empty (root);
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 
     public bool is_alive (Point p) {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             return _is_alive (root, bottom_left (), p);
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 
@@ -102,19 +109,25 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     )
         ensures (root.width >= max_width)
         ensures (root.width >= max_height) {
-        lock (_lock) {
+        Lock.rw.writer_lock ();
+        try {
             var max = int64.max (max_width, max_height);
             while (root.width <= max) {
                 grow ();
             }
+        } finally {
+            Lock.rw.writer_unlock ();
         }
     }
 
     public void set_alive (Point p, bool alive)
         requires (root.width >= p.x.abs () / 2)
         requires (root.width >= p.y.abs () / 2) {
-        lock (_lock) {
+        Lock.rw.writer_lock ();
+        try {
             root = _set_alive (root, bottom_left (), p, alive);
+        } finally {
+            Lock.rw.writer_unlock ();
         }
     }
 
@@ -138,47 +151,65 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public void clear_all () {
-        lock (_lock) {
+        Lock.rw.writer_lock ();
+        try {
             root = factory.create_empty_quad (level);
+        } finally {
+            Lock.rw.writer_unlock ();
         }
     }
 
     public bool contains (Point p) {
-        lock (_lock) {
-            return root.rect (bottom_left ()).contains (p);
-        }
+        return root.rect (bottom_left ()).contains (p);
     }
 
     public void draw_entire (DrawAction draw_action) {
-        draw (root.rect (bottom_left ()), draw_action);
+        Lock.rw.reader_lock ();
+        try {
+            var stop_timer = draw_timer.start_timer ();
+            _draw (root, bottom_left (), root.rect (bottom_left ()), draw_action);
+            stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 
     public void draw_optimal (OptimizedDrawAction draw_action) {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             var trimmed_root = root;
             while (_has_empty_edges (trimmed_root) && trimmed_root.level > 2) {
                 trimmed_root = center (trimmed_root);
             }
 
-            var bottom_left = new Point (
+            var bl = new Point (
                 -trimmed_root.width / 2,
                 -trimmed_root.width / 2
             );
-            var drawing_area = trimmed_root.rect (bottom_left);
-            draw (
+            var drawing_area = trimmed_root.rect (bl);
+            var stop_timer = draw_timer.start_timer ();
+            _draw (
+                root,
+                bottom_left (),
                 drawing_area,
                 (p) => {
                     draw_action (p, trimmed_root.width, trimmed_root.width);
                 }
             );
+            stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 
     public void draw (Rectangle drawing_area, DrawAction draw_action) {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             var stop_timer = draw_timer.start_timer ();
             _draw (root, bottom_left (), drawing_area, draw_action);
             stop_timer ();
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 
@@ -188,26 +219,24 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
         Rectangle drawing_area,
         DrawAction draw_action
     ) {
-        lock (_lock) {
-            if (_is_empty (q)) {
-                return;
-            }
-
-            if (!q.rect (bottom_left).overlaps (drawing_area)) {
-                return;
-            }
-
-            if (q.level == 0 && q == QuadFactory.alive) {
-                draw_action (bottom_left);
-                return;
-            }
-
-            var w = q.width / 2;
-            _draw (q.nw, bottom_left.y_add (w), drawing_area, draw_action);
-            _draw (q.ne, bottom_left.add (w), drawing_area, draw_action);
-            _draw (q.se, bottom_left.x_add (w), drawing_area, draw_action);
-            _draw (q.sw, bottom_left, drawing_area, draw_action);
+        if (_is_empty (q)) {
+            return;
         }
+
+        if (!q.rect (bottom_left).overlaps (drawing_area)) {
+            return;
+        }
+
+        if (q.level == 0 && q == QuadFactory.alive) {
+            draw_action (bottom_left);
+            return;
+        }
+
+        var w = q.width / 2;
+        _draw (q.nw, bottom_left.y_add (w), drawing_area, draw_action);
+        _draw (q.ne, bottom_left.add (w), drawing_area, draw_action);
+        _draw (q.se, bottom_left.x_add (w), drawing_area, draw_action);
+        _draw (q.sw, bottom_left, drawing_area, draw_action);
     }
 
     public bool _is_empty (Quad q) {
@@ -249,15 +278,11 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public bool has_empty_edges () {
-        lock (_lock) {
-            return _has_empty_edges (root);
-        }
+        return _has_empty_edges (root);
     }
 
     public bool center_has_empty_edges () {
-        lock (_lock) {
-            return _has_empty_edges (center (root));
-        }
+        return _has_empty_edges (center (root));
     }
 
     private bool _has_empty_edges (Quad q) {
@@ -270,20 +295,21 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
 
     public void grow ()
         requires (level < MAX_LEVEL) {
-        lock (_lock) {
-            var border = factory.create_empty_quad (level - 1);
-            root = factory.create_quad (
-                factory.create_quad (border, border, root.nw, border),
-                factory.create_quad (border, border, border, root.ne),
-                factory.create_quad (root.se, border, border, border),
-                factory.create_quad (border, root.sw, border, border)
-            );
-        }
+        var border = factory.create_empty_quad (level - 1);
+        root = factory.create_quad (
+            factory.create_quad (border, border, root.nw, border),
+            factory.create_quad (border, border, border, root.ne),
+            factory.create_quad (root.se, border, border, border),
+            factory.create_quad (border, root.sw, border, border)
+        );
     }
 
     public Stats.Metric[] stats () {
-        lock (_lock) {
+        Lock.rw.reader_lock ();
+        try {
             return { draw_timer, level_gauge };
+        } finally {
+            Lock.rw.reader_unlock ();
         }
     }
 }

@@ -18,19 +18,6 @@
 *
 */
 
-public class Life.Stats.Counter : Metric {
-
-    public int64 count { get; private set; default = 0; }
-
-    private Mutex mutex = Mutex ();
-
-    public override void accept (MetricVisitor visitor) {
-        visitor.visit_counter (this);
-    }
-
-    public void inc () {
-        mutex.lock ();
-        count++;
-        mutex.unlock ();
-    }
+public class Life.HashLife.Lock {
+    public static RWLock rw = RWLock ();
 }

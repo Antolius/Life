@@ -56,23 +56,37 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public void step () {
-        var stop_timer = step_timer.start_timer ();
-        step_with_speed (0);
-        stop_timer ();
+        Lock.rw.writer_lock ();
+        try {
+            var stop_timer = step_timer.start_timer ();
+            _step_with_speed (0);
+            stop_timer ();
+        } finally {
+            Lock.rw.writer_unlock ();
+        }
+    }
+
+    public void step_with_speed (int speed) {
+        Lock.rw.writer_lock ();
+        try {
+            var stop_timer = step_timer.start_timer ();
+            _step_with_speed (speed);
+            stop_timer ();
+        } finally {
+            Lock.rw.writer_unlock ();
+        }
     }
 
     // step forward 2^speed generations
-    public void step_with_speed (int speed)
+    private void _step_with_speed (int speed)
         requires (speed <= MAX_SPEED)
         requires (speed >= 0) {
-        lock (tree) {
-            grow_tree_if_necessery (speed);
-            tree.root = step_quad_with_speed (tree.root, speed);
-            tree.grow ();
+        grow_tree_if_necessery (speed);
+        tree.root = step_quad_with_speed (tree.root, speed);
+        tree.grow ();
 
-            generation += ((int64) 1) << speed;
-            step_completed ();
-        }
+        generation += ((int64) 1) << speed;
+        step_completed ();
     }
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
@@ -212,14 +226,19 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public Stats.Metric[] stats () {
-        return {
-            step_timer,
-            steps_cache.elements_counter,
-            steps_cache.evict_counter,
-            factory.quads_cache.elements_counter,
-            factory.quads_cache.evict_counter,
-            factory.empty_quads_cache.elements_counter,
-            factory.empty_quads_cache.evict_counter
-        };
+        Lock.rw.reader_lock ();
+        try {
+            return {
+                step_timer,
+                steps_cache.elements_counter,
+                steps_cache.evict_counter,
+                factory.quads_cache.elements_counter,
+                factory.quads_cache.evict_counter,
+                factory.empty_quads_cache.elements_counter,
+                factory.empty_quads_cache.evict_counter
+            };
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 }

@@ -46,7 +46,7 @@ public class Life.Widgets.LibraryPane : Gtk.ScrolledWindow {
             valign = Gtk.Align.END,
             margin = 8
         };
-        attribution.buffer.text = _("Content of the Patterns Library is adapted from LifeWiki, awailable on https://conwaylife.com/wiki");
+        attribution.buffer.text = _("Content of the Patterns Library is adapted from LifeWiki, awailable on https://conwaylife.com/wiki"); // vala-lint=line-length
         content.pack_end (attribution, true);
 
         child = content;

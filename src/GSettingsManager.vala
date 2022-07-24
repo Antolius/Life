@@ -26,8 +26,14 @@ public class Life.GSettingsManager : Object {
 
     public GSettingsManager (Settings settings) {
         Object (settings: settings);
+
+        if (!Thread.supported ()) {
+            warning ("Thredding not supported, storing settings might cause lag.");
+            return;
+        }
+
         try {
-            worker = new ThreadPool<KeyVal>.with_owned_data (store, 1, true);
+            worker = new ThreadPool<KeyVal>.with_owned_data (store, 1, false);
         } catch (ThreadError err) {
             warning ("Failed to create thread pool, will fall back to " +
             "blocking calls to settings. Error: %s", err.message);
@@ -75,17 +81,15 @@ public class Life.GSettingsManager : Object {
     }
 
     private void enqueue_with_debounce (KeyVal kv) {
-        lock (debounce_ids) {
-            if (debounce_ids.has_key (kv.key)) {
-                Source.remove (debounce_ids[kv.key]);
-            }
-
-            debounce_ids[kv.key] = Timeout.add (500, () => {
-                debounce_ids.unset (kv.key);
-                enqueue (kv);
-                return Source.REMOVE;
-            });
+        if (debounce_ids.has_key (kv.key)) {
+            Source.remove (debounce_ids[kv.key]);
         }
+
+        debounce_ids[kv.key] = Timeout.add (500, () => {
+            debounce_ids.unset (kv.key);
+            enqueue (kv);
+            return Source.REMOVE;
+        });
     }
 
     private void enqueue (KeyVal kv) {

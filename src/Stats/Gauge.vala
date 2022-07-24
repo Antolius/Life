@@ -22,25 +22,27 @@ public class Life.Stats.Gauge : Metric {
 
     public double val { get; private set; default = 0; }
 
+    private Mutex mutex = Mutex ();
+
     public override void accept (MetricVisitor visitor) {
         visitor.visit_gauge (this);
     }
 
     public void inc (double dif = 1) {
-        lock (val) {
-            val += dif;
-        }
+        mutex.lock ();
+        val += dif;
+        mutex.unlock ();
     }
 
     public void dec (double dif = 1) {
-        lock (val) {
-            val -= dif;
-        }
+        mutex.lock ();
+        val -= dif;
+        mutex.unlock ();
     }
 
     public void assign (double new_val) {
-        lock (val) {
-            val = new_val;
-        }
+        mutex.lock ();
+        val = new_val;
+        mutex.unlock ();
     }
 }

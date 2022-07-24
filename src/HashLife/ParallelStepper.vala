@@ -22,17 +22,22 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
 
 
     private Stepper _delegate;
-    private ThreadPool<Stepper>? thread_pool;
+    private ThreadPool<int>? thread_pool;
 
     public ParallelStepper (Stepper delegate_stepper) {
         _delegate = delegate_stepper;
         _delegate.step_completed.connect (emit_step_completed_on_main_loop);
 
+        if (!Thread.supported ()) {
+            warning ("Thredding not supported, simulation updates might cause lag.");
+            return;
+        }
+
         try {
-            thread_pool = new ThreadPool<Stepper>.with_owned_data (
-                (stepper) => stepper.step (),
+            thread_pool = new ThreadPool<int>.with_owned_data (
+                (ignored) => _delegate.step (),
                 1,
-                true
+                false
             );
         } catch (ThreadError err) {
             warning ("Failed to initialize parallel stepper's thread pool, " +
@@ -50,7 +55,7 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
     public void step () {
         if (thread_pool != null) {
             try {
-                thread_pool.add (_delegate);
+                thread_pool.add (1);
                 return;
             } catch (ThreadError err) {
                 warning ("Failed to run step inside parallel stepper's " +
@@ -68,7 +73,9 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
     }
 
     public void shutdown_gracefully () {
-        ThreadPool.free ((owned) thread_pool, false, true);
+        if (thread_pool != null) {
+            ThreadPool.free ((owned) thread_pool, false, true);
+        }
     }
 
     private async void emit_step_completed_on_main_loop () {
