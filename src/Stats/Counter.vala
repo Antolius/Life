@@ -22,13 +22,15 @@ public class Life.Stats.Counter : Metric {
 
     public int64 count { get; private set; default = 0; }
 
+    private Mutex mutex = Mutex ();
+
     public override void accept (MetricVisitor visitor) {
         visitor.visit_counter (this);
     }
 
     public void inc () {
-        lock (count) {
-            count++;
-        }
+        mutex.lock ();
+        count++;
+        mutex.unlock ();
     }
 }

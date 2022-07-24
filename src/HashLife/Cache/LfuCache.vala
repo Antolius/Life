@@ -65,55 +65,53 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
     }
 
     public override Value? access (Key key) {
-        lock (key_to_node) {
-            var node = key_to_node[key];
-            if (node == null) {
-                var new_val = cache_loader_func (key);
-                loaded (key, new_val);
-                if (new_val == null) {
-                    warning ("Loader returned null!");
-                    return null;
-                }
-
-                var new_node = insert (key, new_val);
-                return new_node.val;
+        var node = key_to_node[key];
+        if (node == null) {
+            var new_val = cache_loader_func (key);
+            loaded (key, new_val);
+            if (new_val == null) {
+                warning ("Loader returned null!");
+                return null;
             }
 
-            // Because node is somewhere in the cache:
-            assert (freq_head != null);
-            assert (node.parent != null);
-
-            // Create next frequency if needed:
-            var old_freq = node.parent;
-            var future_freq = old_freq->next;
-            if (future_freq == null || future_freq->freq != old_freq->freq + 1) {
-                // Create next incremental frequency
-                future_freq = new Frequency<Key, Value> (old_freq->freq + 1);
-                future_freq->prev = old_freq;
-                future_freq->next = old_freq->next;
-                if (old_freq->next != null) {
-                    old_freq->next->prev = future_freq;
-                }
-                old_freq->next = future_freq;
-            }
-
-            // Move node into next frequency:
-            old_freq->remove_node (node);
-            future_freq->add_node (node);
-
-            if (old_freq->is_empty) {
-                if (freq_head == old_freq) {
-                    // Because we never remove all elements:
-                    assert (freq_head->next != null);
-                    freq_head = freq_head->next;
-                }
-
-                old_freq->remove_self ();
-                delete old_freq;
-            }
-
-            return node.val;
+            var new_node = insert (key, new_val);
+            return new_node.val;
         }
+
+        // Because node is somewhere in the cache:
+        assert (freq_head != null);
+        assert (node.parent != null);
+
+        // Create next frequency if needed:
+        var old_freq = node.parent;
+        var future_freq = old_freq->next;
+        if (future_freq == null || future_freq->freq != old_freq->freq + 1) {
+            // Create next incremental frequency
+            future_freq = new Frequency<Key, Value> (old_freq->freq + 1);
+            future_freq->prev = old_freq;
+            future_freq->next = old_freq->next;
+            if (old_freq->next != null) {
+                old_freq->next->prev = future_freq;
+            }
+            old_freq->next = future_freq;
+        }
+
+        // Move node into next frequency:
+        old_freq->remove_node (node);
+        future_freq->add_node (node);
+
+        if (old_freq->is_empty) {
+            if (freq_head == old_freq) {
+                // Because we never remove all elements:
+                assert (freq_head->next != null);
+                freq_head = freq_head->next;
+            }
+
+            old_freq->remove_self ();
+            delete old_freq;
+        }
+
+        return node.val;
     }
 
     private Node<Key, Value> insert (Key key, Value val)

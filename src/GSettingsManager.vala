@@ -75,17 +75,15 @@ public class Life.GSettingsManager : Object {
     }
 
     private void enqueue_with_debounce (KeyVal kv) {
-        lock (debounce_ids) {
-            if (debounce_ids.has_key (kv.key)) {
-                Source.remove (debounce_ids[kv.key]);
-            }
-
-            debounce_ids[kv.key] = Timeout.add (500, () => {
-                debounce_ids.unset (kv.key);
-                enqueue (kv);
-                return Source.REMOVE;
-            });
+        if (debounce_ids.has_key (kv.key)) {
+            Source.remove (debounce_ids[kv.key]);
         }
+
+        debounce_ids[kv.key] = Timeout.add (500, () => {
+            debounce_ids.unset (kv.key);
+            enqueue (kv);
+            return Source.REMOVE;
+        });
     }
 
     private void enqueue (KeyVal kv) {
