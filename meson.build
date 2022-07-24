@@ -2,7 +2,7 @@
 project (
     'hr.from.josipantolis.life',
     'c', 'vala',
-    version: '0.1.0'
+    version: '1.0.0'
 )
 
 # Translation module
