@@ -26,8 +26,14 @@ public class Life.GSettingsManager : Object {
 
     public GSettingsManager (Settings settings) {
         Object (settings: settings);
+
+        if (!Thread.supported ()) {
+            warning ("Thredding not supported, storing settings might cause lag.");
+            return;
+        }
+
         try {
-            worker = new ThreadPool<KeyVal>.with_owned_data (store, 1, true);
+            worker = new ThreadPool<KeyVal>.with_owned_data (store, 1, false);
         } catch (ThreadError err) {
             warning ("Failed to create thread pool, will fall back to " +
             "blocking calls to settings. Error: %s", err.message);
