@@ -56,26 +56,37 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public void step () {
-        var stop_timer = step_timer.start_timer ();
-        step_with_speed (0);
-        stop_timer ();
-    }
-
-    // step forward 2^speed generations
-    public void step_with_speed (int speed)
-        requires (speed <= MAX_SPEED)
-        requires (speed >= 0) {
         Lock.rw.writer_lock ();
         try {
-            grow_tree_if_necessery (speed);
-            tree.root = step_quad_with_speed (tree.root, speed);
-            tree.grow ();
-
-            generation += ((int64) 1) << speed;
-            step_completed ();
+            var stop_timer = step_timer.start_timer ();
+            _step_with_speed (0);
+            stop_timer ();
         } finally {
             Lock.rw.writer_unlock ();
         }
+    }
+
+    public void step_with_speed (int speed) {
+        Lock.rw.writer_lock ();
+        try {
+            var stop_timer = step_timer.start_timer ();
+            _step_with_speed (speed);
+            stop_timer ();
+        } finally {
+            Lock.rw.writer_unlock ();
+        }
+    }
+
+    // step forward 2^speed generations
+    private void _step_with_speed (int speed)
+        requires (speed <= MAX_SPEED)
+        requires (speed >= 0) {
+        grow_tree_if_necessery (speed);
+        tree.root = step_quad_with_speed (tree.root, speed);
+        tree.grow ();
+
+        generation += ((int64) 1) << speed;
+        step_completed ();
     }
 
     private Quad step_quad_with_speed (Quad quad, int speed) {
