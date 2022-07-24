@@ -22,15 +22,15 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
 
 
     private Stepper _delegate;
-    private ThreadPool<Stepper>? thread_pool;
+    private ThreadPool<bool>? thread_pool;
 
     public ParallelStepper (Stepper delegate_stepper) {
         _delegate = delegate_stepper;
         _delegate.step_completed.connect (emit_step_completed_on_main_loop);
 
         try {
-            thread_pool = new ThreadPool<Stepper>.with_owned_data (
-                (stepper) => stepper.step (),
+            thread_pool = new ThreadPool<bool> (
+                (ignored) => _delegate.step (),
                 1,
                 true
             );
@@ -50,7 +50,7 @@ public class Life.HashLife.ParallelStepper : Object, Stepper {
     public void step () {
         if (thread_pool != null) {
             try {
-                thread_pool.add (_delegate);
+                thread_pool.add (true);
                 return;
             } catch (ThreadError err) {
                 warning ("Failed to run step inside parallel stepper's " +
