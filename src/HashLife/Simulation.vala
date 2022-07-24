@@ -226,14 +226,19 @@ public class Life.HashLife.Simulation : Object, Stepper {
     }
 
     public Stats.Metric[] stats () {
-        return {
-            step_timer,
-            steps_cache.elements_counter,
-            steps_cache.evict_counter,
-            factory.quads_cache.elements_counter,
-            factory.quads_cache.evict_counter,
-            factory.empty_quads_cache.elements_counter,
-            factory.empty_quads_cache.evict_counter
-        };
+        Lock.rw.reader_lock ();
+        try {
+            return {
+                step_timer,
+                steps_cache.elements_counter,
+                steps_cache.evict_counter,
+                factory.quads_cache.elements_counter,
+                factory.quads_cache.evict_counter,
+                factory.empty_quads_cache.elements_counter,
+                factory.empty_quads_cache.evict_counter
+            };
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 }
