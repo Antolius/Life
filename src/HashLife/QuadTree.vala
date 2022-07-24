@@ -305,6 +305,11 @@ public class Life.HashLife.QuadTree : Object, Drawable, Editable {
     }
 
     public Stats.Metric[] stats () {
-        return { draw_timer, level_gauge };
+        Lock.rw.reader_lock ();
+        try {
+            return { draw_timer, level_gauge };
+        } finally {
+            Lock.rw.reader_unlock ();
+        }
     }
 }
