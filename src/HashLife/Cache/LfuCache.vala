@@ -22,6 +22,7 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
 
     public int max_size { get; construct; }
 
+    private RWLock rw_lock = RWLock ();
     private Gee.Map<Key, Node<Key, Value>> key_to_node;
     private Frequency<Key, Value>* freq_head;
     private CacheLoader<Key, Value> cache_loader_func;
@@ -65,7 +66,10 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
     }
 
     public override Value? access (Key key) {
+        rw_lock.reader_lock ();
         var node = key_to_node[key];
+        rw_lock.reader_unlock ();
+
         if (node == null) {
             var new_val = cache_loader_func (key);
             loaded (key, new_val);
@@ -101,11 +105,13 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
         future_freq->add_node (node);
 
         if (old_freq->is_empty) {
+            rw_lock.writer_lock ();
             if (freq_head == old_freq) {
                 // Because we never remove all elements:
                 assert (freq_head->next != null);
                 freq_head = freq_head->next;
             }
+            rw_lock.writer_unlock ();
 
             old_freq->remove_self ();
             delete old_freq;
@@ -131,6 +137,7 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
         }
 
         // Ensure freq_head has frequency 1:
+        rw_lock.writer_lock ();
         if (freq_head == null) {
             freq_head = new Frequency<Key, Value> ();
         } else if (freq_head->freq != 1) {
@@ -145,6 +152,7 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
         freq_head->add_node (node);
         key_to_node[key] = node;
         size++;
+        rw_lock.writer_unlock ();
         return node;
     }
 
@@ -156,8 +164,10 @@ public class Life.HashLife.Cache.LfuCache<Key, Value> : LoadingCache<Key, Value>
         ensures (freq_head->node_head != null) {
         var node_to_remove = freq_head->node_head;
         freq_head->remove_node (node_to_remove);
+        rw_lock.writer_lock ();
         key_to_node.unset (node_to_remove->key);
         size--;
+        rw_lock.writer_unlock ();
         evicted ();
 
         if (freq_head->is_empty) {
